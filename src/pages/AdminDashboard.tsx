@@ -12,6 +12,14 @@ type AdminUser = {
   invited_at: string | null;
 };
 
+// Define the type for Supabase users
+type SupabaseUser = {
+  id: string;
+  email?: string;
+  created_at?: string;
+  // Add other properties as needed
+}
+
 const AdminDashboard = () => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +61,10 @@ const AdminDashboard = () => {
           };
         }
 
-        const matched = users.users.find((u) => u.id === role.user_id);
+        // Properly type the users array
+        const supabaseUsers = users.users as SupabaseUser[];
+        const matched = supabaseUsers.find((u) => u.id === role.user_id);
+        
         return {
           user_id: role.user_id,
           email: matched?.email || null,
