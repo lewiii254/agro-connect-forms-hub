@@ -44,7 +44,16 @@ const AdminDashboard = () => {
       }
 
       const adminsList: AdminUser[] = roles.map((role) => {
-        const matched = users?.users?.find((u) => u.id === role.user_id);
+        // Type guard to make TypeScript happy
+        if (!users?.users) {
+          return {
+            user_id: role.user_id,
+            email: null,
+            invited_at: null,
+          };
+        }
+
+        const matched = users.users.find((u) => u.id === role.user_id);
         return {
           user_id: role.user_id,
           email: matched?.email || null,

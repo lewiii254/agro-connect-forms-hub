@@ -79,7 +79,6 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
         <DialogFooter>
           <Button
             onClick={handleInvite}
-            loading={isLoading}
             disabled={!email || isLoading}
             className="mt-2"
           >
