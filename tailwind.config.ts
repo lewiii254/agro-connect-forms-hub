@@ -52,6 +52,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+                agro: {
+                    blue: '#005678',
+                    green: '#447932',
+                    orange: '#F47D20',
+                    lightblue: '#E6F7FF',
+                    lightgreen: '#E8F5E9',
+                    lightorange: '#FFF3E0',
+                },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
