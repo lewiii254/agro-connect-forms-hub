@@ -1,86 +1,23 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
-// Mock data for applications
-const mockApplications = [
-  {
-    id: 1,
-    applicantName: "John Doe",
-    email: "john.doe@example.com",
-    serviceRequested: "SSP Training",
-    dateSubmitted: "2024-04-19",
-    status: "Pending"
-  },
-  {
-    id: 2,
-    applicantName: "Jane Smith",
-    email: "jane.smith@example.com",
-    serviceRequested: "Extension Services",
-    dateSubmitted: "2024-04-18",
-    status: "Approved"
-  },
-  {
-    id: 3,
-    applicantName: "Robert Johnson",
-    email: "robert.j@example.com",
-    serviceRequested: "Agro-dealer Training",
-    dateSubmitted: "2024-04-17",
-    status: "Pending"
-  },
-  {
-    id: 4,
-    applicantName: "Alice Williams",
-    email: "alice.w@example.com",
-    serviceRequested: "SSP Training",
-    dateSubmitted: "2024-04-16",
-    status: "Rejected"
-  },
-  {
-    id: 5,
-    applicantName: "Michael Brown",
-    email: "michael.b@example.com",
-    serviceRequested: "Extension Services",
-    dateSubmitted: "2024-04-15",
-    status: "Pending"
-  }
-];
-
-// Mock data for messages
-const mockMessages = [
-  {
-    id: 1,
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    subject: "Inquiry about training",
-    message: "I'd like to know more about the SSP training schedule for next month.",
-    date: "2024-04-19",
-    status: "Unread"
-  },
-  {
-    id: 2,
-    name: "Thomas Wilson",
-    email: "thomas.w@example.com",
-    subject: "Extension service feedback",
-    message: "I wanted to thank you for the excellent extension service provided last week.",
-    date: "2024-04-18",
-    status: "Read"
-  },
-  {
-    id: 3,
-    name: "Emily Johnson",
-    email: "emily.j@example.com",
-    subject: "Question about certification",
-    message: "How long is the agro-dealer certification valid for?",
-    date: "2024-04-17",
-    status: "Unread"
-  }
-];
+const fetchApplications = async () => {
+  const [{ data: sspTraining }, { data: extension }, { data: agro }] = await Promise.all([
+    supabase.from("ssp_training_applications").select("*").order("created_at", { ascending: false }),
+    supabase.from("extension_applications").select("*").order("created_at", { ascending: false }),
+    supabase.from("agro_dealer_applications").select("*").order("created_at", { ascending: false }),
+  ]);
+  return {
+    sspTraining: sspTraining || [],
+    extension: extension || [],
+    agro: agro || [],
+  };
+};
 
 const AdminDashboard = () => {
-  const [applications, setApplications] = useState(mockApplications);
-  const [messages, setMessages] = useState(mockMessages);
   const [activeTab, setActiveTab] = useState("home");
   const [selectedApplication, setSelectedApplication] = useState<any>(null);
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
@@ -98,6 +35,43 @@ const AdminDashboard = () => {
     }
   }, [navigate]);
 
+  const { data: appsData, refetch } = useQuery({
+    queryKey: ["all-applications"],
+    queryFn: fetchApplications,
+  });
+
+  // Flatten and annotate applications
+  const applications = [
+    ...(appsData?.sspTraining || []).map(app => ({
+      ...app,
+      applicantName: app.full_name,
+      email: app.email,
+      serviceRequested: "SSP Training",
+      dateSubmitted: app.created_at ? app.created_at.split("T")[0] : "",
+      status: "Pending"
+    })),
+    ...(appsData?.extension || []).map(app => ({
+      ...app,
+      applicantName: app.full_name,
+      email: app.email,
+      serviceRequested: "Extension Services",
+      dateSubmitted: app.created_at ? app.created_at.split("T")[0] : "",
+      status: "Pending"
+    })),
+    ...(appsData?.agro || []).map(app => ({
+      ...app,
+      applicantName: app.full_name,
+      email: app.email,
+      serviceRequested: "Agro-dealer Training",
+      dateSubmitted: app.created_at ? app.created_at.split("T")[0] : "",
+      status: "Pending"
+    })),
+  ].sort((a, b) => (b.dateSubmitted.localeCompare(a.dateSubmitted)));
+
+  // Placeholder for messages (if you later add a messages/contact table)
+  const [messages, setMessages] = useState<any[]>([]);
+  const unreadMessagesCount = messages.filter(msg => msg.status === "Unread").length;
+
   const handleLogout = () => {
     // In a real app, you would clear auth tokens/state
     toast.success("Logged out successfully");
@@ -105,7 +79,6 @@ const AdminDashboard = () => {
   };
 
   const pendingApplicationsCount = applications.filter(app => app.status === "Pending").length;
-  const unreadMessagesCount = messages.filter(msg => msg.status === "Unread").length;
 
   const viewApplication = (application: any) => {
     setSelectedApplication(application);
@@ -125,13 +98,13 @@ const AdminDashboard = () => {
     }
   };
 
+  // Status update actions are now frontend-only until a status field is added!
   const updateApplicationStatus = (id: number, newStatus: string) => {
-    const updatedApplications = applications.map(app => 
-      app.id === id ? { ...app, status: newStatus } : app
-    );
-    setApplications(updatedApplications);
+    // In real app, update application status in DB
     setShowApplicationModal(false);
     toast.success(`Application has been ${newStatus.toLowerCase()}`);
+    // Optionally refetch
+    refetch();
   };
 
   const deleteMessage = (id: number) => {
@@ -240,7 +213,7 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {applications.slice(0, 3).map((application) => (
-                      <tr key={application.id}>
+                      <tr key={application.email + application.serviceRequested}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{application.applicantName}</div>
                           <div className="text-sm text-gray-500">{application.email}</div>
@@ -381,7 +354,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {applications.map((application) => (
-                    <tr key={application.id}>
+                    <tr key={application.email + application.serviceRequested}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{application.applicantName}</div>
                         <div className="text-sm text-gray-500">{application.email}</div>

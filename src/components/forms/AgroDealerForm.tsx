@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   TextInput, 
@@ -12,6 +11,7 @@ import {
   SubmitButton 
 } from "./FormComponents";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   fullName: string;
@@ -54,40 +54,59 @@ const AgroDealerForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      // In a real app, you would send this data to your backend API
-      console.log("Form data submitted:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast.success("Application submitted successfully! We'll contact you soon.");
-      
-      // Reset form
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        businessName: "",
-        location: "",
-        productTypes: [],
-        experiencePeriod: "",
-        previousTraining: false,
-        trainingTopics: [],
-        staffCount: "",
-        wantsCertificate: false,
-        referralSource: "",
-      });
-    } catch (error) {
-      toast.error("There was an error submitting your application. Please try again.");
-      console.error("Form submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    // Prepare data for Supabase insert
+    const insertData = {
+      full_name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      business_name: formData.businessName || null,
+      location: formData.location,
+      product_types: formData.productTypes,
+      other_product_type: formData.otherProductType || null,
+      experience_period: formData.experiencePeriod,
+      previous_training: formData.previousTraining,
+      training_topics: formData.trainingTopics,
+      other_training_topic: formData.otherTrainingTopic || null,
+      preferred_date: formData.preferredDate
+        ? formData.preferredDate.toISOString().split("T")[0]
+        : null,
+      staff_count: formData.staffCount || null,
+      wants_certificate: formData.wantsCertificate,
+      referral_source: formData.referralSource || null,
+      other_referral_source: formData.otherReferralSource || null,
+    };
+
+    const { error } = await supabase.from("agro_dealer_applications").insert([insertData]);
+    if (error) throw error;
+
+    toast.success("Application submitted successfully! We'll contact you soon.");
+
+    // Reset form
+    setFormData({
+      fullName: "",
+      email: "",
+      phone: "",
+      businessName: "",
+      location: "",
+      productTypes: [],
+      experiencePeriod: "",
+      previousTraining: false,
+      trainingTopics: [],
+      staffCount: "",
+      wantsCertificate: false,
+      referralSource: "",
+    });
+  } catch (error: any) {
+    toast.error("There was an error submitting your application. Please try again.");
+    console.error("Form submission error:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

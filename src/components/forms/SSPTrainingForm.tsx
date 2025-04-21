@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   TextInput, 
@@ -12,6 +11,7 @@ import {
   SubmitButton 
 } from "./FormComponents";
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   fullName: string;
@@ -51,39 +51,54 @@ const SSPTrainingForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      // In a real app, you would send this data to your backend API
-      console.log("Form data submitted:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast.success("Application submitted successfully! We'll contact you soon.");
-      
-      // Reset form
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        location: "",
-        experience: "",
-        previousTraining: false,
-        techniques: [],
-        areaSize: "",
-        peopleCount: "",
-        challenges: "",
-        referralSource: "",
-      });
-    } catch (error) {
-      toast.error("There was an error submitting your application. Please try again.");
-      console.error("Form submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    const insertData = {
+      full_name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      location: formData.location,
+      experience: formData.experience,
+      previous_training: formData.previousTraining,
+      techniques: formData.techniques,
+      other_technique: formData.otherTechnique || null,
+      area_size: formData.areaSize || null,
+      people_count: formData.peopleCount || null,
+      preferred_date: formData.preferredDate
+        ? formData.preferredDate.toISOString().split("T")[0]
+        : null,
+      challenges: formData.challenges || null,
+      referral_source: formData.referralSource || null,
+      other_referral_source: formData.otherReferralSource || null,
+    };
+
+    const { error } = await supabase.from("ssp_training_applications").insert([insertData]);
+    if (error) throw error;
+
+    toast.success("Application submitted successfully! We'll contact you soon.");
+
+    setFormData({
+      fullName: "",
+      email: "",
+      phone: "",
+      location: "",
+      experience: "",
+      previousTraining: false,
+      techniques: [],
+      areaSize: "",
+      peopleCount: "",
+      challenges: "",
+      referralSource: "",
+    });
+  } catch (error: any) {
+    toast.error("There was an error submitting your application. Please try again.");
+    console.error("Form submission error:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

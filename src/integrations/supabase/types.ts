@@ -9,7 +9,186 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      agro_dealer_applications: {
+        Row: {
+          business_name: string | null
+          created_at: string
+          email: string
+          experience_period: string
+          full_name: string
+          id: string
+          location: string
+          other_product_type: string | null
+          other_referral_source: string | null
+          other_training_topic: string | null
+          phone: string
+          preferred_date: string | null
+          previous_training: boolean
+          product_types: string[] | null
+          referral_source: string | null
+          staff_count: string | null
+          training_topics: string[] | null
+          wants_certificate: boolean
+        }
+        Insert: {
+          business_name?: string | null
+          created_at?: string
+          email: string
+          experience_period: string
+          full_name: string
+          id?: string
+          location: string
+          other_product_type?: string | null
+          other_referral_source?: string | null
+          other_training_topic?: string | null
+          phone: string
+          preferred_date?: string | null
+          previous_training?: boolean
+          product_types?: string[] | null
+          referral_source?: string | null
+          staff_count?: string | null
+          training_topics?: string[] | null
+          wants_certificate?: boolean
+        }
+        Update: {
+          business_name?: string | null
+          created_at?: string
+          email?: string
+          experience_period?: string
+          full_name?: string
+          id?: string
+          location?: string
+          other_product_type?: string | null
+          other_referral_source?: string | null
+          other_training_topic?: string | null
+          phone?: string
+          preferred_date?: string | null
+          previous_training?: boolean
+          product_types?: string[] | null
+          referral_source?: string | null
+          staff_count?: string | null
+          training_topics?: string[] | null
+          wants_certificate?: boolean
+        }
+        Relationships: []
+      }
+      extension_applications: {
+        Row: {
+          challenges: string | null
+          created_at: string
+          delivery_method: string | null
+          email: string
+          farm_size: string | null
+          farming_types: string[] | null
+          full_name: string
+          id: string
+          interest_areas: string[] | null
+          location: string
+          other_farming_type: string | null
+          other_interest_area: string | null
+          other_referral_source: string | null
+          phone: string
+          preferred_date: string | null
+          referral_source: string | null
+          training_preference: string | null
+        }
+        Insert: {
+          challenges?: string | null
+          created_at?: string
+          delivery_method?: string | null
+          email: string
+          farm_size?: string | null
+          farming_types?: string[] | null
+          full_name: string
+          id?: string
+          interest_areas?: string[] | null
+          location: string
+          other_farming_type?: string | null
+          other_interest_area?: string | null
+          other_referral_source?: string | null
+          phone: string
+          preferred_date?: string | null
+          referral_source?: string | null
+          training_preference?: string | null
+        }
+        Update: {
+          challenges?: string | null
+          created_at?: string
+          delivery_method?: string | null
+          email?: string
+          farm_size?: string | null
+          farming_types?: string[] | null
+          full_name?: string
+          id?: string
+          interest_areas?: string[] | null
+          location?: string
+          other_farming_type?: string | null
+          other_interest_area?: string | null
+          other_referral_source?: string | null
+          phone?: string
+          preferred_date?: string | null
+          referral_source?: string | null
+          training_preference?: string | null
+        }
+        Relationships: []
+      }
+      ssp_training_applications: {
+        Row: {
+          area_size: string | null
+          challenges: string | null
+          created_at: string
+          email: string
+          experience: string
+          full_name: string
+          id: string
+          location: string
+          other_referral_source: string | null
+          other_technique: string | null
+          people_count: string | null
+          phone: string
+          preferred_date: string | null
+          previous_training: boolean
+          referral_source: string | null
+          techniques: string[] | null
+        }
+        Insert: {
+          area_size?: string | null
+          challenges?: string | null
+          created_at?: string
+          email: string
+          experience: string
+          full_name: string
+          id?: string
+          location: string
+          other_referral_source?: string | null
+          other_technique?: string | null
+          people_count?: string | null
+          phone: string
+          preferred_date?: string | null
+          previous_training?: boolean
+          referral_source?: string | null
+          techniques?: string[] | null
+        }
+        Update: {
+          area_size?: string | null
+          challenges?: string | null
+          created_at?: string
+          email?: string
+          experience?: string
+          full_name?: string
+          id?: string
+          location?: string
+          other_referral_source?: string | null
+          other_technique?: string | null
+          people_count?: string | null
+          phone?: string
+          preferred_date?: string | null
+          previous_training?: boolean
+          referral_source?: string | null
+          techniques?: string[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
