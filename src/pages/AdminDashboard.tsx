@@ -100,7 +100,6 @@ const AdminDashboard = () => {
 
       if (roles && roles.length > 0) {
         // Fetch emails from auth.users using admin API
-        // Note: This API only works for service roles -- here, we just display the user_id
         const { data: users, error: usersError } = await supabase.auth.admin.listUsers({
           page: 1,
           perPage: 50,
