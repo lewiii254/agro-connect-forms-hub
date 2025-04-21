@@ -1,8 +1,9 @@
-
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/HeroSection";
 import ServiceCard from "@/components/ServiceCard";
+// Import Lucide icons that best match the reference
+import { Shield, PersonStanding, Sprout, Home } from "lucide-react";
 
 const Index = () => {
   return (
@@ -26,9 +27,7 @@ const Index = () => {
               title="SSP TRAINING CERTIFICATION"
               description="Specialized training and certification for safe pesticide application."
               icon={
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
+                <Shield size={48} color="#fff" strokeWidth={2.5} />
               }
               linkTo="/applications/ssp-training"
               bgColorClass="bg-agro-green"
@@ -39,9 +38,7 @@ const Index = () => {
               title="AGRO DEALERS TRAINING & CERTIFICATION"
               description="Educational programs tailored for agricultural dealers."
               icon={
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+                <PersonStanding size={48} color="#fff" strokeWidth={2.5} />
               }
               linkTo="/applications/agro-dealers"
               bgColorClass="bg-agro-orange"
@@ -52,9 +49,7 @@ const Index = () => {
               title="EXTENSION SERVICES"
               description="Support and advice for specific farming activities."
               icon={
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
+                <Sprout size={48} color="#fff" strokeWidth={2.5} />
               }
               linkTo="/applications/extension-services"
               bgColorClass="bg-agro-blue"
@@ -65,9 +60,7 @@ const Index = () => {
               title="FARM VISITS & TOUR PLANNING"
               description="Organizing educational tours to farms."
               icon={
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
+                <Home size={48} color="#fff" strokeWidth={2.5} />
               }
               linkTo="/services"
               bgColorClass="bg-agro-orange"

@@ -11,13 +11,13 @@ const AboutPage = () => {
         </div>
       </div>
 
-      {/* About Content with Image */}
+      {/* About Content with Maize Farm Image */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="mb-16">
             <img
-              src="/lovable-uploads/a00aba65-a5e6-4dae-8b02-630a83457614.png"
-              alt="Agricultural field"
+              src="https://images.unsplash.com/photo-1465379944081-7f47de8d74ac?auto=format&fit=crop&w=987&q=80" // maize/corn field, you can use your own custom maize photo if desired
+              alt="Maize farm field"
               className="w-full h-96 object-cover rounded-lg shadow-lg mb-8"
             />
             
