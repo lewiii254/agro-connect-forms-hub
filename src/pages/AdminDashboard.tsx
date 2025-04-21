@@ -114,6 +114,88 @@ const AdminDashboard = () => {
     toast.success("Message deleted successfully");
   };
 
+  // Function to render all application fields
+  const renderApplicationFields = (application: any) => {
+    if (!application) return null;
+
+    // Map each application type to the set of fields (and their order)
+    if (application.serviceRequested === "SSP Training") {
+      return (
+        <>
+          <Field label="Full Name" value={application.full_name} />
+          <Field label="Email" value={application.email} />
+          <Field label="Phone" value={application.phone} />
+          <Field label="Location" value={application.location} />
+          <Field label="Experience" value={application.experience} />
+          <Field label="Previous Training" value={application.previous_training ? "Yes" : "No"} />
+          <Field label="Techniques Interested In" value={(application.techniques && application.techniques.length > 0) ? application.techniques.join(", ") : "-"} />
+          {application.other_technique && <Field label="Other Technique" value={application.other_technique} />}
+          <Field label="Area Size" value={application.area_size || "-"} />
+          <Field label="People Count" value={application.people_count || "-"} />
+          <Field label="Preferred Date" value={application.preferred_date || "-"} />
+          <Field label="Challenges" value={application.challenges || "-"} />
+          <Field label="Referral Source" value={application.referral_source || "-"} />
+          {application.other_referral_source && <Field label="Other Referral Source" value={application.other_referral_source} />}
+        </>
+      );
+    }
+
+    if (application.serviceRequested === "Extension Services") {
+      return (
+        <>
+          <Field label="Full Name" value={application.full_name} />
+          <Field label="Email" value={application.email} />
+          <Field label="Phone" value={application.phone} />
+          <Field label="Location" value={application.location} />
+          <Field label="Farming Types" value={(application.farming_types && application.farming_types.length > 0) ? application.farming_types.join(", ") : "-"} />
+          {application.other_farming_type && <Field label="Other Farming Type" value={application.other_farming_type} />}
+          <Field label="Farm Size" value={application.farm_size || "-"} />
+          <Field label="Interest Areas" value={(application.interest_areas && application.interest_areas.length > 0) ? application.interest_areas.join(", ") : "-"} />
+          {application.other_interest_area && <Field label="Other Interest Area" value={application.other_interest_area} />}
+          <Field label="Delivery Method" value={application.delivery_method || "-"} />
+          <Field label="Training Preference" value={application.training_preference || "-"} />
+          <Field label="Preferred Date" value={application.preferred_date || "-"} />
+          <Field label="Challenges" value={application.challenges || "-"} />
+          <Field label="Referral Source" value={application.referral_source || "-"} />
+          {application.other_referral_source && <Field label="Other Referral Source" value={application.other_referral_source} />}
+        </>
+      );
+    }
+
+    if (application.serviceRequested === "Agro-dealer Training") {
+      return (
+        <>
+          <Field label="Full Name" value={application.full_name} />
+          <Field label="Email" value={application.email} />
+          <Field label="Phone" value={application.phone} />
+          <Field label="Business Name" value={application.business_name || "-"} />
+          <Field label="Location" value={application.location} />
+          <Field label="Experience Period" value={application.experience_period} />
+          <Field label="Product Types" value={(application.product_types && application.product_types.length > 0) ? application.product_types.join(", ") : "-"} />
+          {application.other_product_type && <Field label="Other Product Type" value={application.other_product_type} />}
+          <Field label="Previous Training" value={application.previous_training ? "Yes" : "No"} />
+          <Field label="Training Topics" value={(application.training_topics && application.training_topics.length > 0) ? application.training_topics.join(", ") : "-"} />
+          {application.other_training_topic && <Field label="Other Training Topic" value={application.other_training_topic} />}
+          <Field label="Staff Count" value={application.staff_count || "-"} />
+          <Field label="Preferred Date" value={application.preferred_date || "-"} />
+          <Field label="Wants Certificate" value={application.wants_certificate ? "Yes" : "No"} />
+          <Field label="Referral Source" value={application.referral_source || "-"} />
+          {application.other_referral_source && <Field label="Other Referral Source" value={application.other_referral_source} />}
+        </>
+      );
+    }
+
+    return <div className="text-sm text-gray-500">No data to display.</div>;
+  };
+
+  // Helper Field component for pretty label-value display
+  const Field = ({ label, value }: { label: string, value: any }) => (
+    <div className="mb-2 flex flex-col">
+      <span className="text-xs text-gray-500">{label}</span>
+      <span className="text-base text-gray-900">{value || "-"}</span>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Admin Header */}
@@ -475,22 +557,7 @@ const AdminDashboard = () => {
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500">Applicant Name</h4>
-                  <p className="text-base">{selectedApplication.applicantName}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500">Email</h4>
-                  <p className="text-base">{selectedApplication.email}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500">Service Requested</h4>
-                  <p className="text-base">{selectedApplication.serviceRequested}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500">Date Submitted</h4>
-                  <p className="text-base">{selectedApplication.dateSubmitted}</p>
-                </div>
+                {renderApplicationFields(selectedApplication)}
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Status</h4>
                   <p className={`inline-block px-2 py-1 text-xs font-semibold rounded-full 
@@ -500,17 +567,21 @@ const AdminDashboard = () => {
                     {selectedApplication.status}
                   </p>
                 </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Date Submitted</h4>
+                  <p className="text-base">{selectedApplication.dateSubmitted}</p>
+                </div>
               </div>
               
-              {/* Additional application details would go here */}
-              <div className="mb-6">
+              {/* Application Details - removed placeholder since all data now shown */}
+              {/* <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Application Details</h4>
                 <div className="bg-gray-50 p-4 rounded">
                   <p className="text-sm text-gray-700">
                     This is a placeholder for more detailed application information that would be displayed here.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="border-t border-gray-200 pt-4 flex justify-end space-x-3">
                 {selectedApplication.status === "Pending" && (

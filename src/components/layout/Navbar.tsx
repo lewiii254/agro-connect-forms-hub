@@ -11,14 +11,15 @@ const Navbar = () => {
         <Link to="/" className="flex items-center">
           <div className="h-12 w-12 relative">
             <img 
-              src="/lovable-uploads/63502e5c-259f-4533-9dbc-0924bef7ca91.png" 
+              src="/lovable-uploads/7b1f715c-e43b-4c11-b2e1-6a57f96baa21.png" 
               alt="Agro-Nexus Logo" 
-              className="h-full w-full"
+              className="h-full w-full object-contain"
             />
           </div>
           <div className="ml-2 text-agro-blue font-bold">
             <span className="text-xl">AGRO-</span>
             <span className="text-xl">NEXUS</span>
+            <span className="block text-xs text-gray-500 font-normal tracking-widest ml-1">LIMITED</span>
           </div>
         </Link>
 
