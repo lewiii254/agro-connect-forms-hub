@@ -18,11 +18,12 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
   // Invite the user with Supabase and add their role in user_roles
   const handleInvite = async () => {
     setIsLoading(true);
-    // Send invite (using Supabase admin API)
-    // The invited user must complete registration via email
-    // After sign-up completes, admin assignment is finalized
+    console.log("Inviting user with email:", email);
+    
     try {
+      // Send invite (using Supabase admin API)
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
+      console.log("Invite response:", data, error);
 
       if (error) {
         toast.error(error.message || "Failed to send invite.");
@@ -33,11 +34,13 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
       // In most cases, inviteUserByEmail immediately creates a user in the auth.users table,
       // so we can assign role now.
       if (data?.user?.id) {
+        console.log("User created with ID:", data.user.id);
         const { error: roleErr } = await supabase
           .from("user_roles")
           .insert([{ user_id: data.user.id, role: "admin" }]);
 
         if (roleErr) {
+          console.error("Role assignment error:", roleErr);
           toast.error("Failed to assign admin role: " + roleErr.message);
         } else {
           toast.success("Admin invited and role assigned!");
@@ -49,6 +52,7 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
         toast.error("User invitation sent but failed to assign role.");
       }
     } catch (err: any) {
+      console.error("Error in invite process:", err);
       toast.error("Failed to invite admin. " + (err?.message || String(err)));
     }
     setIsLoading(false);
