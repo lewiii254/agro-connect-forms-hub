@@ -1,47 +1,24 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
-import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RegisterAdminDialog from "@/components/admin/RegisterAdminDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
-
-type AdminUser = {
-  user_id: string;
-  email: string | null;
-  invited_at: string | null;
-};
-
-type SupabaseUser = {
-  id: string;
-  email?: string;
-  created_at?: string;
-};
-
-type ApplicationBase = {
-  id: string;
-  created_at: string;
-  full_name: string;
-  email: string;
-  location: string;
-  phone: string;
-  // Add other common fields here
-};
+import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import ApplicationsTable from "@/components/admin/ApplicationsTable";
+import { AdminUser, AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
 
 const AdminDashboard = () => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
-  const [agroDealerApps, setAgroDealerApps] = useState<ApplicationBase[]>([]);
-  const [sspTrainingApps, setSspTrainingApps] = useState<ApplicationBase[]>([]);
-  const [extensionApps, setExtensionApps] = useState<ApplicationBase[]>([]);
+  const [agroDealerApps, setAgroDealerApps] = useState<AgroDealerApplication[]>([]);
+  const [sspTrainingApps, setSspTrainingApps] = useState<SSPTrainingApplication[]>([]);
+  const [extensionApps, setExtensionApps] = useState<ExtensionApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("admins");
 
-  // Fetch applications data
   const fetchApplications = async () => {
     setLoading(true);
     
-    // Fetch agro dealer applications
     const { data: agroDealers, error: agroError } = await supabase
       .from("agro_dealer_applications")
       .select("*")
@@ -53,7 +30,6 @@ const AdminDashboard = () => {
       setAgroDealerApps(agroDealers || []);
     }
     
-    // Fetch SSP training applications
     const { data: sspApps, error: sspError } = await supabase
       .from("ssp_training_applications")
       .select("*")
@@ -65,7 +41,6 @@ const AdminDashboard = () => {
       setSspTrainingApps(sspApps || []);
     }
     
-    // Fetch extension services applications
     const { data: extApps, error: extError } = await supabase
       .from("extension_applications")
       .select("*")
@@ -80,7 +55,6 @@ const AdminDashboard = () => {
     setLoading(false);
   };
 
-  // Fetch admin users with their emails
   const fetchAdmins = async () => {
     setLoading(true);
     
@@ -115,7 +89,7 @@ const AdminDashboard = () => {
             };
           }
 
-          const supabaseUsers = users.users as SupabaseUser[];
+          const supabaseUsers = users.users as any[];
           const matched = supabaseUsers.find((u) => u.id === role.user_id);
           
           return {
@@ -188,197 +162,53 @@ const AdminDashboard = () => {
                 Refresh List
               </button>
             </div>
-            
-            <div className="rounded-xl bg-white p-4 shadow-sm overflow-x-auto max-w-full">
-              <Table className="min-w-[375px] md:min-w-[600px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User ID</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Invited At</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8">
-                        Loading admin users...
-                      </TableCell>
-                    </TableRow>
-                  ) : admins.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8">
-                        No admin users found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    admins.map((ad) => (
-                      <TableRow key={ad.user_id}>
-                        <TableCell className="break-all">{ad.user_id}</TableCell>
-                        <TableCell className="break-all">{ad.email}</TableCell>
-                        <TableCell>
-                          {ad.invited_at ? formatDate(ad.invited_at) : ""}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <AdminUsersTable 
+              loading={loading} 
+              admins={admins} 
+              formatDate={formatDate}
+            />
           </TabsContent>
           
           <TabsContent value="agro">
             <div className="mb-6 flex justify-end">
-              <button 
-                onClick={handleRefresh}
-                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
+              <button onClick={handleRefresh} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
                 Refresh List
               </button>
             </div>
-            
-            <div className="rounded-xl bg-white p-4 shadow-sm overflow-x-auto max-w-full">
-              <Table className="min-w-[375px] md:min-w-[600px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Experience</TableHead>
-                    <TableHead>Applied At</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        Loading applications...
-                      </TableCell>
-                    </TableRow>
-                  ) : agroDealerApps.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        No applications found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    agroDealerApps.map((app) => (
-                      <TableRow key={app.id}>
-                        <TableCell>{app.full_name}</TableCell>
-                        <TableCell>{app.email}</TableCell>
-                        <TableCell>{app.phone}</TableCell>
-                        <TableCell>{app.location}</TableCell>
-                        <TableCell>{app.experience_period}</TableCell>
-                        <TableCell>{formatDate(app.created_at)}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <ApplicationsTable 
+              loading={loading}
+              applications={agroDealerApps}
+              type="agro"
+              formatDate={formatDate}
+            />
           </TabsContent>
           
           <TabsContent value="ssp">
             <div className="mb-6 flex justify-end">
-              <button 
-                onClick={handleRefresh}
-                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
+              <button onClick={handleRefresh} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
                 Refresh List
               </button>
             </div>
-            
-            <div className="rounded-xl bg-white p-4 shadow-sm overflow-x-auto max-w-full">
-              <Table className="min-w-[375px] md:min-w-[600px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Experience</TableHead>
-                    <TableHead>Applied At</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        Loading applications...
-                      </TableCell>
-                    </TableRow>
-                  ) : sspTrainingApps.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        No applications found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    sspTrainingApps.map((app) => (
-                      <TableRow key={app.id}>
-                        <TableCell>{app.full_name}</TableCell>
-                        <TableCell>{app.email}</TableCell>
-                        <TableCell>{app.phone}</TableCell>
-                        <TableCell>{app.location}</TableCell>
-                        <TableCell>{app.experience}</TableCell>
-                        <TableCell>{formatDate(app.created_at)}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <ApplicationsTable 
+              loading={loading}
+              applications={sspTrainingApps}
+              type="ssp"
+              formatDate={formatDate}
+            />
           </TabsContent>
           
           <TabsContent value="extension">
             <div className="mb-6 flex justify-end">
-              <button 
-                onClick={handleRefresh}
-                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
+              <button onClick={handleRefresh} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
                 Refresh List
               </button>
             </div>
-            
-            <div className="rounded-xl bg-white p-4 shadow-sm overflow-x-auto max-w-full">
-              <Table className="min-w-[375px] md:min-w-[600px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Applied At</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        Loading applications...
-                      </TableCell>
-                    </TableRow>
-                  ) : extensionApps.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        No applications found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    extensionApps.map((app) => (
-                      <TableRow key={app.id}>
-                        <TableCell>{app.full_name}</TableCell>
-                        <TableCell>{app.email}</TableCell>
-                        <TableCell>{app.phone}</TableCell>
-                        <TableCell>{app.location}</TableCell>
-                        <TableCell>{formatDate(app.created_at)}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <ApplicationsTable 
+              loading={loading}
+              applications={extensionApps}
+              type="extension"
+              formatDate={formatDate}
+            />
           </TabsContent>
         </Tabs>
       </div>
