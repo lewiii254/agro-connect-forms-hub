@@ -9,7 +9,7 @@ import StatisticsCard from "@/components/admin/StatisticsCard";
 import ApplicationsTable from "@/components/admin/ApplicationsTable";
 import MessagesTable from "@/components/admin/MessagesTable";
 import RegisterAdminDialog from "@/components/admin/RegisterAdminDialog";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, MessageSquare, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
@@ -187,6 +187,7 @@ const AdminDashboard = () => {
   const handleRefresh = () => {
     fetchApplications();
     fetchAdmins();
+    toast.success("Data refreshed");
   };
 
   return (
@@ -212,11 +213,13 @@ const AdminDashboard = () => {
               title="Total Applications" 
               value={allApplications.length} 
               color="bg-emerald-600"
+              icon={<FileText size={24} />}
             />
             <StatisticsCard 
               title="Unread Messages" 
               value={unreadMessages} 
               color="bg-orange-500" 
+              icon={<MessageSquare size={24} />}
             />
           </div>
           
@@ -226,6 +229,7 @@ const AdminDashboard = () => {
               applications={allApplications}
               formatDate={formatDate}
               loading={loading}
+              onUpdate={fetchApplications}
             />
           </div>
           

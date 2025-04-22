@@ -13,6 +13,7 @@ import ExtensionServicesApplicationPage from "./pages/applications/ExtensionServ
 import SSPTrainingApplicationPage from "./pages/applications/SSPTrainingApplicationPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminMessagesPage from "./pages/AdminMessagesPage";
 import NotFound from "./pages/NotFound";
 
 // Create a new QueryClient instance
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/applications/ssp-training" element={<SSPTrainingApplicationPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/messages" element={<AdminMessagesPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

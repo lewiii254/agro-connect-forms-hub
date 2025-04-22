@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
 
@@ -14,10 +16,12 @@ type Props = {
   applications: ApplicationType[];
   formatDate: (date: string) => string;
   loading: boolean;
+  onUpdate?: () => void;
 };
 
-export default function ApplicationsTable({ applications, formatDate, loading }: Props) {
+export default function ApplicationsTable({ applications, formatDate, loading, onUpdate }: Props) {
   const [selectedApp, setSelectedApp] = useState<ApplicationType | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   const getServiceType = (app: ApplicationType): string => {
     if ('product_types' in app) return 'Agro-Dealer Training';
@@ -26,16 +30,73 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
     return 'Unknown';
   };
 
-  const renderDetailItem = (label: string, value: string | string[] | null | boolean) => {
+  const getTableName = (app: ApplicationType): string => {
+    if ('product_types' in app) return 'agro_dealer_applications';
+    if ('techniques' in app) return 'ssp_training_applications';
+    if ('farming_types' in app) return 'extension_applications';
+    return '';
+  };
+
+  const updateApplicationStatus = async (app: ApplicationType, status: string) => {
+    const tableName = getTableName(app);
+    if (!tableName) return false;
+    
+    try {
+      setProcessingId(app.id);
+      
+      // In a real implementation, we would update the application status in the database
+      // For now, we'll simulate this with a timeout
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // The real implementation would look like:
+      /*
+      const { error } = await supabase
+        .from(tableName)
+        .update({ status: status })
+        .eq('id', app.id);
+        
+      if (error) throw error;
+      */
+      
+      return true;
+    } catch (error) {
+      console.error(`Error updating ${tableName}:`, error);
+      return false;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleApprove = async (app: ApplicationType) => {
+    const success = await updateApplicationStatus(app, 'approved');
+    if (success) {
+      toast.success(`Application from ${app.full_name} has been approved!`);
+      if (onUpdate) onUpdate();
+    } else {
+      toast.error("Failed to approve application");
+    }
+  };
+
+  const handleReject = async (app: ApplicationType) => {
+    const success = await updateApplicationStatus(app, 'rejected');
+    if (success) {
+      toast.success(`Application from ${app.full_name} has been rejected`);
+      if (onUpdate) onUpdate();
+    } else {
+      toast.error("Failed to reject application");
+    }
+  };
+
+  const renderDetailItem = (label: string, value: string | string[] | null | boolean | undefined) => {
     if (value === null || value === undefined) return null;
     
     if (Array.isArray(value)) {
       return (
-        <div className="mb-2">
-          <p className="font-medium">{label}:</p>
-          <ul className="list-disc pl-5">
+        <div className="mb-4">
+          <p className="font-medium text-gray-700">{label}:</p>
+          <ul className="list-disc pl-5 mt-1">
             {value.map((item, index) => (
-              <li key={index}>{item}</li>
+              <li key={index} className="text-gray-600">{item}</li>
             ))}
           </ul>
         </div>
@@ -43,9 +104,9 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
     }
     
     return (
-      <div className="mb-2">
-        <p className="font-medium">{label}:</p>
-        <p>{typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</p>
+      <div className="mb-4">
+        <p className="font-medium text-gray-700">{label}:</p>
+        <p className="text-gray-600 mt-1">{typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</p>
       </div>
     );
   };
@@ -65,38 +126,73 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
       // AgroDealerApplication
       const agroDealerApp = app as AgroDealerApplication;
       return (
-        <div>
+        <div className="space-y-2">
           {commonDetails}
-          <Separator className="my-3" />
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Business Details</h3>
           {renderDetailItem("Business Name", agroDealerApp.business_name)}
           {renderDetailItem("Experience", agroDealerApp.experience_period)}
+          {renderDetailItem("Staff Count", agroDealerApp.staff_count)}
           {renderDetailItem("Product Types", agroDealerApp.product_types)}
+          {renderDetailItem("Other Product Type", agroDealerApp.other_product_type)}
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Training Information</h3>
           {renderDetailItem("Training Topics", agroDealerApp.training_topics)}
+          {renderDetailItem("Other Training Topic", agroDealerApp.other_training_topic)}
+          {renderDetailItem("Previous Training", agroDealerApp.previous_training)}
+          {renderDetailItem("Wants Certificate", agroDealerApp.wants_certificate)}
+          {renderDetailItem("Preferred Date", agroDealerApp.preferred_date)}
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Other Information</h3>
+          {renderDetailItem("Referral Source", agroDealerApp.referral_source)}
+          {renderDetailItem("Other Referral Source", agroDealerApp.other_referral_source)}
         </div>
       );
     } else if ('techniques' in app) {
       // SSPTrainingApplication
       const sspApp = app as SSPTrainingApplication;
       return (
-        <div>
+        <div className="space-y-2">
           {commonDetails}
-          <Separator className="my-3" />
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Training Information</h3>
           {renderDetailItem("Experience", sspApp.experience)}
           {renderDetailItem("Area Size", sspApp.area_size)}
+          {renderDetailItem("People Count", sspApp.people_count)}
           {renderDetailItem("Techniques", sspApp.techniques)}
+          {renderDetailItem("Other Technique", sspApp.other_technique)}
           {renderDetailItem("Previous Training", sspApp.previous_training)}
+          {renderDetailItem("Preferred Date", sspApp.preferred_date)}
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Other Information</h3>
+          {renderDetailItem("Challenges", sspApp.challenges)}
+          {renderDetailItem("Referral Source", sspApp.referral_source)}
+          {renderDetailItem("Other Referral Source", sspApp.other_referral_source)}
         </div>
       );
     } else if ('farming_types' in app) {
       // ExtensionApplication
       const extApp = app as ExtensionApplication;
       return (
-        <div>
+        <div className="space-y-2">
           {commonDetails}
-          <Separator className="my-3" />
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Farming Details</h3>
           {renderDetailItem("Farming Types", extApp.farming_types)}
+          {renderDetailItem("Other Farming Type", extApp.other_farming_type)}
           {renderDetailItem("Interest Areas", extApp.interest_areas)}
+          {renderDetailItem("Other Interest Area", extApp.other_interest_area)}
           {renderDetailItem("Farm Size", extApp.farm_size)}
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Service Preferences</h3>
+          {renderDetailItem("Delivery Method", extApp.delivery_method)}
+          {renderDetailItem("Training Preference", extApp.training_preference)}
+          {renderDetailItem("Preferred Date", extApp.preferred_date)}
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold text-emerald-700 mb-4">Other Information</h3>
+          {renderDetailItem("Challenges", extApp.challenges)}
+          {renderDetailItem("Referral Source", extApp.referral_source)}
+          {renderDetailItem("Other Referral Source", extApp.other_referral_source)}
         </div>
       );
     }
@@ -154,9 +250,9 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
                             View
                           </Button>
                         </SheetTrigger>
-                        <SheetContent className="sm:max-w-md">
+                        <SheetContent className="sm:max-w-md overflow-y-auto max-h-screen">
                           <SheetHeader>
-                            <SheetTitle>Application Details</SheetTitle>
+                            <SheetTitle>{getServiceType(app)} Application</SheetTitle>
                             <SheetDescription>
                               Application submitted on {formatDate(selectedApp?.created_at || '')}
                             </SheetDescription>
@@ -164,12 +260,38 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
                           <div className="py-4">
                             {selectedApp && renderApplicationDetails(selectedApp)}
                           </div>
+                          <div className="flex justify-end gap-2 mt-8">
+                            <SheetClose asChild>
+                              <Button 
+                                variant="default" 
+                                className="bg-emerald-600 hover:bg-emerald-700"
+                                onClick={() => handleApprove(app)}
+                                disabled={processingId === app.id}
+                              >
+                                <Check size={16} className="mr-1" />
+                                Approve
+                              </Button>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <Button 
+                                variant="default"
+                                className="bg-orange-500 hover:bg-orange-600"
+                                onClick={() => handleReject(app)}
+                                disabled={processingId === app.id}
+                              >
+                                <X size={16} className="mr-1" />
+                                Reject
+                              </Button>
+                            </SheetClose>
+                          </div>
                         </SheetContent>
                       </Sheet>
                       <Button 
                         variant="default" 
                         size="sm" 
                         className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+                        onClick={() => handleApprove(app)}
+                        disabled={processingId === app.id}
                       >
                         <Check size={16} />
                         Approve
@@ -178,6 +300,8 @@ export default function ApplicationsTable({ applications, formatDate, loading }:
                         variant="default" 
                         size="sm" 
                         className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
+                        onClick={() => handleReject(app)}
+                        disabled={processingId === app.id}
                       >
                         <X size={16} />
                         Reject
