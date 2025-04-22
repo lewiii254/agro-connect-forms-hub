@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { UserPlus } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,10 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Register New Admin</Button>
+        <Button variant="default" className="flex items-center gap-1">
+          <UserPlus size={18} />
+          Register New Admin
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
