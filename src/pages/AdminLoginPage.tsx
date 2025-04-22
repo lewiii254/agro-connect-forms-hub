@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,11 +28,13 @@ const AdminLoginPage = () => {
 
       if (signInError) {
         toast.error(signInError.message);
+        setIsLoading(false);
         return;
       }
 
       if (!signInData.user) {
         toast.error("No user found");
+        setIsLoading(false);
         return;
       }
 
@@ -45,6 +47,9 @@ const AdminLoginPage = () => {
 
       if (roleError) {
         toast.error("Error checking admin privileges");
+        // Sign out the user since we couldn't verify admin status
+        await supabase.auth.signOut();
+        setIsLoading(false);
         return;
       }
 
@@ -52,6 +57,7 @@ const AdminLoginPage = () => {
         toast.error("You don't have admin privileges");
         // Sign out the user since they're not an admin
         await supabase.auth.signOut();
+        setIsLoading(false);
         return;
       }
 
@@ -72,44 +78,70 @@ const AdminLoginPage = () => {
     try {
       if (password !== confirmPassword) {
         toast.error("Passwords do not match");
+        setIsLoading(false);
         return;
       }
       
+      // First, check if the email is already registered
+      const { data: { users }, error: existingUserError } = await supabase.auth.admin.listUsers();
+      const emailExists = users?.some(user => user.email === email);
+      
+      if (existingUserError) {
+        console.error("Error checking existing users:", existingUserError);
+      }
+      
+      if (emailExists) {
+        toast.error("This email is already registered");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Register the new user
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            is_admin: true
+          }
+        }
       });
 
       if (signUpError) {
         toast.error(signUpError.message);
+        setIsLoading(false);
         return;
       }
 
       if (!signUpData.user) {
         toast.error("Registration failed");
+        setIsLoading(false);
         return;
       }
 
-      // Assign admin role to the new user
+      // Add admin role to the new user
       const { error: roleError } = await supabase
         .from('user_roles')
-        .insert([
-          { user_id: signUpData.user.id, role: 'admin' }
-        ]);
+        .insert([{ 
+          user_id: signUpData.user.id, 
+          role: 'admin' 
+        }]);
 
       if (roleError) {
+        console.error("Role assignment error:", roleError);
         toast.error("Failed to assign admin role");
+        setIsLoading(false);
         return;
       }
 
-      toast.success("Registration successful! Please check your email to verify your account.");
+      toast.success("Registration successful! Please confirm your email to log in.");
       setActiveTab("login");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-    } catch (error) {
-      toast.error("Registration failed. Please try again.");
+    } catch (error: any) {
       console.error("Registration error:", error);
+      toast.error(`Registration failed: ${error?.message || "Please try again"}`);
     } finally {
       setIsLoading(false);
     }
