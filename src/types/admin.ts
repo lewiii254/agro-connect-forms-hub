@@ -19,17 +19,39 @@ export type AgroDealerApplication = ApplicationBase & {
   business_name: string | null;
   product_types: string[] | null;
   training_topics: string[] | null;
+  staff_count: string | null;
+  other_product_type: string | null;
+  other_training_topic: string | null;
+  previous_training: boolean;
+  wants_certificate: boolean;
+  preferred_date: string | null;
+  referral_source: string | null;
+  other_referral_source: string | null;
 };
 
 export type SSPTrainingApplication = ApplicationBase & {
   experience: string;
   area_size: string | null;
   techniques: string[] | null;
+  people_count: string | null;
+  other_technique: string | null;
+  preferred_date: string | null;
   previous_training: boolean;
+  challenges: string | null;
+  referral_source: string | null;
+  other_referral_source: string | null;
 };
 
 export type ExtensionApplication = ApplicationBase & {
   farming_types: string[] | null;
   interest_areas: string[] | null;
   farm_size: string | null;
+  other_farming_type: string | null;
+  other_interest_area: string | null;
+  delivery_method: string | null;
+  training_preference: string | null;
+  preferred_date: string | null;
+  challenges: string | null;
+  referral_source: string | null;
+  other_referral_source: string | null;
 };
