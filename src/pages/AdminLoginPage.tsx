@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -82,21 +81,7 @@ const AdminLoginPage = () => {
         return;
       }
       
-      // First, check if the email is already registered
-      const { data: { users }, error: existingUserError } = await supabase.auth.admin.listUsers();
-      const emailExists = users?.some(user => user.email === email);
-      
-      if (existingUserError) {
-        console.error("Error checking existing users:", existingUserError);
-      }
-      
-      if (emailExists) {
-        toast.error("This email is already registered");
-        setIsLoading(false);
-        return;
-      }
-      
-      // Register the new user
+      // First attempt to sign up the user - Supabase will handle checking for existing emails
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -108,6 +93,7 @@ const AdminLoginPage = () => {
       });
 
       if (signUpError) {
+        // This will catch if the email already exists
         toast.error(signUpError.message);
         setIsLoading(false);
         return;
