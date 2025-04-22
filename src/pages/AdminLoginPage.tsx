@@ -6,6 +6,7 @@ import { toast } from "@/components/ui/sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
 
 const AdminLoginPage = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -20,21 +21,42 @@ const AdminLoginPage = () => {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would authenticate with Supabase
-      // const { data, error } = await supabase.auth.signInWithPassword({
-      //   email,
-      //   password
-      // });
-      
-      // For demo purposes
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (email === "admin@agro-nexus.com" && password === "admin123") {
-        toast.success("Login successful!");
-        navigate("/admin/dashboard");
-      } else {
-        toast.error("Invalid credentials. Please try again.");
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (signInError) {
+        toast.error(signInError.message);
+        return;
       }
+
+      if (!signInData.user) {
+        toast.error("No user found");
+        return;
+      }
+
+      // Check if user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', signInData.user.id)
+        .single();
+
+      if (roleError) {
+        toast.error("Error checking admin privileges");
+        return;
+      }
+
+      if (!roleData || roleData.role !== 'admin') {
+        toast.error("You don't have admin privileges");
+        // Sign out the user since they're not an admin
+        await supabase.auth.signOut();
+        return;
+      }
+
+      toast.success("Login successful!");
+      navigate("/admin/dashboard");
     } catch (error) {
       toast.error("Login failed. Please try again.");
       console.error("Login error:", error);
@@ -48,22 +70,38 @@ const AdminLoginPage = () => {
     setIsLoading(true);
     
     try {
-      // Validate passwords match
       if (password !== confirmPassword) {
         toast.error("Passwords do not match");
-        setIsLoading(false);
         return;
       }
       
-      // In a real implementation, this would register with Supabase
-      // const { data, error } = await supabase.auth.signUp({
-      //   email,
-      //   password
-      // });
-      
-      // For demo purposes
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (signUpError) {
+        toast.error(signUpError.message);
+        return;
+      }
+
+      if (!signUpData.user) {
+        toast.error("Registration failed");
+        return;
+      }
+
+      // Assign admin role to the new user
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([
+          { user_id: signUpData.user.id, role: 'admin' }
+        ]);
+
+      if (roleError) {
+        toast.error("Failed to assign admin role");
+        return;
+      }
+
       toast.success("Registration successful! Please check your email to verify your account.");
       setActiveTab("login");
       setEmail("");
@@ -100,32 +138,26 @@ const AdminLoginPage = () => {
               <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                 <div className="rounded-md shadow-sm -space-y-px">
                   <div>
-                    <label htmlFor="email-address" className="sr-only">
-                      Email address
-                    </label>
-                    <input
+                    <Input
                       id="email-address"
                       name="email"
                       type="email"
                       autoComplete="email"
                       required
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-t-md"
                       placeholder="Email address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label htmlFor="password" className="sr-only">
-                      Password
-                    </label>
-                    <input
+                    <Input
                       id="password"
                       name="password"
                       type="password"
                       autoComplete="current-password"
                       required
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-b-md mt-2"
                       placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -133,40 +165,14 @@ const AdminLoginPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                      Remember me
-                    </label>
-                  </div>
-
-                  <div className="text-sm">
-                    <a href="#" className="font-medium text-emerald-600 hover:text-emerald-500">
-                      Forgot your password?
-                    </a>
-                  </div>
-                </div>
-
                 <div>
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                    className="w-full"
                   >
                     {isLoading ? 'Signing in...' : 'Sign in'}
                   </Button>
-                </div>
-                
-                <div className="mt-4 text-center text-sm">
-                  <p className="text-gray-600">
-                    For demo: Email: admin@agro-nexus.com | Password: admin123
-                  </p>
                 </div>
               </form>
             </TabsContent>
@@ -175,48 +181,39 @@ const AdminLoginPage = () => {
               <form className="mt-8 space-y-6" onSubmit={handleRegister}>
                 <div className="rounded-md shadow-sm -space-y-px">
                   <div>
-                    <label htmlFor="register-email" className="sr-only">
-                      Email address
-                    </label>
-                    <input
+                    <Input
                       id="register-email"
                       name="email"
                       type="email"
                       autoComplete="email"
                       required
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-t-md"
                       placeholder="Email address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label htmlFor="register-password" className="sr-only">
-                      Password
-                    </label>
-                    <input
+                    <Input
                       id="register-password"
                       name="password"
                       type="password"
                       autoComplete="new-password"
                       required
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                      className="appearance-none mt-2"
                       placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label htmlFor="confirm-password" className="sr-only">
-                      Confirm Password
-                    </label>
-                    <input
+                    <Input
                       id="confirm-password"
                       name="confirmPassword"
                       type="password"
                       autoComplete="new-password"
                       required
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-b-md mt-2"
                       placeholder="Confirm Password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -228,23 +225,10 @@ const AdminLoginPage = () => {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                    className="w-full"
                   >
                     {isLoading ? 'Registering...' : 'Register'}
                   </Button>
-                </div>
-                
-                <div className="mt-4 text-center text-sm">
-                  <p className="text-gray-600">
-                    Already have an account?{" "}
-                    <button
-                      type="button"
-                      className="text-emerald-600 hover:text-emerald-500 font-medium"
-                      onClick={() => setActiveTab("login")}
-                    >
-                      Sign in
-                    </button>
-                  </p>
                 </div>
               </form>
             </TabsContent>
