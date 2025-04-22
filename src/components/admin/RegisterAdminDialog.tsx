@@ -15,7 +15,6 @@ export default function RegisterAdminDialog({ onAdminRegistered }: Props) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Invite the user with Supabase and add their role in user_roles
   const handleInvite = async () => {
     setIsLoading(true);
     console.log("Inviting user with email:", email);

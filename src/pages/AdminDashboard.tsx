@@ -13,21 +13,20 @@ type AdminUser = {
   invited_at: string | null;
 };
 
-// Define the type for Supabase users
 type SupabaseUser = {
   id: string;
   email?: string;
   created_at?: string;
-  // Add other properties as needed
-}
+};
 
-// Define types for application data
 type ApplicationBase = {
   id: string;
   created_at: string;
   full_name: string;
   email: string;
   location: string;
+  phone: string;
+  // Add other common fields here
 };
 
 const AdminDashboard = () => {
@@ -45,7 +44,7 @@ const AdminDashboard = () => {
     // Fetch agro dealer applications
     const { data: agroDealers, error: agroError } = await supabase
       .from("agro_dealer_applications")
-      .select("id, created_at, full_name, email, location")
+      .select("*")
       .order("created_at", { ascending: false });
     
     if (agroError) {
@@ -57,7 +56,7 @@ const AdminDashboard = () => {
     // Fetch SSP training applications
     const { data: sspApps, error: sspError } = await supabase
       .from("ssp_training_applications")
-      .select("id, created_at, full_name, email, location")
+      .select("*")
       .order("created_at", { ascending: false });
     
     if (sspError) {
@@ -69,7 +68,7 @@ const AdminDashboard = () => {
     // Fetch extension services applications
     const { data: extApps, error: extError } = await supabase
       .from("extension_applications")
-      .select("id, created_at, full_name, email, location")
+      .select("*")
       .order("created_at", { ascending: false });
     
     if (extError) {
@@ -86,7 +85,6 @@ const AdminDashboard = () => {
     setLoading(true);
     
     try {
-      // Get all users with admin role from user_roles and join with auth.users (via admin API)
       const { data: roles, error: rolesError } = await supabase
         .from("user_roles")
         .select("user_id, role")
@@ -99,7 +97,6 @@ const AdminDashboard = () => {
       }
 
       if (roles && roles.length > 0) {
-        // Fetch emails from auth.users using admin API
         const { data: users, error: usersError } = await supabase.auth.admin.listUsers({
           page: 1,
           perPage: 50,
@@ -110,7 +107,6 @@ const AdminDashboard = () => {
         }
 
         const adminsList: AdminUser[] = roles.map((role) => {
-          // Type guard to make TypeScript happy
           if (!users?.users) {
             return {
               user_id: role.user_id,
@@ -119,7 +115,6 @@ const AdminDashboard = () => {
             };
           }
 
-          // Properly type the users array
           const supabaseUsers = users.users as SupabaseUser[];
           const matched = supabaseUsers.find((u) => u.id === role.user_id);
           
@@ -148,8 +143,11 @@ const AdminDashboard = () => {
     } else {
       fetchApplications();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString();
+  };
 
   const handleRefresh = () => {
     if (activeTab === "admins") {
@@ -157,10 +155,6 @@ const AdminDashboard = () => {
     } else {
       fetchApplications();
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
   };
 
   return (
@@ -223,9 +217,7 @@ const AdminDashboard = () => {
                         <TableCell className="break-all">{ad.user_id}</TableCell>
                         <TableCell className="break-all">{ad.email}</TableCell>
                         <TableCell>
-                          {ad.invited_at
-                            ? formatDate(ad.invited_at)
-                            : ""}
+                          {ad.invited_at ? formatDate(ad.invited_at) : ""}
                         </TableCell>
                       </TableRow>
                     ))
@@ -251,20 +243,22 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
                     <TableHead>Location</TableHead>
+                    <TableHead>Experience</TableHead>
                     <TableHead>Applied At</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={6} className="text-center py-8">
                         Loading applications...
                       </TableCell>
                     </TableRow>
                   ) : agroDealerApps.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={6} className="text-center py-8">
                         No applications found.
                       </TableCell>
                     </TableRow>
@@ -273,7 +267,9 @@ const AdminDashboard = () => {
                       <TableRow key={app.id}>
                         <TableCell>{app.full_name}</TableCell>
                         <TableCell>{app.email}</TableCell>
+                        <TableCell>{app.phone}</TableCell>
                         <TableCell>{app.location}</TableCell>
+                        <TableCell>{app.experience_period}</TableCell>
                         <TableCell>{formatDate(app.created_at)}</TableCell>
                       </TableRow>
                     ))
@@ -299,20 +295,22 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
                     <TableHead>Location</TableHead>
+                    <TableHead>Experience</TableHead>
                     <TableHead>Applied At</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={6} className="text-center py-8">
                         Loading applications...
                       </TableCell>
                     </TableRow>
                   ) : sspTrainingApps.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={6} className="text-center py-8">
                         No applications found.
                       </TableCell>
                     </TableRow>
@@ -321,7 +319,9 @@ const AdminDashboard = () => {
                       <TableRow key={app.id}>
                         <TableCell>{app.full_name}</TableCell>
                         <TableCell>{app.email}</TableCell>
+                        <TableCell>{app.phone}</TableCell>
                         <TableCell>{app.location}</TableCell>
+                        <TableCell>{app.experience}</TableCell>
                         <TableCell>{formatDate(app.created_at)}</TableCell>
                       </TableRow>
                     ))
@@ -347,6 +347,7 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Applied At</TableHead>
                   </TableRow>
@@ -354,13 +355,13 @@ const AdminDashboard = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={5} className="text-center py-8">
                         Loading applications...
                       </TableCell>
                     </TableRow>
                   ) : extensionApps.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8">
+                      <TableCell colSpan={5} className="text-center py-8">
                         No applications found.
                       </TableCell>
                     </TableRow>
@@ -369,6 +370,7 @@ const AdminDashboard = () => {
                       <TableRow key={app.id}>
                         <TableCell>{app.full_name}</TableCell>
                         <TableCell>{app.email}</TableCell>
+                        <TableCell>{app.phone}</TableCell>
                         <TableCell>{app.location}</TableCell>
                         <TableCell>{formatDate(app.created_at)}</TableCell>
                       </TableRow>
