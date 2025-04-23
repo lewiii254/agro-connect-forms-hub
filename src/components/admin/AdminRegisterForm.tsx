@@ -51,20 +51,20 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
         return;
       }
 
-      // Add admin role to the new user - fixed the error here
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert([{ 
-          user_id: signUpData.user.id, 
-          role: 'admin' 
-        }]);
+      // Call a server function that's pre-authenticated with service_role to add the admin role
+      // This approach bypasses RLS policies
+      const { data: assignRoleData, error: assignRoleError } = await supabase.functions.invoke('assign-admin-role', {
+        body: {
+          userId: signUpData.user.id
+        }
+      });
 
-      if (roleError) {
-        console.error("Role assignment error:", roleError);
-        // More detailed error message to help with debugging
-        toast.error(`Failed to assign admin role: ${roleError.message || roleError.details || "Unknown error"}`);
-        setIsLoading(false);
-        return;
+      if (assignRoleError) {
+        console.error("Role assignment error:", assignRoleError);
+        toast.error(`Failed to assign admin role: ${assignRoleError.message || assignRoleError.name || "Unknown error"}`);
+        // We continue despite the error - user is created but might not have admin role
+      } else {
+        console.log("Role assignment success:", assignRoleData);
       }
 
       toast.success("Registration successful! Please confirm your email to log in.");

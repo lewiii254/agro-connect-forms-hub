@@ -46,8 +46,17 @@ const AdminLoginForm = ({ isLoading, setIsLoading }: AdminLoginFormProps) => {
         .single();
 
       if (roleError) {
-        toast.error("Error checking admin privileges");
-        // Sign out the user since we couldn't verify admin status
+        // If we can't verify admin status (not a single() error)
+        if (roleError.code !== 'PGRST116') {
+          toast.error("Error checking admin privileges");
+          // Sign out the user since we couldn't verify admin status
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
+        }
+        // If error is "no rows returned", then user has no roles
+        toast.error("You don't have admin privileges");
+        // Sign out the user since they're not an admin
         await supabase.auth.signOut();
         setIsLoading(false);
         return;
