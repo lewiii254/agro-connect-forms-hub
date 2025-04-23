@@ -2,7 +2,7 @@
 import { Home, LogOut, MessageSquare, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function DashboardHeader() {
@@ -10,8 +10,7 @@ export default function DashboardHeader() {
 
   const handleLogout = async () => {
     try {
-      // In a real auth implementation, this would sign out the user
-      // await supabase.auth.signOut();
+      await supabase.auth.signOut();
       toast.success("Logged out successfully");
       navigate("/admin/login");
     } catch (error) {

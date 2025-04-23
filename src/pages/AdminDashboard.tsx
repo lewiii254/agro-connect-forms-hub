@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
@@ -13,6 +13,7 @@ import { RefreshCw, MessageSquare, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [allApplications, setAllApplications] = useState<(AgroDealerApplication | SSPTrainingApplication | ExtensionApplication)[]>([]);
   const [agroDealerApps, setAgroDealerApps] = useState<AgroDealerApplication[]>([]);
@@ -20,6 +21,60 @@ const AdminDashboard = () => {
   const [extensionApps, setExtensionApps] = useState<ExtensionApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadMessages, setUnreadMessages] = useState(3); // Placeholder for now
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check if user is authenticated and has admin role
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          console.log("No session found, redirecting to login");
+          navigate("/admin/login");
+          return;
+        }
+        
+        // Check if user has admin role
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+          
+        if (roleError || !roleData || roleData.role !== 'admin') {
+          console.log("User is not an admin, redirecting to login");
+          await supabase.auth.signOut();
+          toast.error("You don't have admin privileges");
+          navigate("/admin/login");
+          return;
+        }
+        
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Auth check error:", error);
+        navigate("/admin/login");
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+    
+    checkAuth();
+    
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+          navigate("/admin/login");
+        }
+      }
+    );
+    
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -89,31 +144,12 @@ const AdminDashboard = () => {
       }
 
       if (roles && roles.length > 0) {
-        const { data: users, error: usersError } = await supabase.auth.admin.listUsers({
-          page: 1,
-          perPage: 50,
-        });
-
-        if (usersError) {
-          toast.error("Failed to fetch admin emails.");
-        }
-
+        // Just use the roles data since we can't access the auth.users table directly
         const adminsList: AdminUser[] = roles.map((role) => {
-          if (!users?.users) {
-            return {
-              user_id: role.user_id,
-              email: null,
-              invited_at: null,
-            };
-          }
-
-          const supabaseUsers = users.users as any[];
-          const matched = supabaseUsers.find((u) => u.id === role.user_id);
-          
           return {
             user_id: role.user_id,
-            email: matched?.email || null,
-            invited_at: matched?.created_at || null,
+            email: null, // We can't fetch this without admin API access
+            invited_at: null,
           };
         });
 
@@ -127,58 +163,13 @@ const AdminDashboard = () => {
     }
   };
 
-  const inviteDefaultAdmin = async () => {
-    const email = "ngondimarklewis@gmail.com";
-    try {
-      const existingAdminWithEmail = admins.find(admin => admin.email === email);
-      
-      if (existingAdminWithEmail) {
-        console.log("Admin with this email already exists:", email);
-        return;
-      }
-      
-      const { data, error } = await supabase.auth.admin.inviteUserByEmail(email);
-      
-      if (error) {
-        console.error("Error inviting default admin:", error);
-        return;
-      }
-      
-      if (data?.user?.id) {
-        const { error: roleErr } = await supabase
-          .from("user_roles")
-          .insert([{ user_id: data.user.id, role: "admin" }]);
-        
-        if (roleErr) {
-          console.error("Error assigning admin role:", roleErr);
-        } else {
-          console.log(`Successfully added ${email} as admin`);
-          toast.success(`Successfully added ${email} as admin`);
-          fetchAdmins();
-        }
-      }
-    } catch (error) {
-      console.error("Error in invite process:", error);
-    }
-  };
-
+  // Only fetch data if authenticated
   useEffect(() => {
-    fetchApplications();
-    fetchAdmins();
-  }, []);
-  
-  // Check if ngondimarklewis@gmail.com is already an admin, if not add them
-  useEffect(() => {
-    if (admins.length > 0) {
-      const defaultAdminExists = admins.some(admin => 
-        admin.email === "ngondimarklewis@gmail.com"
-      );
-      
-      if (!defaultAdminExists) {
-        inviteDefaultAdmin();
-      }
+    if (isAuthenticated && !isCheckingAuth) {
+      fetchApplications();
+      fetchAdmins();
     }
-  }, [admins]);
+  }, [isAuthenticated, isCheckingAuth]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
@@ -189,6 +180,17 @@ const AdminDashboard = () => {
     fetchAdmins();
     toast.success("Data refreshed");
   };
+
+  // Show loading until auth check is complete
+  if (isCheckingAuth) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-lg">Loading admin dashboard...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
