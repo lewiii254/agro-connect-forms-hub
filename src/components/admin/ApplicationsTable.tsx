@@ -24,34 +24,34 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   const getServiceType = (app: ApplicationType): string => {
-    if ('product_types' in app) return 'Agro-Dealer Training';
-    if ('techniques' in app) return 'SSP Training';
-    if ('farming_types' in app) return 'Extension Services';
-    return 'Unknown';
+    if ("product_types" in app) return "Agro-Dealer Training";
+    if ("techniques" in app) return "SSP Training";
+    if ("farming_types" in app) return "Extension Services";
+    return "Unknown";
   };
 
-  const getTableName = (app: ApplicationType): string => {
-    if ('product_types' in app) return 'agro_dealer_applications';
-    if ('techniques' in app) return 'ssp_training_applications';
-    if ('farming_types' in app) return 'extension_applications';
-    return '';
+  // Make this strictly typed for Supabase
+  const getTableName = (app: ApplicationType) => {
+    if ("product_types" in app) return "agro_dealer_applications" as const;
+    if ("techniques" in app) return "ssp_training_applications" as const;
+    if ("farming_types" in app) return "extension_applications" as const;
+    return null;
   };
 
   const updateApplicationStatus = async (app: ApplicationType, status: string) => {
     const tableName = getTableName(app);
     if (!tableName) return false;
-    
+
     try {
       setProcessingId(app.id);
-      
-      // Update the application status in the database
+
       const { error } = await supabase
         .from(tableName)
-        .update({ status: status })
-        .eq('id', app.id);
-        
+        .update({ status })
+        .eq("id", app.id);
+
       if (error) throw error;
-      
+
       return true;
     } catch (error) {
       console.error(`Error updating ${tableName}:`, error);
@@ -62,7 +62,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
   };
 
   const handleApprove = async (app: ApplicationType) => {
-    const success = await updateApplicationStatus(app, 'approved');
+    const success = await updateApplicationStatus(app, "approved");
     if (success) {
       toast.success(`Application from ${app.full_name} has been approved!`);
       if (onUpdate) onUpdate();
@@ -72,7 +72,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
   };
 
   const handleReject = async (app: ApplicationType) => {
-    const success = await updateApplicationStatus(app, 'rejected');
+    const success = await updateApplicationStatus(app, "rejected");
     if (success) {
       toast.success(`Application from ${app.full_name} has been rejected`);
       if (onUpdate) onUpdate();
@@ -83,7 +83,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
 
   const renderDetailItem = (label: string, value: string | string[] | null | boolean | undefined) => {
     if (value === null || value === undefined) return null;
-    
+
     if (Array.isArray(value)) {
       return (
         <div className="mb-4">
@@ -96,11 +96,11 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
         </div>
       );
     }
-    
+
     return (
       <div className="mb-4">
         <p className="font-medium text-gray-700">{label}:</p>
-        <p className="text-gray-600 mt-1">{typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}</p>
+        <p className="text-gray-600 mt-1">{typeof value === "boolean" ? (value ? "Yes" : "No") : value}</p>
       </div>
     );
   };
@@ -116,8 +116,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
       </>
     );
 
-    if ('product_types' in app) {
-      // AgroDealerApplication
+    if ("product_types" in app) {
       const agroDealerApp = app as AgroDealerApplication;
       return (
         <div className="space-y-2">
@@ -142,8 +141,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
           {renderDetailItem("Other Referral Source", agroDealerApp.other_referral_source)}
         </div>
       );
-    } else if ('techniques' in app) {
-      // SSPTrainingApplication
+    } else if ("techniques" in app) {
       const sspApp = app as SSPTrainingApplication;
       return (
         <div className="space-y-2">
@@ -164,8 +162,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
           {renderDetailItem("Other Referral Source", sspApp.other_referral_source)}
         </div>
       );
-    } else if ('farming_types' in app) {
-      // ExtensionApplication
+    } else if ("farming_types" in app) {
       const extApp = app as ExtensionApplication;
       return (
         <div className="space-y-2">
@@ -190,7 +187,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
         </div>
       );
     }
-    
+
     return commonDetails;
   };
 
@@ -224,25 +221,25 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                 <TableRow key={app.id}>
                   <TableCell>{app.full_name}</TableCell>
                   <TableCell>{getServiceType(app)}</TableCell>
-                  <TableCell>{formatDate(app.created_at).split(',')[0]}</TableCell>
+                  <TableCell>{formatDate(app.created_at).split(",")[0]}</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs ${
-                      app.status === 'approved' 
-                        ? 'bg-green-100 text-green-800'
-                        : app.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                      app.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : app.status === "rejected"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-yellow-100 text-yellow-800"
                     }`}>
-                      {app.status ? app.status.charAt(0).toUpperCase() + app.status.slice(1) : 'Pending'}
+                      {app.status ? app.status.charAt(0).toUpperCase() + app.status.slice(1) : "Pending"}
                     </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Sheet>
                         <SheetTrigger asChild>
-                          <Button 
-                            variant="default" 
-                            size="sm" 
+                          <Button
+                            variant="default"
+                            size="sm"
                             className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
                             onClick={() => setSelectedApp(app)}
                           >
@@ -254,7 +251,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                           <SheetHeader>
                             <SheetTitle>{getServiceType(app)} Application</SheetTitle>
                             <SheetDescription>
-                              Application submitted on {formatDate(selectedApp?.created_at || '')}
+                              Application submitted on {formatDate(selectedApp?.created_at || "")}
                             </SheetDescription>
                           </SheetHeader>
                           <div className="py-4">
@@ -262,22 +259,22 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                           </div>
                           <div className="flex justify-end gap-2 mt-8">
                             <SheetClose asChild>
-                              <Button 
-                                variant="default" 
+                              <Button
+                                variant="default"
                                 className="bg-emerald-600 hover:bg-emerald-700"
                                 onClick={() => handleApprove(app)}
-                                disabled={processingId === app.id || app.status === 'approved'}
+                                disabled={processingId === app.id || app.status === "approved"}
                               >
                                 <Check size={16} className="mr-1" />
                                 Approve
                               </Button>
                             </SheetClose>
                             <SheetClose asChild>
-                              <Button 
+                              <Button
                                 variant="default"
                                 className="bg-orange-500 hover:bg-orange-600"
                                 onClick={() => handleReject(app)}
-                                disabled={processingId === app.id || app.status === 'rejected'}
+                                disabled={processingId === app.id || app.status === "rejected"}
                               >
                                 <X size={16} className="mr-1" />
                                 Reject
@@ -286,22 +283,22 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                           </div>
                         </SheetContent>
                       </Sheet>
-                      <Button 
-                        variant="default" 
-                        size="sm" 
+                      <Button
+                        variant="default"
+                        size="sm"
                         className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
                         onClick={() => handleApprove(app)}
-                        disabled={processingId === app.id || app.status === 'approved'}
+                        disabled={processingId === app.id || app.status === "approved"}
                       >
                         <Check size={16} />
                         Approve
                       </Button>
-                      <Button 
-                        variant="default" 
-                        size="sm" 
+                      <Button
+                        variant="default"
+                        size="sm"
                         className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
                         onClick={() => handleReject(app)}
-                        disabled={processingId === app.id || app.status === 'rejected'}
+                        disabled={processingId === app.id || app.status === "rejected"}
                       >
                         <X size={16} />
                         Reject

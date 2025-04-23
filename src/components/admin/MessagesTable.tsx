@@ -25,32 +25,29 @@ export default function MessagesTable() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [replyText, setReplyText] = useState("");
 
+  // Always fetch live data from Supabase.
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      // Fetch messages from Supabase
       const { data, error } = await supabase
-        .from('contact_messages')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        throw error;
-      }
-      
-      // If no messages exist yet, don't show any
+        .from("contact_messages")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
       if (!data || data.length === 0) {
         setMessages([]);
       } else {
-        // Format messages from database
-        const formattedMessages: Message[] = data.map(msg => ({
+        // Map the rows to Message type
+        const formattedMessages: Message[] = data.map((msg: any) => ({
           id: msg.id,
           name: msg.name,
           email: msg.email,
           subject: msg.subject,
           message: msg.message,
           date: msg.created_at,
-          status: msg.status
+          status: msg.status === "read" ? "read" : "unread",
         }));
         setMessages(formattedMessages);
       }
@@ -73,13 +70,13 @@ export default function MessagesTable() {
   const handleMarkAsRead = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages')
-        .update({ status: 'read' })
-        .eq('id', id);
-      
+        .from("contact_messages")
+        .update({ status: "read" })
+        .eq("id", id);
+
       if (error) throw error;
-      
-      setMessages(messages.map(msg => 
+
+      setMessages(messages.map(msg =>
         msg.id === id ? { ...msg, status: "read" } : msg
       ));
       toast.success("Message marked as read");
@@ -91,12 +88,12 @@ export default function MessagesTable() {
 
   const handleReply = async () => {
     if (!selectedMessage || !replyText.trim()) return;
-    
+
     try {
       // In a real implementation, this would send an email or save the reply
       toast.success(`Reply sent to ${selectedMessage.email}`);
       setReplyText("");
-      // Close the sheet - implementation would depend on your UI setup
+      // Sheet closes as per UI state logic
     } catch (error) {
       console.error("Error sending reply:", error);
       toast.error("Failed to send reply");
@@ -106,23 +103,23 @@ export default function MessagesTable() {
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages')
+        .from("contact_messages")
         .delete()
-        .eq('id', id);
-      
+        .eq("id", id);
+
       if (error) throw error;
-      
+
       setMessages(messages.filter(msg => msg.id !== id));
       toast.success("Message deleted");
+      // Optionally refresh from backend in case of race condition
+      fetchMessages();
     } catch (error) {
       console.error("Error deleting message:", error);
       toast.error("Failed to delete message");
     }
   };
 
-  const getUnreadCount = () => {
-    return messages.filter(msg => msg.status === "unread").length;
-  };
+  const getUnreadCount = () => messages.filter(msg => msg.status === "unread").length;
 
   if (loading) {
     return <div className="text-center py-8">Loading messages...</div>;
@@ -162,8 +159,8 @@ export default function MessagesTable() {
                     <TableCell>{formatDate(message.date)}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        message.status === "unread" 
-                          ? "bg-blue-100 text-blue-800" 
+                        message.status === "unread"
+                          ? "bg-blue-100 text-blue-800"
                           : "bg-gray-100 text-gray-800"
                       }`}>
                         {message.status === "unread" ? "Unread" : "Read"}
@@ -173,9 +170,9 @@ export default function MessagesTable() {
                       <div className="flex gap-2">
                         <Sheet>
                           <SheetTrigger asChild>
-                            <Button 
-                              variant="default" 
-                              size="sm" 
+                            <Button
+                              variant="default"
+                              size="sm"
                               className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
                               onClick={() => {
                                 setSelectedMessage(message);
@@ -203,8 +200,8 @@ export default function MessagesTable() {
                               </div>
                               <div>
                                 <h4 className="font-medium mb-2">Reply:</h4>
-                                <Textarea 
-                                  value={replyText} 
+                                <Textarea
+                                  value={replyText}
                                   onChange={(e) => setReplyText(e.target.value)}
                                   placeholder="Type your response here..."
                                   className="mb-4"
@@ -215,9 +212,9 @@ export default function MessagesTable() {
                             </div>
                           </SheetContent>
                         </Sheet>
-                        <Button 
-                          variant="default" 
-                          size="sm" 
+                        <Button
+                          variant="default"
+                          size="sm"
                           className="bg-blue-600 hover:bg-blue-700 flex items-center gap-1"
                           onClick={() => {
                             setSelectedMessage(message);
@@ -227,9 +224,9 @@ export default function MessagesTable() {
                           <Reply size={16} />
                           Reply
                         </Button>
-                        <Button 
-                          variant="default" 
-                          size="sm" 
+                        <Button
+                          variant="default"
+                          size="sm"
                           className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
                           onClick={() => handleDelete(message.id)}
                         >
@@ -248,3 +245,4 @@ export default function MessagesTable() {
     </Card>
   );
 }
+

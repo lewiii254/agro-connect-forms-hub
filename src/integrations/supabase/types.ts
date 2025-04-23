@@ -27,6 +27,7 @@ export type Database = {
           product_types: string[] | null
           referral_source: string | null
           staff_count: string | null
+          status: string | null
           training_topics: string[] | null
           wants_certificate: boolean
         }
@@ -47,6 +48,7 @@ export type Database = {
           product_types?: string[] | null
           referral_source?: string | null
           staff_count?: string | null
+          status?: string | null
           training_topics?: string[] | null
           wants_certificate?: boolean
         }
@@ -67,8 +69,39 @@ export type Database = {
           product_types?: string[] | null
           referral_source?: string | null
           staff_count?: string | null
+          status?: string | null
           training_topics?: string[] | null
           wants_certificate?: boolean
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
         }
         Relationships: []
       }
@@ -90,6 +123,7 @@ export type Database = {
           phone: string
           preferred_date: string | null
           referral_source: string | null
+          status: string | null
           training_preference: string | null
         }
         Insert: {
@@ -109,6 +143,7 @@ export type Database = {
           phone: string
           preferred_date?: string | null
           referral_source?: string | null
+          status?: string | null
           training_preference?: string | null
         }
         Update: {
@@ -128,6 +163,7 @@ export type Database = {
           phone?: string
           preferred_date?: string | null
           referral_source?: string | null
+          status?: string | null
           training_preference?: string | null
         }
         Relationships: []
@@ -149,6 +185,7 @@ export type Database = {
           preferred_date: string | null
           previous_training: boolean
           referral_source: string | null
+          status: string | null
           techniques: string[] | null
         }
         Insert: {
@@ -167,6 +204,7 @@ export type Database = {
           preferred_date?: string | null
           previous_training?: boolean
           referral_source?: string | null
+          status?: string | null
           techniques?: string[] | null
         }
         Update: {
@@ -185,6 +223,7 @@ export type Database = {
           preferred_date?: string | null
           previous_training?: boolean
           referral_source?: string | null
+          status?: string | null
           techniques?: string[] | null
         }
         Relationships: []
