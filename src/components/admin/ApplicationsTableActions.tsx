@@ -1,0 +1,86 @@
+
+import { Check, X, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+type ActionsProps = {
+  app: any;
+  onApprove: (app: any) => void;
+  onReject: (app: any) => void;
+  onDelete: (app: any) => void;
+  processingId: string | null;
+};
+
+export default function ApplicationsTableActions({
+  app,
+  onApprove,
+  onReject,
+  onDelete,
+  processingId,
+}: ActionsProps) {
+  return (
+    <div className="flex gap-2">
+      <Button
+        variant="default"
+        size="sm"
+        className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+        onClick={() => onApprove(app)}
+        disabled={processingId === app.id || app.status === "approved"}
+      >
+        <Check size={16} />
+        Approve
+      </Button>
+      <Button
+        variant="default"
+        size="sm"
+        className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
+        onClick={() => onReject(app)}
+        disabled={processingId === app.id || app.status === "rejected"}
+      >
+        <X size={16} />
+        Reject
+      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="flex items-center gap-1"
+            disabled={processingId === app.id}
+          >
+            <Trash2 size={16} />
+            Delete
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will permanently delete the application from {app.full_name}.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => onDelete(app)}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
