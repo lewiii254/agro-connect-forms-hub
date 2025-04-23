@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { View, Check, X } from "lucide-react";
+import { View, Check, X, Trash2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,6 +9,17 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
 
@@ -78,6 +89,32 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
       if (onUpdate) onUpdate();
     } else {
       toast.error("Failed to reject application");
+    }
+  };
+
+  const handleDelete = async (app: ApplicationType) => {
+    const tableName = getTableName(app);
+    if (!tableName) return false;
+
+    try {
+      setProcessingId(app.id);
+
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq("id", app.id);
+
+      if (error) throw error;
+
+      toast.success(`Application from ${app.full_name} has been deleted`);
+      if (onUpdate) onUpdate();
+      return true;
+    } catch (error) {
+      console.error(`Error deleting from ${tableName}:`, error);
+      toast.error("Failed to delete application");
+      return false;
+    } finally {
+      setProcessingId(null);
     }
   };
 
@@ -303,6 +340,37 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                         <X size={16} />
                         Reject
                       </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            disabled={processingId === app.id}
+                          >
+                            <Trash2 size={16} />
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action will permanently delete the application from {app.full_name}.
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(app)}
+                              className="bg-red-500 hover:bg-red-600"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>
