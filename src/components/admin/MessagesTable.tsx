@@ -28,39 +28,32 @@ export default function MessagesTable() {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      // Simulate fetching messages from a database
-      // In a real implementation, this would use supabase.from('messages').select('*')
-      const mockMessages: Message[] = [
-        {
-          id: "1",
-          name: "Jane Smith",
-          email: "jane.smith@example.com",
-          subject: "Inquiry about training",
-          message: "Hello, I'm interested in learning more about your training programs. Can you provide details about upcoming sessions and costs?",
-          date: "2024-04-22",
-          status: "unread"
-        },
-        {
-          id: "2",
-          name: "John Williams",
-          email: "john.williams@example.com",
-          subject: "Question about agro-dealer program",
-          message: "I'm running a small agricultural supply store and would like information about your agro-dealer certification program. What are the requirements to join?",
-          date: "2024-04-20",
-          status: "read"
-        },
-        {
-          id: "3",
-          name: "Sarah Johnson",
-          email: "sarah.j@example.com",
-          subject: "Extension services information",
-          message: "I'm a farmer in Nairobi County looking for extension services for my tomato farm. Do you have specialists available for on-site consultation? I've been experiencing issues with pests.",
-          date: "2024-04-19",
-          status: "unread"
-        }
-      ];
+      // Fetch messages from Supabase
+      const { data, error } = await supabase
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      setMessages(mockMessages);
+      if (error) {
+        throw error;
+      }
+      
+      // If no messages exist yet, don't show any
+      if (!data || data.length === 0) {
+        setMessages([]);
+      } else {
+        // Format messages from database
+        const formattedMessages: Message[] = data.map(msg => ({
+          id: msg.id,
+          name: msg.name,
+          email: msg.email,
+          subject: msg.subject,
+          message: msg.message,
+          date: msg.created_at,
+          status: msg.status
+        }));
+        setMessages(formattedMessages);
+      }
     } catch (error) {
       console.error("Error fetching messages:", error);
       toast.error("Failed to load messages");
@@ -79,7 +72,13 @@ export default function MessagesTable() {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      // Update message status to read
+      const { error } = await supabase
+        .from('contact_messages')
+        .update({ status: 'read' })
+        .eq('id', id);
+      
+      if (error) throw error;
+      
       setMessages(messages.map(msg => 
         msg.id === id ? { ...msg, status: "read" } : msg
       ));
@@ -106,7 +105,13 @@ export default function MessagesTable() {
 
   const handleDelete = async (id: string) => {
     try {
-      // Delete message from the database
+      const { error } = await supabase
+        .from('contact_messages')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
       setMessages(messages.filter(msg => msg.id !== id));
       toast.success("Message deleted");
     } catch (error) {

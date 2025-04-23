@@ -44,19 +44,13 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
     try {
       setProcessingId(app.id);
       
-      // In a real implementation, we would update the application status in the database
-      // For now, we'll simulate this with a timeout
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      // The real implementation would look like:
-      /*
+      // Update the application status in the database
       const { error } = await supabase
         .from(tableName)
         .update({ status: status })
         .eq('id', app.id);
         
       if (error) throw error;
-      */
       
       return true;
     } catch (error) {
@@ -232,8 +226,14 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                   <TableCell>{getServiceType(app)}</TableCell>
                   <TableCell>{formatDate(app.created_at).split(',')[0]}</TableCell>
                   <TableCell>
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">
-                      Pending
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      app.status === 'approved' 
+                        ? 'bg-green-100 text-green-800'
+                        : app.status === 'rejected'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {app.status ? app.status.charAt(0).toUpperCase() + app.status.slice(1) : 'Pending'}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -266,7 +266,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                                 variant="default" 
                                 className="bg-emerald-600 hover:bg-emerald-700"
                                 onClick={() => handleApprove(app)}
-                                disabled={processingId === app.id}
+                                disabled={processingId === app.id || app.status === 'approved'}
                               >
                                 <Check size={16} className="mr-1" />
                                 Approve
@@ -277,7 +277,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                                 variant="default"
                                 className="bg-orange-500 hover:bg-orange-600"
                                 onClick={() => handleReject(app)}
-                                disabled={processingId === app.id}
+                                disabled={processingId === app.id || app.status === 'rejected'}
                               >
                                 <X size={16} className="mr-1" />
                                 Reject
@@ -291,7 +291,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                         size="sm" 
                         className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
                         onClick={() => handleApprove(app)}
-                        disabled={processingId === app.id}
+                        disabled={processingId === app.id || app.status === 'approved'}
                       >
                         <Check size={16} />
                         Approve
@@ -301,7 +301,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
                         size="sm" 
                         className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
                         onClick={() => handleReject(app)}
-                        disabled={processingId === app.id}
+                        disabled={processingId === app.id || app.status === 'rejected'}
                       >
                         <X size={16} />
                         Reject

@@ -12,6 +12,7 @@ export type ApplicationBase = {
   email: string;
   location: string;
   phone: string;
+  status?: string;
 };
 
 export type AgroDealerApplication = ApplicationBase & {
