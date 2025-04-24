@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 
@@ -208,12 +207,23 @@ const ServicesPage = () => {
                     <span>Networking opportunities with agricultural professionals</span>
                   </li>
                 </ul>
-                <Link 
-                  to="/contact" 
-                  className="inline-block px-6 py-3 bg-agro-orange text-white font-medium rounded-md hover:bg-opacity-90 transition-colors"
-                >
-                  Contact Us for Farm Tours
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                  <Link 
+                    to="/contact" 
+                    className="inline-block px-6 py-3 bg-agro-orange text-white font-medium rounded-md hover:bg-opacity-90 transition-colors"
+                  >
+                    Contact Us for Farm Tours
+                  </Link>
+                  <a 
+                    href="https://wa.me/254790767347?text=Hello,%20I%20would%20like%20to%20inquire%20about%20farm%20tours%20and%20visits."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-md hover:bg-opacity-90 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    WhatsApp Us
+                  </a>
+                </div>
               </div>
             </div>
             <div className="md:w-1/2">
