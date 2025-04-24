@@ -15,6 +15,7 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
 import NotFound from "./pages/NotFound";
+import GalleryPage from "./pages/GalleryPage";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
