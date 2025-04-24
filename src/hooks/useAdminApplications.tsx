@@ -13,39 +13,49 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   const [loading, setLoading] = useState(true);
 
   const fetchApplications = async () => {
+    console.log("Fetching applications...");
     setLoading(true);
     
     try {
+      // Fetch agro dealer applications
       const { data: agroDealers, error: agroError } = await supabase
         .from("agro_dealer_applications")
         .select("*")
         .order("created_at", { ascending: false });
       
       if (agroError) {
+        console.error("Error fetching agro dealers:", agroError);
         toast.error("Failed to fetch agro dealer applications");
       } else {
+        console.log(`Fetched ${agroDealers?.length || 0} agro dealer applications`);
         setAgroDealerApps(agroDealers || []);
       }
       
+      // Fetch SSP training applications
       const { data: sspApps, error: sspError } = await supabase
         .from("ssp_training_applications")
         .select("*")
         .order("created_at", { ascending: false });
       
       if (sspError) {
+        console.error("Error fetching SSP applications:", sspError);
         toast.error("Failed to fetch SSP training applications");
       } else {
+        console.log(`Fetched ${sspApps?.length || 0} SSP training applications`);
         setSspTrainingApps(sspApps || []);
       }
       
+      // Fetch extension applications
       const { data: extApps, error: extError } = await supabase
         .from("extension_applications")
         .select("*")
         .order("created_at", { ascending: false });
       
       if (extError) {
+        console.error("Error fetching extension applications:", extError);
         toast.error("Failed to fetch extension services applications");
       } else {
+        console.log(`Fetched ${extApps?.length || 0} extension applications`);
         setExtensionApps(extApps || []);
       }
 
@@ -58,6 +68,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
       
+      console.log(`Total combined applications: ${combined.length}`);
       setAllApplications(combined);
     } catch (error) {
       console.error("Error fetching applications:", error);
@@ -75,6 +86,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         .eq("role", "admin");
 
       if (rolesError) {
+        console.error("Error fetching admin roles:", rolesError);
         toast.error("Failed to fetch admins.");
         return;
       }

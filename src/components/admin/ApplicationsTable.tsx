@@ -23,7 +23,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [localApplications, setLocalApplications] = useState<ApplicationType[]>(applications);
 
-  // Update local state when applications prop changes - using useEffect instead of useState
+  // Update local state when applications prop changes
   useEffect(() => {
     setLocalApplications(applications);
   }, [applications]);
@@ -87,27 +87,45 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
 
   const handleDelete = async (app: ApplicationType) => {
     const tableName = getTableName(app);
-    if (!tableName) return false;
+    if (!tableName) {
+      toast.error("Unknown application type, cannot delete");
+      return false;
+    }
 
     try {
       setProcessingId(app.id);
-      const { error } = await supabase
+      
+      // DEBUG: Log the deletion attempt
+      console.log(`Attempting to delete application with ID ${app.id} from table ${tableName}`);
+      
+      const { error, data } = await supabase
         .from(tableName)
         .delete()
-        .eq("id", app.id);
+        .eq("id", app.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error(`Error deleting from ${tableName}:`, error);
+        toast.error("Failed to delete application");
+        return false;
+      }
 
+      // DEBUG: Log success and response data
+      console.log(`Deletion successful, response:`, data);
+      
       // Update local state immediately to reflect deletion
-      setLocalApplications(localApplications.filter(a => a.id !== app.id));
+      setLocalApplications(prev => prev.filter(a => a.id !== app.id));
       
       // Also call onUpdate to refresh the data from parent
-      if (onUpdate) onUpdate();
+      if (onUpdate) {
+        console.log("Calling onUpdate to refresh parent data");
+        onUpdate();
+      }
       
       toast.success(`Application from ${app.full_name} has been deleted`);
       return true;
     } catch (error) {
-      console.error(`Error deleting from ${tableName}:`, error);
+      console.error(`Unexpected error deleting from ${tableName}:`, error);
       toast.error("Failed to delete application");
       return false;
     } finally {
