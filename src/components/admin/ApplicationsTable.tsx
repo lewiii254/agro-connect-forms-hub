@@ -92,8 +92,10 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
 
       if (error) throw error;
 
-      toast.success(`Application from ${app.full_name} has been deleted`);
+      // Call onUpdate to refresh the data immediately after successful deletion
       if (onUpdate) onUpdate();
+      
+      toast.success(`Application from ${app.full_name} has been deleted`);
       return true;
     } catch (error) {
       console.error(`Error deleting from ${tableName}:`, error);
