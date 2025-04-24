@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
@@ -23,10 +23,10 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [localApplications, setLocalApplications] = useState<ApplicationType[]>(applications);
 
-  // Update local state when applications prop changes
-  useState(() => {
+  // Update local state when applications prop changes - using useEffect instead of useState
+  useEffect(() => {
     setLocalApplications(applications);
-  });
+  }, [applications]);
 
   const getServiceType = (app: ApplicationType): string => {
     if ("product_types" in app) return "Agro-Dealer Training";
