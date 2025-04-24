@@ -21,6 +21,12 @@ type Props = {
 export default function ApplicationsTable({ applications, formatDate, loading, onUpdate }: Props) {
   const [selectedApp, setSelectedApp] = useState<ApplicationType | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [localApplications, setLocalApplications] = useState<ApplicationType[]>(applications);
+
+  // Update local state when applications prop changes
+  useState(() => {
+    setLocalApplications(applications);
+  });
 
   const getServiceType = (app: ApplicationType): string => {
     if ("product_types" in app) return "Agro-Dealer Training";
@@ -92,7 +98,10 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
 
       if (error) throw error;
 
-      // Call onUpdate to refresh the data immediately after successful deletion
+      // Update local state immediately to reflect deletion
+      setLocalApplications(localApplications.filter(a => a.id !== app.id));
+      
+      // Also call onUpdate to refresh the data from parent
       if (onUpdate) onUpdate();
       
       toast.success(`Application from ${app.full_name} has been deleted`);
@@ -110,7 +119,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
     return <div className="text-center py-8">Loading applications...</div>;
   }
 
-  if (applications.length === 0) {
+  if (localApplications.length === 0) {
     return <div className="text-center py-8">No applications found.</div>;
   }
 
@@ -132,7 +141,7 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
               </TableRow>
             </TableHeader>
             <TableBody>
-              {applications.map((app) => (
+              {localApplications.map((app) => (
                 <TableRow key={app.id}>
                   <TableCell>{app.full_name}</TableCell>
                   <TableCell>{getServiceType(app)}</TableCell>
