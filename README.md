@@ -161,4 +161,16 @@ We welcome contributions from the community! To contribute:
 - Push to the branch:
    ```bash
    git push origin feature/YourFeature
-- Open a pull request describing your changes.   
+- Open a pull request describing your changes.
+
+---
+# 📞 Contact Us
+For inquiries or more information:
+
+Email: info@agro-nexus.com
+
+Phone: +254 700 000 000
+
+WhatsApp: Chat with us
+
+😁🤝Thank you for choosing Agro-Nexus Limited – Partnering for sustainable agricultural development. 🌾
