@@ -104,3 +104,14 @@ To set up the project locally, follow these steps:
 
    ```bash
    git clone <YOUR_GIT_URL>
+2. Navigate to the project directory:
+   ```bash
+   cd <YOUR_PROJECT_NAME>
+3. Install dependencies:
+   ```bash
+   npm install
+4. Start the development server:
+   ```bash
+   npm run dev
+   
+---   
