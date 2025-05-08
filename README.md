@@ -13,6 +13,8 @@ Agro-Nexus Limited is a web-based platform designed to offer:
 - **Farm Tours** to facilitate knowledge exchange and networking.
 - **Responsive Design** ensuring seamless access across devices.
 - **Interactive Application Forms** for each service offered.
+- **Admin Dashboard** for streamlined service management.
+- **Supabase-Powered Backend** for secure, scalable data handling.
 
 ---
 
@@ -20,11 +22,21 @@ Agro-Nexus Limited is a web-based platform designed to offer:
 
 This project is built with the following technologies:
 
+### Frontend
 - [Vite](https://vitejs.dev/) – Fast and modern frontend build tool.
 - [React](https://reactjs.org/) – JavaScript library for building user interfaces.
 - [TypeScript](https://www.typescriptlang.org/) – Typed superset of JavaScript.
 - [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework.
 - [shadcn/ui](https://ui.shadcn.dev/) – Beautifully designed UI components.
+
+### Backend
+
+- 🛢️ [Supabase](https://supabase.io/) – Open-source Firebase alternative used for:
+
+  - Authentication (admin and users)
+  - Database management (PostgreSQL)
+  - Real-time updates
+  - RESTful and GraphQL API access
 
 ---
 
@@ -97,6 +109,7 @@ To set up the project locally, follow these steps:
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed. It's recommended to use [nvm](https://github.com/nvm-sh/nvm) for managing Node.js versions.
+- Internet access for Supabase services
 
 ### Steps
 
@@ -145,6 +158,10 @@ To set up the project locally, follow these steps:
 - Integration with 💰Payment Gateways🤑💸: Facilitate online payments for services.
 
 - Offline Access📴: Enable access to certain features without an internet connection.
+
+- 🧾 Service History Tracking – Let users review their past applications.
+
+- 📬 Email Notifications – Automated updates on application status.
 
 ---
 # 🤝 Contributing
