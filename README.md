@@ -115,3 +115,20 @@ To set up the project locally, follow these steps:
    npm run dev
    
 ---   
+
+# 💻 Development Options
+### Using GitHub Codespaces
+Navigate to the main page of your repository.
+
+Click on the Code button.
+
+Select the Codespaces tab.
+
+Click on New codespace to launch a new environment.
+
+### Editing Files Directly on GitHub
+Navigate to the desired file(s).
+
+Click the Edit button (pencil icon) at the top right of the file view.
+
+Make your changes and commit them.
