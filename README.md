@@ -136,12 +136,12 @@ To set up the project locally, follow these steps:
 ---
 
 # 🌟 Future Improvements
-Multilingual Support🌐: Incorporate multiple languages to cater to a diverse user base.
+- Multilingual Support🌐: Incorporate multiple languages to cater to a diverse user base.
 
-User Authentication🔐: Implement secure login and user management features.
+- User Authentication🔐: Implement secure login and user management features.
 
-Analytics Dashboard💹: Provide insights into user engagement and service utilization.
+- Analytics Dashboard💹: Provide insights into user engagement and service utilization.
 
-Integration with 💰Payment Gateways🤑💸: Facilitate online payments for services.
+- Integration with 💰Payment Gateways🤑💸: Facilitate online payments for services.
 
-Offline Access📴: Enable access to certain features without an internet connection.
+- Offline Access📴: Enable access to certain features without an internet connection.
