@@ -1,62 +1,106 @@
-# Welcome to your Lovable project
+# 🌿 Agro-Nexus Limited
 
+Welcome to **Agro-Nexus Limited** – Empowering sustainable agriculture through innovative training, certification, and extension services. Our mission is to enhance agricultural productivity and sustainability by providing comprehensive support to farmers, agro-dealers, and agricultural professionals.
 
-**URL**: https://lovable.dev/projects/a597ea3d-78ef-4fc9-8fca-49cf2965f71e
+---
 
-## How can I edit this code?
+## 🚀 Project Overview
 
-There are several ways of editing your application.
+Agro-Nexus Limited is a web-based platform designed to offer:
 
-**Use Lovable**
+- **Specialized Training Programs** for Spray Service Providers (SSPs) and Agro-Dealers.
+- **Extension Services** to assist farmers in adopting best agricultural practices.
+- **Farm Tours** to facilitate knowledge exchange and networking.
+- **Responsive Design** ensuring seamless access across devices.
+- **Interactive Application Forms** for each service offered.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a597ea3d-78ef-4fc9-8fca-49cf2965f71e) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Technologies Used
 
-**Use your preferred IDE**
+This project is built with the following technologies:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- [Vite](https://vitejs.dev/) – Fast and modern frontend build tool.
+- [React](https://reactjs.org/) – JavaScript library for building user interfaces.
+- [TypeScript](https://www.typescriptlang.org/) – Typed superset of JavaScript.
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework.
+- [shadcn/ui](https://ui.shadcn.dev/) – Beautifully designed UI components.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 📸 Features
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 🏠 Landing Page
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+A visually appealing landing page with intuitive navigation links:
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **Home**
+- **About Us**
+- **Services**
+- **Gallery**
+- **Applications**
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### 🧰 Services Offered
 
-**Edit a file directly in GitHub**
+#### 1. SSP Training and Certification
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Specialized training for Spray Service Providers to ensure safe and effective pesticide application.
 
-**Use GitHub Codespaces**
+- Comprehensive safety training for pesticide handling.
+- Proper application techniques and equipment calibration.
+- Internationally recognized certification.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+👉 [Apply for SSP Training](#)
 
-## What technologies are used for this project?
+#### 2. Agro-Dealers Training and Certification
 
-This project is built with:
+Educational programs tailored for agricultural input dealers to improve product knowledge and customer service.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Product knowledge training (seeds, fertilizers, pesticides).
+- Business management and customer service skills.
+- Regulatory compliance and ethical business practices.
 
+👉 [Apply for Agro-Dealer Training](#)
 
+#### 3. Extension Services to Farmers
+
+Support and advice for specific farming activities to improve yields and sustainability.
+
+- On-farm demonstrations and consultations.
+- Guidance on best agricultural practices.
+- Problem-solving for specific farming challenges.
+
+👉 [Apply for Extension Services](#)
+
+#### 4. Farm Visits & Tour Planning
+
+Organizing educational tours to farms for learning and knowledge exchange.
+
+- Customized farm tour planning and logistics.
+- Expert guides and informational resources.
+- Networking opportunities with agricultural professionals.
+
+👉 [Contact Us for Farm Tours](#)
+
+---
+
+## 📱 Mobile Responsiveness
+
+Our platform is fully responsive, ensuring optimal user experience across all devices, including desktops, tablets, and smartphones.
+
+---
+
+## 📝 Installation & Setup
+
+To set up the project locally, follow these steps:
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed. It's recommended to use [nvm](https://github.com/nvm-sh/nvm) for managing Node.js versions.
+
+### Steps
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone <YOUR_GIT_URL>
