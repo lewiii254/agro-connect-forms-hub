@@ -118,17 +118,17 @@ To set up the project locally, follow these steps:
 
 # 💻 Development Options
 ### Using GitHub Codespaces
-Navigate to the main page of your repository.
+- Navigate to the main page of your repository.
 
-Click on the Code button.
+- Click on the Code button.
 
-Select the Codespaces tab.
+- Select the Codespaces tab.
 
-Click on New codespace to launch a new environment.
+- Click on New codespace to launch a new environment.
 
 ### Editing Files Directly on GitHub
-Navigate to the desired file(s).
+1. Navigate to the desired file(s).
 
-Click the Edit button (pencil icon) at the top right of the file view.
+2. Click the Edit button (pencil icon) at the top right of the file view.
 
-Make your changes and commit them.
+3. Make your changes and commit them.
