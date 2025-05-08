@@ -1,4 +1,4 @@
-# 🌿 Agro-Nexus Limited
+# 🌿 Agro-Nexus Limited🚀
 
 Welcome to **Agro-Nexus Limited** – Empowering sustainable agriculture through innovative training, certification, and extension services. Our mission is to enhance agricultural productivity and sustainability by providing comprehensive support to farmers, agro-dealers, and agricultural professionals.
 
@@ -16,7 +16,7 @@ Agro-Nexus Limited is a web-based platform designed to offer:
 
 ---
 
-## 🛠️ Technologies Used
+## 🛠️ Technologies Used  ⚒
 
 This project is built with the following technologies:
 
