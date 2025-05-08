@@ -91,7 +91,7 @@ const AgroDealerApplicationPage = () => {
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-agro-orange rounded-full mr-4"></div>
                 <div>
-                  <h3 className="font-bold text-agro-blue">John Smith</h3>
+                  <h3 className="font-bold text-agro-blue">Ann Njeru</h3>
                   <p className="text-gray-600 text-sm">Agro-dealer, Central Region</p>
                 </div>
               </div>
@@ -104,7 +104,7 @@ const AgroDealerApplicationPage = () => {
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-agro-orange rounded-full mr-4"></div>
                 <div>
-                  <h3 className="font-bold text-agro-blue">Mary Johnson</h3>
+                  <h3 className="font-bold text-agro-blue">Stephen Ndwiga</h3>
                   <p className="text-gray-600 text-sm">Farm Supply Store Owner, Eastern Region</p>
                 </div>
               </div>
