@@ -145,3 +145,20 @@ To set up the project locally, follow these steps:
 - Integration with 💰Payment Gateways🤑💸: Facilitate online payments for services.
 
 - Offline Access📴: Enable access to certain features without an internet connection.
+
+---
+# 🤝 Contributing
+We welcome contributions from the community! To contribute:
+
+- Fork the repository.
+
+- Create a new branch:
+   ```bash 
+   git checkout -b feature/YourFeature
+- Make your changes and commit them:
+   ```bash
+   git commit -m "Add YourFeature"
+- Push to the branch:
+   ```bash
+   git push origin feature/YourFeature
+- Open a pull request describing your changes.   
