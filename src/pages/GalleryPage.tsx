@@ -13,7 +13,7 @@ interface GalleryImage {
 const galleryImages: GalleryImage[] = [
   {
     id: 1,
-    src: "/lovable-uploads/a00aba65-a5e6-4dae-8b02-630a83457614.png",
+    src: "GalleryPic1.png",
     alt: "Agricultural field",
     caption: "Our agricultural fields in full bloom"
   },
