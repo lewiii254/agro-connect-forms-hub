@@ -1,4 +1,4 @@
-
+JJ
 import Layout from "@/components/layout/Layout";
 import { Grid2x2, GridIcon } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +19,7 @@ const galleryImages: GalleryImage[] = [
   },
   {
     id: 2,
-    src: "/lovable-uploads/7b1f715c-e43b-4c11-b2e1-6a57f96baa21.png",
+    src: "GalleryPic2.png",
     alt: "Training Session",
     caption: "SSP Training certification session"
   },
