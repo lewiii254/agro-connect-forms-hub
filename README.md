@@ -116,7 +116,7 @@ To set up the project locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone <YOUR_GIT_URL>
+   git clone https://github.com/lewiii254/agro-connect-forms-hub.git
 2. Navigate to the project directory:
    ```bash
    cd <YOUR_PROJECT_NAME>
