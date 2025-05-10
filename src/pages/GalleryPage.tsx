@@ -1,4 +1,3 @@
-JJ
 import Layout from "@/components/layout/Layout";
 import { Grid2x2, GridIcon } from "lucide-react";
 import { useState } from "react";
