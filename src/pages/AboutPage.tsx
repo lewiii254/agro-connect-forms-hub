@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
 
@@ -19,7 +18,7 @@ const AboutPage = () => {
   // Team members data with contact information
   const teamMembers = [
     {
-      name: "Jane Doe",
+      name: "Eric Muriithi",
       position: "Chief Executive Officer",
       bio: "With over 15 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
       contacts: {
@@ -30,9 +29,9 @@ const AboutPage = () => {
       }
     },
     {
-      name: "John Smith",
+      name: "Qabale Halkano Galgalo",
       position: "Director of Training",
-      bio: "John oversees all training programs, ensuring that our certification meets international standards and provides real value to participants.",
+      bio: "Qabale oversees all training programs, ensuring that our certification meets international standards and provides real value to participants.",
       contacts: {
         facebook: "https://facebook.com/john.smith",
         instagram: "https://instagram.com/john.smith",
@@ -41,7 +40,7 @@ const AboutPage = () => {
       }
     },
     {
-      name: "Alice Johnson",
+      name: "Eliezer Nduati",
       position: "Extension Services Manager",
       bio: "Alice coordinates our field operations, working directly with farmers to implement sustainable agricultural practices.",
       contacts: {
@@ -52,9 +51,9 @@ const AboutPage = () => {
       }
     },
     {
-      name: "David Kamau",
-      position: "Agricultural Technician",
-      bio: "David provides technical expertise on crop management and soil health, developing practical solutions for local farming challenges.",
+      name: "Grace Nyambura",
+      position: "Office Administration",
+      bio: "Grace provides technical expertise on crop management and soil health, developing practical solutions for local farming challenges.",
       contacts: {
         facebook: "https://facebook.com/david.kamau",
         instagram: "https://instagram.com/david.kamau",
@@ -63,9 +62,9 @@ const AboutPage = () => {
       }
     },
     {
-      name: "Sarah Omondi",
-      position: "Community Outreach Coordinator",
-      bio: "Sarah builds relationships with local farming communities, ensuring our programs address their actual needs and circumstances.",
+      name: "Claire Wangui",
+      position: "Trainer & Consultant ",
+      bio: "Claire builds relationships with local farming communities, ensuring our programs address their actual needs and circumstances.",
       contacts: {
         facebook: "https://facebook.com/sarah.omondi",
         instagram: "https://instagram.com/sarah.omondi",
@@ -74,9 +73,9 @@ const AboutPage = () => {
       }
     },
     {
-      name: "Michael Wanjau",
+      name: "Mark Kyalo",
       position: "Agricultural Finance Specialist",
-      bio: "Michael helps farmers access financial services and develop sustainable business models for their agricultural enterprises.",
+      bio: "Mark helps farmers access financial services and develop sustainable business models for their agricultural enterprises.",
       contacts: {
         facebook: "https://facebook.com/michael.wanjau",
         instagram: "https://instagram.com/michael.wanjau",
@@ -85,7 +84,7 @@ const AboutPage = () => {
       }
     },
     {
-      name: "Grace Mutua",
+      name: "Kevin Jackson",
       position: "Training Program Developer",
       bio: "Grace designs our agricultural training programs, drawing on the latest research and best practices in sustainable farming.",
       contacts: {
@@ -96,14 +95,14 @@ const AboutPage = () => {
       }
     },
     {
-      name: "Joseph Mwangi",
-      position: "Technology Integration Specialist",
-      bio: "Joseph identifies and implements appropriate agricultural technologies that can help small-scale farmers increase their productivity.",
+      name: "Marklewis Mutugi",
+      position: "ICT & SYSTEMS MANAGER",
+      bio: "Marklewis identifies and implements appropriate agricultural technologies that can help small-scale farmers increase their productivity.",
       contacts: {
-        facebook: "https://facebook.com/joseph.mwangi",
-        instagram: "https://instagram.com/joseph.mwangi",
-        email: "mailto:joseph.mwangi@agronexus.com",
-        whatsapp: "https://wa.me/254700000008"
+        facebook: "https://facebook.com/LewiiiTheeG",
+        instagram: "https://instagram.com/LewiiiTheeG",
+        email: "mailto: ngondimarklewis@gmail.com",
+        whatsapp: "https://wa.me/254790767347"
       }
     }
   ];
