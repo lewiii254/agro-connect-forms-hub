@@ -22,6 +22,66 @@ const galleryImages: GalleryImage[] = [
     alt: "Training Session",
     caption: "SSP Training certification session"
   },
+  {
+    id: 3,
+    src: "GalleryPic3.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 4,
+    src: "GalleryPic4.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 5,
+    src: "GalleryPic5.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 6,
+    src: "GalleryPic6.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 7,
+    src: "GalleryPic7.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 8,
+    src: "GalleryPic8.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 9,
+    src: "GalleryPic9.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 10,
+    src: "GalleryPic10.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 11,
+    src: "GalleryPic11.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
+  {
+    id: 12,
+    src: "GalleryPic12.png",
+    alt: "Training Session",
+    caption: "SSP Training certification session"
+  },
   // Add more images as they become available
 ];
 
