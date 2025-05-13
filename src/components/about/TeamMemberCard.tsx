@@ -47,9 +47,9 @@ interface TeamMemberCardProps {
 const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
-      {/* Image container with fixed height */}
-      <div className="h-48 bg-gray-200">
-        <AspectRatio ratio={1 / 1} className="h-full">
+      {/* Image container with better proportions */}
+      <div className="w-full bg-gray-200" style={{ maxHeight: "220px" }}>
+        <AspectRatio ratio={4/3} className="w-full">
           {member.image ? (
             <img 
               src={member.image} 
@@ -73,7 +73,7 @@ const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
         <div>
           <h3 className="text-xl font-bold text-agro-blue mb-1">{member.name}</h3>
           <p className="text-agro-green font-medium mb-3">{member.position}</p>
-          <p className="text-gray-600 mb-4 text-sm">
+          <p className="text-gray-600 mb-4 text-sm line-clamp-3">
             {member.bio}
           </p>
         </div>
