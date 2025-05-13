@@ -65,7 +65,7 @@ const ServicesPage = () => {
             <div className="md:w-1/2">
               <div className="rounded-lg overflow-hidden shadow-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1595870877177-ddd3bfd3b57c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  src="SSPTraining1.png" 
                   alt="SSP Training" 
                   className="w-full h-80 object-cover"
                 />
