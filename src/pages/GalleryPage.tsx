@@ -54,7 +54,7 @@ const galleryImages: GalleryImage[] = [
   },
   {
     id: 8,
-    src: "GalleryPic8.png",
+    src: "GallleryPic8.png",
     alt: "Training Session",
     caption: "SSP Training certification session"
   },
