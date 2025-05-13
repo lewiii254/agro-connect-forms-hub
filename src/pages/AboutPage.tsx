@@ -1,5 +1,8 @@
+
 import Layout from "@/components/layout/Layout";
 import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 // Contact icon component for consistent styling
 const ContactIcon = ({ children, href, label, className = "" }: { children: React.ReactNode; href: string; label: string; className?: string }) => (
@@ -26,7 +29,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/jane.doe",
         email: "mailto:jane.doe@agronexus.com",
         whatsapp: "https://wa.me/254700000001"
-      }
+      },
+      image: "/SirEric.png"
     },
     {
       name: "Qabale Halkano Galgalo",
@@ -37,7 +41,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/john.smith",
         email: "mailto:john.smith@agronexus.com",
         whatsapp: "https://wa.me/254700000002"
-      }
+      },
+      image: "/Qabale.png"
     },
     {
       name: "Eliezer Nduati",
@@ -48,7 +53,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/alice.johnson",
         email: "mailto:alice.johnson@agronexus.com",
         whatsapp: "https://wa.me/254700000003"
-      }
+      },
+      image: "/Nduati.png"
     },
     {
       name: "Grace Nyambura",
@@ -59,7 +65,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/david.kamau",
         email: "mailto:david.kamau@agronexus.com",
         whatsapp: "https://wa.me/254700000004"
-      }
+      },
+      image: "/Grace.png"
     },
     {
       name: "Claire Wangui",
@@ -70,7 +77,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/sarah.omondi",
         email: "mailto:sarah.omondi@agronexus.com",
         whatsapp: "https://wa.me/254700000005"
-      }
+      },
+      image: "/Claire.png"
     },
     {
       name: "Mark Kyalo",
@@ -81,7 +89,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/michael.wanjau",
         email: "mailto:michael.wanjau@agronexus.com",
         whatsapp: "https://wa.me/254700000006"
-      }
+      },
+      image: "/KyaloM.png"
     },
     {
       name: "Kevin Jackson",
@@ -92,7 +101,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/grace.mutua",
         email: "mailto:grace.mutua@agronexus.com",
         whatsapp: "https://wa.me/254700000007"
-      }
+      },
+      image: "/Jackson.png"
     },
     {
       name: "Marklewis Mutugi",
@@ -103,7 +113,8 @@ const AboutPage = () => {
         instagram: "https://instagram.com/LewiiiTheeG",
         email: "mailto: ngondimarklewis@gmail.com",
         whatsapp: "https://wa.me/254790767347"
-      }
+      },
+      image: "/Marklewis.jpg"
     }
   ];
 
@@ -175,7 +186,25 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="h-64 bg-gray-200"></div>
+                <div className="h-64 bg-gray-200">
+                  <AspectRatio ratio={1 / 1} className="h-full">
+                    {member.image ? (
+                      <img 
+                        src={member.image} 
+                        alt={`${member.name}`} 
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full bg-gray-100">
+                        <Avatar className="h-32 w-32">
+                          <AvatarFallback className="text-4xl font-bold text-agro-blue">
+                            {member.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    )}
+                  </AspectRatio>
+                </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-agro-blue mb-1">{member.name}</h3>
                   <p className="text-agro-green font-medium mb-2">{member.position}</p>
