@@ -1,4 +1,5 @@
 
+
 import Layout from "@/components/layout/Layout";
 import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
