@@ -1,7 +1,58 @@
 
 import Layout from "@/components/layout/Layout";
+import { Facebook, Instagram, Mail, Smartphone } from "lucide-react";
+
+// Contact icon component for consistent styling
+const ContactIcon = ({ children, href, label }: { children: React.ReactNode; href: string; label: string }) => (
+  <a 
+    href={href} 
+    aria-label={label}
+    className="text-agro-blue hover:text-agro-green transition-colors"
+    target="_blank" 
+    rel="noopener noreferrer"
+  >
+    {children}
+  </a>
+);
 
 const AboutPage = () => {
+  // Team members data with contact information
+  const teamMembers = [
+    {
+      name: "Jane Doe",
+      position: "Chief Executive Officer",
+      bio: "With over 15 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
+      contacts: {
+        facebook: "https://facebook.com/jane.doe",
+        instagram: "https://instagram.com/jane.doe",
+        email: "mailto:jane.doe@agronexus.com",
+        whatsapp: "https://wa.me/254700000001"
+      }
+    },
+    {
+      name: "John Smith",
+      position: "Director of Training",
+      bio: "John oversees all training programs, ensuring that our certification meets international standards and provides real value to participants.",
+      contacts: {
+        facebook: "https://facebook.com/john.smith",
+        instagram: "https://instagram.com/john.smith",
+        email: "mailto:john.smith@agronexus.com",
+        whatsapp: "https://wa.me/254700000002"
+      }
+    },
+    {
+      name: "Alice Johnson",
+      position: "Extension Services Manager",
+      bio: "Alice coordinates our field operations, working directly with farmers to implement sustainable agricultural practices.",
+      contacts: {
+        facebook: "https://facebook.com/alice.johnson",
+        instagram: "https://instagram.com/alice.johnson",
+        email: "mailto:alice.johnson@agronexus.com",
+        whatsapp: "https://wa.me/254700000003"
+      }
+    }
+  ];
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -68,41 +119,34 @@ const AboutPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Team Member 1 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-64 bg-gray-200"></div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-agro-blue mb-1">Jane Doe</h3>
-                <p className="text-agro-green font-medium mb-4">Chief Executive Officer</p>
-                <p className="text-gray-600">
-                  With over 15 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.
-                </p>
+            {teamMembers.map((member, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="h-64 bg-gray-200"></div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-agro-blue mb-1">{member.name}</h3>
+                  <p className="text-agro-green font-medium mb-2">{member.position}</p>
+                  <p className="text-gray-600 mb-4">
+                    {member.bio}
+                  </p>
+                  
+                  {/* Contact icons */}
+                  <div className="flex space-x-4 mt-3">
+                    <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`}>
+                      <Facebook size={20} />
+                    </ContactIcon>
+                    <ContactIcon href={member.contacts.instagram} label={`${member.name}'s Instagram`}>
+                      <Instagram size={20} />
+                    </ContactIcon>
+                    <ContactIcon href={member.contacts.email} label={`Email ${member.name}`}>
+                      <Mail size={20} />
+                    </ContactIcon>
+                    <ContactIcon href={member.contacts.whatsapp} label={`${member.name}'s WhatsApp`}>
+                      <Smartphone size={20} />
+                    </ContactIcon>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            {/* Team Member 2 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-64 bg-gray-200"></div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-agro-blue mb-1">John Smith</h3>
-                <p className="text-agro-green font-medium mb-4">Director of Training</p>
-                <p className="text-gray-600">
-                  John oversees all training programs, ensuring that our certification meets international standards and provides real value to participants.
-                </p>
-              </div>
-            </div>
-            
-            {/* Team Member 3 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-64 bg-gray-200"></div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-agro-blue mb-1">Alice Johnson</h3>
-                <p className="text-agro-green font-medium mb-4">Extension Services Manager</p>
-                <p className="text-gray-600">
-                  Alice coordinates our field operations, working directly with farmers to implement sustainable agricultural practices.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
