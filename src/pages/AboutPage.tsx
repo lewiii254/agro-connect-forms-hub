@@ -1,26 +1,10 @@
 
-
 import Layout from "@/components/layout/Layout";
-import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
-// Contact icon component for consistent styling
-const ContactIcon = ({ children, href, label, className = "" }: { children: React.ReactNode; href: string; label: string; className?: string }) => (
-  <a 
-    href={href} 
-    aria-label={label}
-    className={`text-agro-blue hover:text-agro-green transition-colors ${className}`}
-    target="_blank" 
-    rel="noopener noreferrer"
-  >
-    {children}
-  </a>
-);
+import TeamMemberCard, { TeamMember } from "@/components/about/TeamMemberCard";
 
 const AboutPage = () => {
   // Team members data with contact information
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     {
       name: "Eric Muriithi",
       position: "Chief Executive Officer",
@@ -186,50 +170,7 @@ const AboutPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="h-64 bg-gray-200">
-                  <AspectRatio ratio={1 / 1} className="h-full">
-                    {member.image ? (
-                      <img 
-                        src={member.image} 
-                        alt={`${member.name}`} 
-                        className="object-cover w-full h-full"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center w-full h-full bg-gray-100">
-                        <Avatar className="h-32 w-32">
-                          <AvatarFallback className="text-4xl font-bold text-agro-blue">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                    )}
-                  </AspectRatio>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-agro-blue mb-1">{member.name}</h3>
-                  <p className="text-agro-green font-medium mb-2">{member.position}</p>
-                  <p className="text-gray-600 mb-4">
-                    {member.bio}
-                  </p>
-                  
-                  {/* Contact icons - enhanced styling */}
-                  <div className="flex space-x-4 mt-3 justify-center">
-                    <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`} className="hover:scale-110 transition-transform">
-                      <Facebook size={20} />
-                    </ContactIcon>
-                    <ContactIcon href={member.contacts.instagram} label={`${member.name}'s Instagram`} className="hover:scale-110 transition-transform">
-                      <Instagram size={20} />
-                    </ContactIcon>
-                    <ContactIcon href={member.contacts.email} label={`Email ${member.name}`} className="hover:scale-110 transition-transform">
-                      <Mail size={20} />
-                    </ContactIcon>
-                    <ContactIcon href={member.contacts.whatsapp} label={`${member.name}'s WhatsApp`} className="hover:scale-110 transition-transform">
-                      <MessageCircle size={20} />
-                    </ContactIcon>
-                  </div>
-                </div>
-              </div>
+              <TeamMemberCard key={index} member={member} />
             ))}
           </div>
         </div>
