@@ -1,13 +1,13 @@
 
 import Layout from "@/components/layout/Layout";
-import { Facebook, Instagram, Mail, Smartphone } from "lucide-react";
+import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
 
 // Contact icon component for consistent styling
-const ContactIcon = ({ children, href, label }: { children: React.ReactNode; href: string; label: string }) => (
+const ContactIcon = ({ children, href, label, className = "" }: { children: React.ReactNode; href: string; label: string; className?: string }) => (
   <a 
     href={href} 
     aria-label={label}
-    className="text-agro-blue hover:text-agro-green transition-colors"
+    className={`text-agro-blue hover:text-agro-green transition-colors ${className}`}
     target="_blank" 
     rel="noopener noreferrer"
   >
@@ -49,6 +49,61 @@ const AboutPage = () => {
         instagram: "https://instagram.com/alice.johnson",
         email: "mailto:alice.johnson@agronexus.com",
         whatsapp: "https://wa.me/254700000003"
+      }
+    },
+    {
+      name: "David Kamau",
+      position: "Agricultural Technician",
+      bio: "David provides technical expertise on crop management and soil health, developing practical solutions for local farming challenges.",
+      contacts: {
+        facebook: "https://facebook.com/david.kamau",
+        instagram: "https://instagram.com/david.kamau",
+        email: "mailto:david.kamau@agronexus.com",
+        whatsapp: "https://wa.me/254700000004"
+      }
+    },
+    {
+      name: "Sarah Omondi",
+      position: "Community Outreach Coordinator",
+      bio: "Sarah builds relationships with local farming communities, ensuring our programs address their actual needs and circumstances.",
+      contacts: {
+        facebook: "https://facebook.com/sarah.omondi",
+        instagram: "https://instagram.com/sarah.omondi",
+        email: "mailto:sarah.omondi@agronexus.com",
+        whatsapp: "https://wa.me/254700000005"
+      }
+    },
+    {
+      name: "Michael Wanjau",
+      position: "Agricultural Finance Specialist",
+      bio: "Michael helps farmers access financial services and develop sustainable business models for their agricultural enterprises.",
+      contacts: {
+        facebook: "https://facebook.com/michael.wanjau",
+        instagram: "https://instagram.com/michael.wanjau",
+        email: "mailto:michael.wanjau@agronexus.com",
+        whatsapp: "https://wa.me/254700000006"
+      }
+    },
+    {
+      name: "Grace Mutua",
+      position: "Training Program Developer",
+      bio: "Grace designs our agricultural training programs, drawing on the latest research and best practices in sustainable farming.",
+      contacts: {
+        facebook: "https://facebook.com/grace.mutua",
+        instagram: "https://instagram.com/grace.mutua",
+        email: "mailto:grace.mutua@agronexus.com",
+        whatsapp: "https://wa.me/254700000007"
+      }
+    },
+    {
+      name: "Joseph Mwangi",
+      position: "Technology Integration Specialist",
+      bio: "Joseph identifies and implements appropriate agricultural technologies that can help small-scale farmers increase their productivity.",
+      contacts: {
+        facebook: "https://facebook.com/joseph.mwangi",
+        instagram: "https://instagram.com/joseph.mwangi",
+        email: "mailto:joseph.mwangi@agronexus.com",
+        whatsapp: "https://wa.me/254700000008"
       }
     }
   ];
@@ -118,7 +173,7 @@ const AboutPage = () => {
             <div className="w-24 h-1 bg-agro-green mx-auto"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="h-64 bg-gray-200"></div>
@@ -129,19 +184,19 @@ const AboutPage = () => {
                     {member.bio}
                   </p>
                   
-                  {/* Contact icons */}
-                  <div className="flex space-x-4 mt-3">
-                    <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`}>
+                  {/* Contact icons - enhanced styling */}
+                  <div className="flex space-x-4 mt-3 justify-center">
+                    <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`} className="hover:scale-110 transition-transform">
                       <Facebook size={20} />
                     </ContactIcon>
-                    <ContactIcon href={member.contacts.instagram} label={`${member.name}'s Instagram`}>
+                    <ContactIcon href={member.contacts.instagram} label={`${member.name}'s Instagram`} className="hover:scale-110 transition-transform">
                       <Instagram size={20} />
                     </ContactIcon>
-                    <ContactIcon href={member.contacts.email} label={`Email ${member.name}`}>
+                    <ContactIcon href={member.contacts.email} label={`Email ${member.name}`} className="hover:scale-110 transition-transform">
                       <Mail size={20} />
                     </ContactIcon>
-                    <ContactIcon href={member.contacts.whatsapp} label={`${member.name}'s WhatsApp`}>
-                      <Smartphone size={20} />
+                    <ContactIcon href={member.contacts.whatsapp} label={`${member.name}'s WhatsApp`} className="hover:scale-110 transition-transform">
+                      <MessageCircle size={20} />
                     </ContactIcon>
                   </div>
                 </div>
