@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -32,6 +33,9 @@ const Navbar = () => {
           </Link>
           <Link to="/services" className="text-gray-800 hover:text-agro-green font-medium">
             Services
+          </Link>
+          <Link to="/news" className="text-gray-800 hover:text-agro-green font-medium">
+            News
           </Link>
           <Link to="/gallery" className="text-gray-800 hover:text-agro-green font-medium">
             Gallery
@@ -86,6 +90,13 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(false)}
           >
             Services
+          </Link>
+          <Link 
+            to="/news" 
+            className="block py-2 text-gray-800 hover:text-agro-green font-medium"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            News
           </Link>
           <Link 
             to="/gallery" 
