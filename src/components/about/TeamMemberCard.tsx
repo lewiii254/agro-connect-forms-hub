@@ -50,9 +50,9 @@ const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
-      {/* Image container with better proportions */}
-      <div className="w-full bg-gray-200" style={{ maxHeight: isMobile ? "180px" : "220px" }}>
-        <AspectRatio ratio={isMobile ? 16/10 : 4/3} className="w-full">
+      {/* Image container with improved responsive sizing */}
+      <div className="w-full bg-gray-200" style={{ maxHeight: isMobile ? "200px" : "220px" }}>
+        <AspectRatio ratio={isMobile ? 3/2 : 4/3} className="w-full">
           {member.image ? (
             <img 
               src={member.image} 
@@ -71,13 +71,13 @@ const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
         </AspectRatio>
       </div>
       
-      {/* Content section - improved for mobile */}
+      {/* Content section - improved visibility for mobile */}
       <div className="p-4 md:p-6 flex-grow flex flex-col justify-between">
         <div>
-          <h3 className="text-lg md:text-xl font-bold text-agro-blue mb-1 break-words hyphens-auto">
+          <h3 className="text-base md:text-xl font-bold text-agro-blue mb-1 break-words hyphens-auto">
             {member.name}
           </h3>
-          <p className="text-agro-green font-medium mb-2 md:mb-3 text-sm md:text-base break-words">
+          <p className="text-agro-green font-semibold mb-2 md:mb-3 text-sm md:text-base">
             {member.position}
           </p>
           {!isMobile && (
@@ -86,14 +86,14 @@ const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
             </p>
           )}
           {isMobile && (
-            <p className="text-gray-600 mb-3 text-xs line-clamp-2">
-              {member.bio}
+            <p className="text-gray-600 mb-3 text-xs">
+              {member.bio.length > 100 ? `${member.bio.substring(0, 100)}...` : member.bio}
             </p>
           )}
         </div>
         
         {/* Contact icons */}
-        <div className="flex space-x-3 md:space-x-4 mt-2 md:mt-3 justify-center">
+        <div className="flex space-x-3 md:space-x-4 mt-auto pt-3 justify-center">
           <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`} className="hover:scale-110 transition-transform">
             <Facebook size={isMobile ? 18 : 20} />
           </ContactIcon>
