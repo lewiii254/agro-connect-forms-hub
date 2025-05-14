@@ -3,6 +3,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Facebook, Instagram, Mail, MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Type definition for team member data
 export interface TeamMember {
@@ -47,17 +48,26 @@ interface TeamMemberCardProps {
 
 const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
   const isMobile = useIsMobile();
+  
+  // Function to truncate bio text based on screen size
+  const truncateBio = (text: string) => {
+    if (isMobile) {
+      return text.length > 85 ? `${text.substring(0, 85)}...` : text;
+    }
+    return text.length > 120 ? `${text.substring(0, 120)}...` : text;
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+    <Card className="h-full overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
       {/* Image container with improved responsive sizing */}
-      <div className="w-full bg-gray-200" style={{ maxHeight: isMobile ? "200px" : "220px" }}>
-        <AspectRatio ratio={isMobile ? 3/2 : 4/3} className="w-full">
+      <div className="w-full bg-gray-100">
+        <AspectRatio ratio={4/3} className="w-full">
           {member.image ? (
             <img 
               src={member.image} 
               alt={`${member.name}`} 
               className="object-cover w-full h-full"
+              loading="lazy"
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full bg-gray-100">
@@ -71,44 +81,39 @@ const TeamMemberCard = ({ member }: TeamMemberCardProps) => {
         </AspectRatio>
       </div>
       
-      {/* Content section - improved visibility for mobile */}
-      <div className="p-4 md:p-6 flex-grow flex flex-col justify-between">
-        <div>
-          <h3 className="text-base md:text-xl font-bold text-agro-blue mb-1 break-words hyphens-auto">
-            {member.name}
-          </h3>
-          <p className="text-agro-green font-semibold mb-2 md:mb-3 text-sm md:text-base">
-            {member.position}
-          </p>
-          {!isMobile && (
-            <p className="text-gray-600 mb-4 text-sm line-clamp-3">
-              {member.bio}
-            </p>
-          )}
-          {isMobile && (
-            <p className="text-gray-600 mb-3 text-xs">
-              {member.bio.length > 100 ? `${member.bio.substring(0, 100)}...` : member.bio}
-            </p>
-          )}
-        </div>
+      <CardContent className="p-4 flex flex-col gap-2">
+        {/* Name with better visibility */}
+        <h3 className="font-bold text-agro-blue text-lg md:text-xl break-words hyphens-auto">
+          {member.name}
+        </h3>
         
-        {/* Contact icons */}
-        <div className="flex space-x-3 md:space-x-4 mt-auto pt-3 justify-center">
+        {/* Position with better contrast */}
+        <p className="text-agro-green font-semibold text-sm md:text-base">
+          {member.position}
+        </p>
+        
+        {/* Bio with better readability */}
+        <p className="text-gray-700 mt-1 mb-3 text-sm leading-relaxed">
+          {truncateBio(member.bio)}
+        </p>
+        
+        {/* Contact icons with improved spacing */}
+        <div className="flex justify-center space-x-4 mt-auto pt-2">
           <ContactIcon href={member.contacts.facebook} label={`${member.name}'s Facebook`} className="hover:scale-110 transition-transform">
-            <Facebook size={isMobile ? 18 : 20} />
+            <Facebook size={20} />
           </ContactIcon>
           <ContactIcon href={member.contacts.instagram} label={`${member.name}'s Instagram`} className="hover:scale-110 transition-transform">
-            <Instagram size={isMobile ? 18 : 20} />
+            <Instagram size={20} />
           </ContactIcon>
-          <ContactIcon href={member.contacts.email} label={`Email ${member.name}`} className="hover:scale-110 transition-transform">
-            <Mail size={isMobile ? 18 : 20} />
+          <ContactIcon href={`mailto:${member.contacts.email}`} label={`Email ${member.name}`} className="hover:scale-110 transition-transform">
+            <Mail size={20} />
           </ContactIcon>
           <ContactIcon href={member.contacts.whatsapp} label={`${member.name}'s WhatsApp`} className="hover:scale-110 transition-transform">
-            <MessageCircle size={isMobile ? 18 : 20} />
+            <MessageCircle size={20} />
           </ContactIcon>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
