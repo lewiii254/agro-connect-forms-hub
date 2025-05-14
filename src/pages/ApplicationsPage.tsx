@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import PaymentDetails from "@/components/applications/PaymentDetails";
 
 const ApplicationsPage = () => {
   return (
@@ -144,6 +144,9 @@ const ApplicationsPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Payment Details Section */}
+      <PaymentDetails />
 
       {/* FAQs */}
       <section className="py-16">
