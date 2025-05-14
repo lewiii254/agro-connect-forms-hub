@@ -99,7 +99,7 @@ const AboutPage = () => {
         email: "mailto: ngondimarklewis@gmail.com",
         whatsapp: "https://wa.me/254790767347"
       },
-      image: "/Marklewis.jpg"
+      image: "/Marklewis2.jpg"
     }
   ];
 
