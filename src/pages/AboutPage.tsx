@@ -10,10 +10,10 @@ const AboutPage = () => {
       position: "Chief Executive Officer",
       bio: "With over 15 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
       contacts: {
-        facebook: "https://facebook.com/jane.doe",
-        instagram: "https://instagram.com/jane.doe",
-        email: "mailto:jane.doe@agronexus.com",
-        whatsapp: "https://wa.me/254700000001"
+        facebook: "https://facebook.com/Eric Muriithi",
+        instagram: "https://instagram.com/muriithieric_official",
+        email: "mailto:ericmuriithi012@gmail.com",
+        whatsapp: "https://wa.me/254768276671"
       },
       image: "/SirEric.png"
     },
