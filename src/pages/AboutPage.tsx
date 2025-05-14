@@ -22,22 +22,22 @@ const AboutPage = () => {
       position: "Director of Training",
       bio: "Qabale oversees all training programs, ensuring that our certification meets international standards and provides real value to participants.",
       contacts: {
-        facebook: "https://facebook.com/john.smith",
-        instagram: "https://instagram.com/john.smith",
-        email: "mailto:john.smith@agronexus.com",
-        whatsapp: "https://wa.me/254700000002"
+        facebook: "https://facebook.com/Qabale Halkano",
+        instagram: "https://instagram.com/Qabale Halkano",
+        email: "mailto:qabalehalkano26@gmail.com",
+        whatsapp: "https://wa.me/254745170583"
       },
       image: "/Qabale.png"
     },
     {
       name: "Eliezer Nduati",
       position: "Extension Services Manager",
-      bio: "Alice coordinates our field operations, working directly with farmers to implement sustainable agricultural practices.",
+      bio: "Eliezer coordinates our field operations, working directly with farmers to implement sustainable agricultural practices.",
       contacts: {
-        facebook: "https://facebook.com/alice.johnson",
-        instagram: "https://instagram.com/alice.johnson",
-        email: "mailto:alice.johnson@agronexus.com",
-        whatsapp: "https://wa.me/254700000003"
+        facebook: "https://facebook.com/Eliezer Nduati",
+        instagram: "https://instagram.com/Eliezer Nduati",
+        email: "mailto:eliezerinduati@gmail.com",
+        whatsapp: "https://wa.me/254742991839"
       },
       image: "/Nduati.png"
     },
@@ -46,10 +46,10 @@ const AboutPage = () => {
       position: "Office Administration",
       bio: "Grace provides technical expertise on crop management and soil health, developing practical solutions for local farming challenges.",
       contacts: {
-        facebook: "https://facebook.com/david.kamau",
-        instagram: "https://instagram.com/david.kamau",
-        email: "mailto:david.kamau@agronexus.com",
-        whatsapp: "https://wa.me/254700000004"
+        facebook: "https://facebook.com/",
+        instagram: "https://instagram.com/",
+        email: "mailto:gw273933@gmail.com",
+        whatsapp: "https://wa.me/254799551856"
       },
       image: "/Grace.png"
     },
@@ -58,10 +58,10 @@ const AboutPage = () => {
       position: "Trainer & Consultant ",
       bio: "Claire builds relationships with local farming communities, ensuring our programs address their actual needs and circumstances.",
       contacts: {
-        facebook: "https://facebook.com/sarah.omondi",
-        instagram: "https://instagram.com/sarah.omondi",
-        email: "mailto:sarah.omondi@agronexus.com",
-        whatsapp: "https://wa.me/254700000005"
+        facebook: "https://facebook.com/",
+        instagram: "https://instagram.com/Claire_2249",
+        email: "mailto:wanguiclaire406@gmail.com",
+        whatsapp: "https://wa.me/254758371332"
       },
       image: "/Claire.png"
     },
@@ -70,10 +70,10 @@ const AboutPage = () => {
       position: "Agricultural Finance Specialist",
       bio: "Mark helps farmers access financial services and develop sustainable business models for their agricultural enterprises.",
       contacts: {
-        facebook: "https://facebook.com/michael.wanjau",
-        instagram: "https://instagram.com/michael.wanjau",
-        email: "mailto:michael.wanjau@agronexus.com",
-        whatsapp: "https://wa.me/254700000006"
+        facebook: "https://facebook.com/",
+        instagram: "https://instagram.com/@trippletacker",
+        email: "mailto:markkyalo824@gmail.com",
+        whatsapp: "https://wa.me/254115378301"
       },
       image: "/KyaloM.png"
     },
@@ -82,10 +82,10 @@ const AboutPage = () => {
       position: "Training Program Developer",
       bio: "Grace designs our agricultural training programs, drawing on the latest research and best practices in sustainable farming.",
       contacts: {
-        facebook: "https://facebook.com/grace.mutua",
-        instagram: "https://instagram.com/grace.mutua",
-        email: "mailto:grace.mutua@agronexus.com",
-        whatsapp: "https://wa.me/254700000007"
+        facebook: "https://facebook.com/",
+        instagram: "https://instagram.com/@jacktren014",
+        email: "mailto:vjacktren@gmail.com",
+        whatsapp: "https://wa.me/254723008409"
       },
       image: "/Jackson.png"
     },
