@@ -8,7 +8,7 @@ const AboutPage = () => {
     {
       name: "Eric Muriithi",
       position: "Chief Executive Officer",
-      bio: "With over 15 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
+      bio: "With over 2 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
       contacts: {
         facebook: "https://facebook.com/Eric Muriithi",
         instagram: "https://instagram.com/muriithieric_official",
