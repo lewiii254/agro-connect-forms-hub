@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import TeamMemberCard, { TeamMember } from "@/components/about/TeamMemberCard";
 
@@ -8,7 +7,7 @@ const AboutPage = () => {
     {
       name: "Eric Muriithi",
       position: "Chief Executive Officer",
-      bio: "With over 2 years of experience in agricultural extension services, Jane leads our organization's mission to connect farmers with the resources they need.",
+      bio: "With over 2 years of experience in agricultural extension services, Eric leads our organization's mission to connect farmers with the resources they need.",
       contacts: {
         facebook: "https://facebook.com/Eric Muriithi",
         instagram: "https://instagram.com/muriithieric_official",
@@ -80,7 +79,7 @@ const AboutPage = () => {
     {
       name: "Kevin Jackson",
       position: "Training Program Developer",
-      bio: "Grace designs our agricultural training programs, drawing on the latest research and best practices in sustainable farming.",
+      bio: "Kevin designs our agricultural training programs, drawing on the latest research and best practices in sustainable farming.",
       contacts: {
         facebook: "https://facebook.com/",
         instagram: "https://instagram.com/@jacktren014",
