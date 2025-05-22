@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { cleanupAuthState } from "@/utils/authUtils";
 
 type AdminLoginFormProps = {
   isLoading: boolean;
@@ -21,6 +22,17 @@ const AdminLoginForm = ({ isLoading, setIsLoading }: AdminLoginFormProps) => {
     setIsLoading(true);
     
     try {
+      // Clean up any existing auth state
+      cleanupAuthState();
+      
+      try {
+        // Attempt global sign out to ensure clean state
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (error) {
+        // Continue even if this fails
+        console.log("Error during global sign out:", error);
+      }
+      
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { NavigateFunction } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
+import { cleanupAuthState } from "@/utils/authUtils";
 
 export const useAdminAuthentication = (navigate: NavigateFunction) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -28,6 +29,8 @@ export const useAdminAuthentication = (navigate: NavigateFunction) => {
           
         if (roleError || !roleData || roleData.role !== 'admin') {
           console.log("User is not an admin, redirecting to login");
+          // Clean up before signing out to prevent auth issues
+          cleanupAuthState();
           await supabase.auth.signOut();
           toast.error("You don't have admin privileges");
           navigate("/admin/login");
@@ -50,6 +53,11 @@ export const useAdminAuthentication = (navigate: NavigateFunction) => {
       async (event, session) => {
         if (event === 'SIGNED_OUT' || !session) {
           navigate("/admin/login");
+        } else if (event === 'SIGNED_IN') {
+          // We'll defer checking admin status to avoid potential deadlocks
+          setTimeout(() => {
+            checkAuth();
+          }, 0);
         }
       }
     );

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { cleanupAuthState } from "@/utils/authUtils";
 
 type AdminRegisterFormProps = {
   isLoading: boolean;
@@ -26,6 +27,9 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
         setIsLoading(false);
         return;
       }
+      
+      // Clean up any existing auth state
+      cleanupAuthState();
       
       // First attempt to sign up the user - Supabase will handle checking for existing emails
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -51,8 +55,7 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
         return;
       }
 
-      // Call a server function that's pre-authenticated with service_role to add the admin role
-      // This approach bypasses RLS policies
+      // Call the edge function to assign admin role
       const { data: assignRoleData, error: assignRoleError } = await supabase.functions.invoke('assign-admin-role', {
         body: {
           userId: signUpData.user.id
@@ -62,9 +65,6 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
       if (assignRoleError) {
         console.error("Role assignment error:", assignRoleError);
         toast.error(`Failed to assign admin role: ${assignRoleError.message || assignRoleError.name || "Unknown error"}`);
-        // We continue despite the error - user is created but might not have admin role
-      } else {
-        console.log("Role assignment success:", assignRoleData);
       }
 
       toast.success("Registration successful! Please confirm your email to log in.");
@@ -72,6 +72,9 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      
+      // Sign out after registration
+      await supabase.auth.signOut();
     } catch (error: any) {
       console.error("Registration error:", error);
       toast.error(`Registration failed: ${error?.message || "Please try again"}`);
