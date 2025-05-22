@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-export default function DashboardHeader() {
+type DashboardHeaderProps = {
+  activeTab?: "applications" | "messages";
+};
+
+export default function DashboardHeader({ activeTab }: DashboardHeaderProps) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -20,29 +24,48 @@ export default function DashboardHeader() {
   };
 
   return (
-    <div className="w-full bg-emerald-800 text-white p-4 flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-      <div className="flex gap-4 items-center">
-        <Link to="/" className="flex items-center gap-1 hover:underline">
-          <Home size={18} />
-          Home
-        </Link>
-        <Link to="/admin/dashboard" className="flex items-center gap-1 hover:underline">
-          <FileText size={18} />
-          Applications
-        </Link>
-        <Link to="/admin/messages" className="flex items-center gap-1 hover:underline">
-          <MessageSquare size={18} />
-          Messages
-        </Link>
-        <Button 
-          variant="ghost" 
-          className="flex items-center gap-1 hover:bg-emerald-700 text-white" 
-          onClick={handleLogout}
-        >
-          <LogOut size={18} />
-          Logout
-        </Button>
+    <div className="w-full bg-emerald-800 text-white p-4 mb-6 shadow-md">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <div className="flex gap-2 md:gap-4 items-center flex-wrap justify-center">
+          <Link to="/" className="flex items-center gap-1 px-3 py-2 rounded-md hover:bg-emerald-700 transition-colors">
+            <Home size={18} />
+            <span className="hidden sm:inline">Home</span>
+          </Link>
+          
+          <Link 
+            to="/admin/dashboard" 
+            className={`flex items-center gap-1 px-3 py-2 rounded-md transition-colors ${
+              activeTab === "applications" 
+                ? "bg-emerald-700 text-white font-medium" 
+                : "hover:bg-emerald-700"
+            }`}
+          >
+            <FileText size={18} />
+            <span className="hidden sm:inline">Applications</span>
+          </Link>
+          
+          <Link 
+            to="/admin/messages" 
+            className={`flex items-center gap-1 px-3 py-2 rounded-md transition-colors ${
+              activeTab === "messages" 
+                ? "bg-emerald-700 text-white font-medium" 
+                : "hover:bg-emerald-700"
+            }`}
+          >
+            <MessageSquare size={18} />
+            <span className="hidden sm:inline">Messages</span>
+          </Link>
+          
+          <Button 
+            variant="ghost" 
+            className="flex items-center gap-1 hover:bg-emerald-700 text-white px-3 py-2" 
+            onClick={handleLogout}
+          >
+            <LogOut size={18} />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

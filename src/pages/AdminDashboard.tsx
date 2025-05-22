@@ -6,16 +6,13 @@ import { toast } from "@/components/ui/sonner";
 import DashboardHeader from "@/components/admin/DashboardHeader";
 import StatisticsCard from "@/components/admin/StatisticsCard";
 import ApplicationsTable from "@/components/admin/ApplicationsTable";
-import MessagesTable from "@/components/admin/MessagesTable";
-import RegisterAdminDialog from "@/components/admin/RegisterAdminDialog";
-import { RefreshCw, MessageSquare, FileText } from "lucide-react";
+import { RefreshCw, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminAuthentication } from "@/hooks/useAdminAuthentication";
 import { useAdminApplications } from "@/hooks/useAdminApplications";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [unreadMessages, setUnreadMessages] = useState(3); // Placeholder for now
   
   const { isAuthenticated, isCheckingAuth } = useAdminAuthentication(navigate);
   const { 
@@ -49,13 +46,15 @@ const AdminDashboard = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        <DashboardHeader />
+        <DashboardHeader activeTab="applications" />
         
         <div className="container mx-auto px-4 pb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Dashboard Overview</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-emerald-800">Applications Management</h2>
+              <p className="text-gray-600 mt-1">Review and process user applications</p>
+            </div>
             <div className="flex space-x-4">
-              <RegisterAdminDialog onAdminRegistered={fetchAdmins} />
               <Button variant="outline" className="flex items-center gap-1" onClick={handleRefresh}>
                 <RefreshCw size={18} />
                 Refresh Data
@@ -64,7 +63,7 @@ const AdminDashboard = () => {
           </div>
           
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <StatisticsCard 
               title="Total Applications" 
               value={allApplications.length} 
@@ -72,26 +71,27 @@ const AdminDashboard = () => {
               icon={<FileText size={24} />}
             />
             <StatisticsCard 
-              title="Unread Messages" 
-              value={unreadMessages} 
-              color="bg-orange-500" 
-              icon={<MessageSquare size={24} />}
+              title="Pending Review" 
+              value={allApplications.filter(app => !app.status || app.status === 'pending').length} 
+              color="bg-amber-500"
+              icon={<FileText size={24} />}
+            />
+            <StatisticsCard 
+              title="Processed" 
+              value={allApplications.filter(app => app.status === 'approved' || app.status === 'rejected').length} 
+              color="bg-blue-500" 
+              icon={<FileText size={24} />}
             />
           </div>
           
           {/* Applications Table */}
-          <div className="mb-8">
+          <div className="mb-8 bg-white rounded-lg shadow-sm">
             <ApplicationsTable 
               applications={allApplications}
               formatDate={formatDate}
               loading={loading}
               onUpdate={fetchApplications}
             />
-          </div>
-          
-          {/* Messages Table */}
-          <div className="mb-8">
-            <MessagesTable />
           </div>
         </div>
       </div>
