@@ -13,11 +13,10 @@ import { useAdminAuthentication } from "@/hooks/useAdminAuthentication";
 
 const AdminMessagesPage = () => {
   const navigate = useNavigate();
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const { isAuthenticated } = useAdminAuthentication(navigate);
+  const { isAuthenticated, isCheckingAuth } = useAdminAuthentication(navigate);
 
   const fetchMessages = async () => {
     if (!isAuthenticated) return;
@@ -106,7 +105,11 @@ const AdminMessagesPage = () => {
           </div>
           
           <div className="mb-8 bg-white rounded-lg shadow-sm">
-            <MessagesTable messages={messages} onUpdate={fetchMessages} loading={loading} />
+            <MessagesTable 
+              messages={messages} 
+              onUpdate={fetchMessages} 
+              loading={loading} 
+            />
           </div>
         </div>
       </div>

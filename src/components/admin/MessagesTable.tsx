@@ -19,49 +19,15 @@ type Message = {
   status: "read" | "unread";
 };
 
-export default function MessagesTable() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
+type MessagesTableProps = {
+  messages: Message[] | any[];
+  onUpdate: () => void;
+  loading: boolean;
+};
+
+export default function MessagesTable({ messages = [], onUpdate, loading = false }: MessagesTableProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [replyText, setReplyText] = useState("");
-
-  // Always fetch live data from Supabase.
-  const fetchMessages = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("contact_messages")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        setMessages([]);
-      } else {
-        // Map the rows to Message type
-        const formattedMessages: Message[] = data.map((msg: any) => ({
-          id: msg.id,
-          name: msg.name,
-          email: msg.email,
-          subject: msg.subject,
-          message: msg.message,
-          date: msg.created_at,
-          status: msg.status === "read" ? "read" : "unread",
-        }));
-        setMessages(formattedMessages);
-      }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      toast.error("Failed to load messages");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -76,10 +42,9 @@ export default function MessagesTable() {
 
       if (error) throw error;
 
-      setMessages(messages.map(msg =>
-        msg.id === id ? { ...msg, status: "read" } : msg
-      ));
+      // Update local state
       toast.success("Message marked as read");
+      onUpdate(); // Refresh messages from parent
     } catch (error) {
       console.error("Error updating message status:", error);
       toast.error("Failed to update message status");
@@ -109,10 +74,8 @@ export default function MessagesTable() {
 
       if (error) throw error;
 
-      setMessages(messages.filter(msg => msg.id !== id));
       toast.success("Message deleted");
-      // Optionally refresh from backend in case of race condition
-      fetchMessages();
+      onUpdate(); // Refresh messages from parent
     } catch (error) {
       console.error("Error deleting message:", error);
       toast.error("Failed to delete message");
@@ -156,7 +119,7 @@ export default function MessagesTable() {
                   <TableRow key={message.id}>
                     <TableCell>{message.name}</TableCell>
                     <TableCell>{message.subject}</TableCell>
-                    <TableCell>{formatDate(message.date)}</TableCell>
+                    <TableCell>{formatDate(message.date || message.created_at)}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         message.status === "unread"
@@ -191,7 +154,7 @@ export default function MessagesTable() {
                               <SheetDescription>
                                 From: {selectedMessage?.name} ({selectedMessage?.email})
                                 <br />
-                                Received: {selectedMessage?.date ? formatDate(selectedMessage.date) : ""}
+                                Received: {selectedMessage?.date ? formatDate(selectedMessage.date) : selectedMessage?.created_at ? formatDate(selectedMessage.created_at) : ""}
                               </SheetDescription>
                             </SheetHeader>
                             <div className="py-4">
@@ -245,4 +208,3 @@ export default function MessagesTable() {
     </Card>
   );
 }
-
