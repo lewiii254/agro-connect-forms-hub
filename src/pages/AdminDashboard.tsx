@@ -19,7 +19,9 @@ const AdminDashboard = () => {
     allApplications, 
     loading, 
     fetchApplications, 
-    fetchAdmins 
+    fetchAdmins,
+    updateApplicationStatus,
+    deleteApplication
   } = useAdminApplications(isAuthenticated, isCheckingAuth);
 
   const formatDate = (dateString: string) => {
@@ -30,6 +32,18 @@ const AdminDashboard = () => {
     fetchApplications();
     fetchAdmins();
     toast.success("Data refreshed");
+  };
+
+  const handleApprove = async (appId: string, tableName: string) => {
+    return await updateApplicationStatus(appId, tableName, "approved");
+  };
+
+  const handleReject = async (appId: string, tableName: string) => {
+    return await updateApplicationStatus(appId, tableName, "rejected");
+  };
+
+  const handleDelete = async (appId: string, tableName: string) => {
+    return await deleteApplication(appId, tableName);
   };
 
   // Show loading until auth check is complete
@@ -91,6 +105,9 @@ const AdminDashboard = () => {
               formatDate={formatDate}
               loading={loading}
               onUpdate={fetchApplications}
+              onApprove={handleApprove}
+              onReject={handleReject}
+              onDelete={handleDelete}
             />
           </div>
         </div>

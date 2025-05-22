@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
 import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
 
 import ApplicationsTableActions from "./ApplicationsTableActions";
@@ -16,9 +15,20 @@ type Props = {
   formatDate: (date: string) => string;
   loading: boolean;
   onUpdate?: () => void;
+  onApprove?: (appId: string, tableName: string) => Promise<boolean>;
+  onReject?: (appId: string, tableName: string) => Promise<boolean>;
+  onDelete?: (appId: string, tableName: string) => Promise<boolean>;
 };
 
-export default function ApplicationsTable({ applications, formatDate, loading, onUpdate }: Props) {
+export default function ApplicationsTable({ 
+  applications, 
+  formatDate, 
+  loading, 
+  onUpdate,
+  onApprove,
+  onReject,
+  onDelete
+}: Props) {
   const [selectedApp, setSelectedApp] = useState<ApplicationType | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [localApplications, setLocalApplications] = useState<ApplicationType[]>(applications);
@@ -37,51 +47,67 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
 
   // Typed for Supabase
   const getTableName = (app: ApplicationType) => {
-    if ("product_types" in app) return "agro_dealer_applications" as const;
-    if ("techniques" in app) return "ssp_training_applications" as const;
-    if ("farming_types" in app) return "extension_applications" as const;
+    if ("product_types" in app) return "agro_dealer_applications";
+    if ("techniques" in app) return "ssp_training_applications";
+    if ("farming_types" in app) return "extension_applications";
     return null;
   };
 
-  const updateApplicationStatus = async (app: ApplicationType, status: string) => {
+  const handleApprove = async (app: ApplicationType) => {
     const tableName = getTableName(app);
-    if (!tableName) return false;
+    if (!tableName) {
+      toast.error("Unknown application type, cannot approve");
+      return;
+    }
 
+    setProcessingId(app.id);
     try {
-      setProcessingId(app.id);
-      const { error } = await supabase
-        .from(tableName)
-        .update({ status })
-        .eq("id", app.id);
-
-      if (error) throw error;
-
-      return true;
-    } catch (error) {
-      console.error(`Error updating ${tableName}:`, error);
-      return false;
+      if (onApprove) {
+        const success = await onApprove(app.id, tableName);
+        if (success) {
+          toast.success(`Application from ${app.full_name} has been approved!`);
+          
+          // Update local state immediately to reflect change
+          setLocalApplications(prev => 
+            prev.map(a => a.id === app.id ? { ...a, status: "approved" } : a)
+          );
+        } else {
+          toast.error("Failed to approve application");
+        }
+      } else {
+        toast.error("Approve function not provided");
+      }
     } finally {
       setProcessingId(null);
     }
   };
 
-  const handleApprove = async (app: ApplicationType) => {
-    const success = await updateApplicationStatus(app, "approved");
-    if (success) {
-      toast.success(`Application from ${app.full_name} has been approved!`);
-      if (onUpdate) onUpdate();
-    } else {
-      toast.error("Failed to approve application");
-    }
-  };
-
   const handleReject = async (app: ApplicationType) => {
-    const success = await updateApplicationStatus(app, "rejected");
-    if (success) {
-      toast.success(`Application from ${app.full_name} has been rejected`);
-      if (onUpdate) onUpdate();
-    } else {
-      toast.error("Failed to reject application");
+    const tableName = getTableName(app);
+    if (!tableName) {
+      toast.error("Unknown application type, cannot reject");
+      return;
+    }
+
+    setProcessingId(app.id);
+    try {
+      if (onReject) {
+        const success = await onReject(app.id, tableName);
+        if (success) {
+          toast.success(`Application from ${app.full_name} has been rejected`);
+          
+          // Update local state immediately to reflect change
+          setLocalApplications(prev => 
+            prev.map(a => a.id === app.id ? { ...a, status: "rejected" } : a)
+          );
+        } else {
+          toast.error("Failed to reject application");
+        }
+      } else {
+        toast.error("Reject function not provided");
+      }
+    } finally {
+      setProcessingId(null);
     }
   };
 
@@ -89,45 +115,24 @@ export default function ApplicationsTable({ applications, formatDate, loading, o
     const tableName = getTableName(app);
     if (!tableName) {
       toast.error("Unknown application type, cannot delete");
-      return false;
+      return;
     }
 
+    setProcessingId(app.id);
     try {
-      setProcessingId(app.id);
-      
-      // DEBUG: Log the deletion attempt
-      console.log(`Attempting to delete application with ID ${app.id} from table ${tableName}`);
-      
-      const { error, data } = await supabase
-        .from(tableName)
-        .delete()
-        .eq("id", app.id)
-        .select();
-
-      if (error) {
-        console.error(`Error deleting from ${tableName}:`, error);
-        toast.error("Failed to delete application");
-        return false;
+      if (onDelete) {
+        const success = await onDelete(app.id, tableName);
+        if (success) {
+          toast.success(`Application from ${app.full_name} has been deleted`);
+          
+          // Update local state immediately to reflect deletion
+          setLocalApplications(prev => prev.filter(a => a.id !== app.id));
+        } else {
+          toast.error("Failed to delete application");
+        }
+      } else {
+        toast.error("Delete function not provided");
       }
-
-      // DEBUG: Log success and response data
-      console.log(`Deletion successful, response:`, data);
-      
-      // Update local state immediately to reflect deletion
-      setLocalApplications(prev => prev.filter(a => a.id !== app.id));
-      
-      // Also call onUpdate to refresh the data from parent
-      if (onUpdate) {
-        console.log("Calling onUpdate to refresh parent data");
-        onUpdate();
-      }
-      
-      toast.success(`Application from ${app.full_name} has been deleted`);
-      return true;
-    } catch (error) {
-      console.error(`Unexpected error deleting from ${tableName}:`, error);
-      toast.error("Failed to delete application");
-      return false;
     } finally {
       setProcessingId(null);
     }

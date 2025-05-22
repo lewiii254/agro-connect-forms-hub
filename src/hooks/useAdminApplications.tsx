@@ -78,6 +78,57 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     setLoading(false);
   };
 
+  // Function to update application status
+  const updateApplicationStatus = async (appId: string, tableName: string, status: string) => {
+    try {
+      const { error } = await supabase
+        .from(tableName)
+        .update({ status })
+        .eq("id", appId);
+
+      if (error) {
+        console.error(`Error updating ${tableName}:`, error);
+        toast.error(`Failed to update application status: ${error.message}`);
+        return false;
+      }
+      
+      console.log(`Successfully updated application ${appId} in ${tableName} to ${status}`);
+      // Refresh data after successful update
+      await fetchApplications();
+      return true;
+    } catch (error) {
+      console.error(`Error in updateApplicationStatus:`, error);
+      toast.error("An unexpected error occurred while updating the application");
+      return false;
+    }
+  };
+
+  // Function to delete application
+  const deleteApplication = async (appId: string, tableName: string) => {
+    try {
+      console.log(`Attempting to delete application ${appId} from ${tableName}`);
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq("id", appId);
+
+      if (error) {
+        console.error(`Error deleting from ${tableName}:`, error);
+        toast.error(`Failed to delete application: ${error.message}`);
+        return false;
+      }
+      
+      console.log(`Successfully deleted application ${appId} from ${tableName}`);
+      // Refresh data after successful deletion
+      await fetchApplications();
+      return true;
+    } catch (error) {
+      console.error(`Error in deleteApplication:`, error);
+      toast.error("An unexpected error occurred while deleting the application");
+      return false;
+    }
+  };
+
   const fetchAdmins = async () => {
     try {
       const { data: roles, error: rolesError } = await supabase
@@ -127,6 +178,8 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     extensionApps,
     loading,
     fetchApplications,
-    fetchAdmins
+    fetchAdmins,
+    updateApplicationStatus,
+    deleteApplication
   };
 };
