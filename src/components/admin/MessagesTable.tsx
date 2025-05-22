@@ -15,7 +15,8 @@ type Message = {
   email: string;
   subject: string;
   message: string;
-  date: string;
+  date?: string;
+  created_at?: string; // Add this property to fix the TypeScript error
   status: "read" | "unread";
 };
 
