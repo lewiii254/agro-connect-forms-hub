@@ -5,6 +5,8 @@ export type AdminUser = {
   invited_at: string | null;
 };
 
+export type ApplicationTableName = "agro_dealer_applications" | "ssp_training_applications" | "extension_applications";
+
 export type ApplicationBase = {
   id: string;
   created_at: string;

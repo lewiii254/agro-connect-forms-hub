@@ -10,6 +10,7 @@ import { RefreshCw, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminAuthentication } from "@/hooks/useAdminAuthentication";
 import { useAdminApplications } from "@/hooks/useAdminApplications";
+import type { ApplicationTableName } from "@/types/admin";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -34,15 +35,30 @@ const AdminDashboard = () => {
     toast.success("Data refreshed");
   };
 
-  const handleApprove = async (appId: string, tableName: string) => {
+  const getTableName = (appId: string): ApplicationTableName => {
+    // Find the application in our data and determine its type
+    const app = allApplications.find(app => app.id === appId);
+    if (!app) return "agro_dealer_applications"; // Default fallback
+
+    if ("product_types" in app) return "agro_dealer_applications";
+    if ("techniques" in app) return "ssp_training_applications";
+    if ("farming_types" in app) return "extension_applications";
+    
+    return "agro_dealer_applications"; // Default fallback
+  };
+
+  const handleApprove = async (appId: string) => {
+    const tableName = getTableName(appId);
     return await updateApplicationStatus(appId, tableName, "approved");
   };
 
-  const handleReject = async (appId: string, tableName: string) => {
+  const handleReject = async (appId: string) => {
+    const tableName = getTableName(appId);
     return await updateApplicationStatus(appId, tableName, "rejected");
   };
 
-  const handleDelete = async (appId: string, tableName: string) => {
+  const handleDelete = async (appId: string) => {
+    const tableName = getTableName(appId);
     return await deleteApplication(appId, tableName);
   };
 

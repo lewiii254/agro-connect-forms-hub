@@ -2,10 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
-import type { AdminUser, AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
-
-// Define a type for valid table names
-type ApplicationTableName = "agro_dealer_applications" | "ssp_training_applications" | "extension_applications";
+import type { AdminUser, AgroDealerApplication, SSPTrainingApplication, ExtensionApplication, ApplicationTableName } from "@/types/admin";
 
 export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: boolean) => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);

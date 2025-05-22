@@ -1,23 +1,23 @@
+
 import { useState, useEffect } from "react";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
-import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
+import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication, ApplicationTableName } from "@/types/admin";
 
 import ApplicationsTableActions from "./ApplicationsTableActions";
 import ApplicationsTableDetailsSheet from "./ApplicationsTableDetailsSheet";
 
 type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
-type ApplicationTableName = "agro_dealer_applications" | "ssp_training_applications" | "extension_applications";
 
 type Props = {
   applications: ApplicationType[];
   formatDate: (date: string) => string;
   loading: boolean;
   onUpdate?: () => void;
-  onApprove?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
-  onReject?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
-  onDelete?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
+  onApprove?: (appId: string) => Promise<boolean>;
+  onReject?: (appId: string) => Promise<boolean>;
+  onDelete?: (appId: string) => Promise<boolean>;
 };
 
 export default function ApplicationsTable({ 
@@ -45,21 +45,12 @@ export default function ApplicationsTable({
     return "Unknown";
   };
 
-  // Typed for Supabase
-  const getTableName = (app: ApplicationType): ApplicationTableName => {
-    if ("product_types" in app) return "agro_dealer_applications";
-    if ("techniques" in app) return "ssp_training_applications";
-    if ("farming_types" in app) return "extension_applications";
-    throw new Error("Unknown application type");
-  };
-
   const handleApprove = async (app: ApplicationType) => {
     try {
-      const tableName = getTableName(app);
       setProcessingId(app.id);
       
       if (onApprove) {
-        const success = await onApprove(app.id, tableName);
+        const success = await onApprove(app.id);
         if (success) {
           toast.success(`Application from ${app.full_name} has been approved!`);
           
@@ -83,11 +74,10 @@ export default function ApplicationsTable({
 
   const handleReject = async (app: ApplicationType) => {
     try {
-      const tableName = getTableName(app);
       setProcessingId(app.id);
       
       if (onReject) {
-        const success = await onReject(app.id, tableName);
+        const success = await onReject(app.id);
         if (success) {
           toast.success(`Application from ${app.full_name} has been rejected`);
           
@@ -111,11 +101,10 @@ export default function ApplicationsTable({
 
   const handleDelete = async (app: ApplicationType) => {
     try {
-      const tableName = getTableName(app);
       setProcessingId(app.id);
       
       if (onDelete) {
-        const success = await onDelete(app.id, tableName);
+        const success = await onDelete(app.id);
         if (success) {
           toast.success(`Application from ${app.full_name} has been deleted`);
           
