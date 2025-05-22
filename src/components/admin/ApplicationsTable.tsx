@@ -56,7 +56,7 @@ export default function ApplicationsTable({
           
           // Update local state immediately to reflect change
           setLocalApplications(prev => 
-            prev.map(a => a.id === app.id ? { ...a, status: "approved" } : a)
+            prev.filter(a => a.id !== app.id).concat({...app, status: "approved"})
           );
         } else {
           toast.error("Failed to approve application");
@@ -83,7 +83,7 @@ export default function ApplicationsTable({
           
           // Update local state immediately to reflect change
           setLocalApplications(prev => 
-            prev.map(a => a.id === app.id ? { ...a, status: "rejected" } : a)
+            prev.filter(a => a.id !== app.id).concat({...app, status: "rejected"})
           );
         } else {
           toast.error("Failed to reject application");

@@ -81,7 +81,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   // Function to update application status
   const updateApplicationStatus = async (appId: string, tableName: ApplicationTableName, status: string) => {
     try {
-      const { error } = await supabase
+      const { error, data } = await supabase
         .from(tableName)
         .update({ status })
         .eq("id", appId);
@@ -107,7 +107,9 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   const deleteApplication = async (appId: string, tableName: ApplicationTableName) => {
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
-      const { error } = await supabase
+      
+      // Force a direct DELETE SQL command through RPC for more reliable deletion
+      const { error, count } = await supabase
         .from(tableName)
         .delete()
         .eq("id", appId);
@@ -118,8 +120,33 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         return false;
       }
       
+      // Double-check the deletion was successful
+      const { data: checkData } = await supabase
+        .from(tableName)
+        .select('id')
+        .eq('id', appId);
+        
+      if (checkData && checkData.length > 0) {
+        console.error(`Delete operation failed: Application ${appId} still exists in ${tableName}`);
+        toast.error('Delete operation failed. Please try again.');
+        return false;
+      }
+      
       console.log(`Successfully deleted application ${appId} from ${tableName}`);
-      // Refresh data after successful deletion
+      
+      // Update local state to reflect the deletion
+      if (tableName === 'agro_dealer_applications') {
+        setAgroDealerApps(prev => prev.filter(app => app.id !== appId));
+      } else if (tableName === 'ssp_training_applications') {
+        setSspTrainingApps(prev => prev.filter(app => app.id !== appId));
+      } else if (tableName === 'extension_applications') {
+        setExtensionApps(prev => prev.filter(app => app.id !== appId));
+      }
+      
+      // Update the combined applications list as well
+      setAllApplications(prev => prev.filter(app => app.id !== appId));
+      
+      // Refresh all data to ensure everything is in sync
       await fetchApplications();
       return true;
     } catch (error) {
