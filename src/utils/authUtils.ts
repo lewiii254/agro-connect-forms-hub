@@ -22,4 +22,6 @@ export const cleanupAuthState = () => {
       }
     });
   }
+  
+  console.log("Auth state cleaned up");
 };

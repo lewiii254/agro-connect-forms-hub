@@ -31,7 +31,7 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
       // Clean up any existing auth state
       cleanupAuthState();
       
-      // First attempt to sign up the user - Supabase will handle checking for existing emails
+      // First attempt to sign up the user
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -43,7 +43,6 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
       });
 
       if (signUpError) {
-        // This will catch if the email already exists
         toast.error(signUpError.message);
         setIsLoading(false);
         return;
@@ -55,16 +54,27 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
         return;
       }
 
-      // Call the edge function to assign admin role
-      const { data: assignRoleData, error: assignRoleError } = await supabase.functions.invoke('assign-admin-role', {
-        body: {
-          userId: signUpData.user.id
-        }
-      });
+      console.log("User registered successfully:", signUpData.user.id);
 
-      if (assignRoleError) {
-        console.error("Role assignment error:", assignRoleError);
-        toast.error(`Failed to assign admin role: ${assignRoleError.message || assignRoleError.name || "Unknown error"}`);
+      // Call the edge function to assign admin role
+      try {
+        const { data: assignRoleData, error: assignRoleError } = await supabase.functions.invoke('assign-admin-role', {
+          body: {
+            userId: signUpData.user.id
+          }
+        });
+
+        if (assignRoleError) {
+          console.error("Role assignment error:", assignRoleError);
+          toast.error(`Failed to assign admin role: ${assignRoleError.message || "Unknown error"}`);
+          // Continue anyway since the user was created
+        } else {
+          console.log("Admin role assigned:", assignRoleData);
+        }
+      } catch (roleError: any) {
+        console.error("Exception during role assignment:", roleError);
+        toast.error(`Error assigning role: ${roleError.message || "Unknown error"}`);
+        // Continue anyway since the user was created
       }
 
       toast.success("Registration successful! Please confirm your email to log in.");
