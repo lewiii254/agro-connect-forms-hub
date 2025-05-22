@@ -12,12 +12,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
+
+type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
 
 type ActionsProps = {
-  app: any;
-  onApprove: (app: any) => void;
-  onReject: (app: any) => void;
-  onDelete: (app: any) => void;
+  app: ApplicationType;
+  onApprove: (app: ApplicationType) => void;
+  onReject: (app: ApplicationType) => void;
+  onDelete: (app: ApplicationType) => void;
   processingId: string | null;
 };
 

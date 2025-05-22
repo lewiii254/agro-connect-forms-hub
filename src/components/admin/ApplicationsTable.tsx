@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,15 +8,16 @@ import ApplicationsTableActions from "./ApplicationsTableActions";
 import ApplicationsTableDetailsSheet from "./ApplicationsTableDetailsSheet";
 
 type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
+type ApplicationTableName = "agro_dealer_applications" | "ssp_training_applications" | "extension_applications";
 
 type Props = {
   applications: ApplicationType[];
   formatDate: (date: string) => string;
   loading: boolean;
   onUpdate?: () => void;
-  onApprove?: (appId: string, tableName: string) => Promise<boolean>;
-  onReject?: (appId: string, tableName: string) => Promise<boolean>;
-  onDelete?: (appId: string, tableName: string) => Promise<boolean>;
+  onApprove?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
+  onReject?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
+  onDelete?: (appId: string, tableName: ApplicationTableName) => Promise<boolean>;
 };
 
 export default function ApplicationsTable({ 
@@ -46,22 +46,18 @@ export default function ApplicationsTable({
   };
 
   // Typed for Supabase
-  const getTableName = (app: ApplicationType) => {
+  const getTableName = (app: ApplicationType): ApplicationTableName => {
     if ("product_types" in app) return "agro_dealer_applications";
     if ("techniques" in app) return "ssp_training_applications";
     if ("farming_types" in app) return "extension_applications";
-    return null;
+    throw new Error("Unknown application type");
   };
 
   const handleApprove = async (app: ApplicationType) => {
-    const tableName = getTableName(app);
-    if (!tableName) {
-      toast.error("Unknown application type, cannot approve");
-      return;
-    }
-
-    setProcessingId(app.id);
     try {
+      const tableName = getTableName(app);
+      setProcessingId(app.id);
+      
       if (onApprove) {
         const success = await onApprove(app.id, tableName);
         if (success) {
@@ -77,20 +73,19 @@ export default function ApplicationsTable({
       } else {
         toast.error("Approve function not provided");
       }
+    } catch (error) {
+      console.error("Error in handleApprove:", error);
+      toast.error("An error occurred while approving the application");
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleReject = async (app: ApplicationType) => {
-    const tableName = getTableName(app);
-    if (!tableName) {
-      toast.error("Unknown application type, cannot reject");
-      return;
-    }
-
-    setProcessingId(app.id);
     try {
+      const tableName = getTableName(app);
+      setProcessingId(app.id);
+      
       if (onReject) {
         const success = await onReject(app.id, tableName);
         if (success) {
@@ -106,20 +101,19 @@ export default function ApplicationsTable({
       } else {
         toast.error("Reject function not provided");
       }
+    } catch (error) {
+      console.error("Error in handleReject:", error);
+      toast.error("An error occurred while rejecting the application");
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleDelete = async (app: ApplicationType) => {
-    const tableName = getTableName(app);
-    if (!tableName) {
-      toast.error("Unknown application type, cannot delete");
-      return;
-    }
-
-    setProcessingId(app.id);
     try {
+      const tableName = getTableName(app);
+      setProcessingId(app.id);
+      
       if (onDelete) {
         const success = await onDelete(app.id, tableName);
         if (success) {
@@ -133,6 +127,9 @@ export default function ApplicationsTable({
       } else {
         toast.error("Delete function not provided");
       }
+    } catch (error) {
+      console.error("Error in handleDelete:", error);
+      toast.error("An error occurred while deleting the application");
     } finally {
       setProcessingId(null);
     }

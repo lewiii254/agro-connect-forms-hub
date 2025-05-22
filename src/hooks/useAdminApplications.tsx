@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import type { AdminUser, AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
 
+// Define a type for valid table names
+type ApplicationTableName = "agro_dealer_applications" | "ssp_training_applications" | "extension_applications";
+
 export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: boolean) => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [allApplications, setAllApplications] = useState<(AgroDealerApplication | SSPTrainingApplication | ExtensionApplication)[]>([]);
@@ -79,7 +82,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   };
 
   // Function to update application status
-  const updateApplicationStatus = async (appId: string, tableName: string, status: string) => {
+  const updateApplicationStatus = async (appId: string, tableName: ApplicationTableName, status: string) => {
     try {
       const { error } = await supabase
         .from(tableName)
@@ -104,7 +107,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   };
 
   // Function to delete application
-  const deleteApplication = async (appId: string, tableName: string) => {
+  const deleteApplication = async (appId: string, tableName: ApplicationTableName) => {
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
       const { error } = await supabase
