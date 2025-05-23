@@ -81,7 +81,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   // Function to update application status
   const updateApplicationStatus = async (appId: string, tableName: ApplicationTableName, status: string) => {
     try {
-      const { error, data } = await supabase
+      const { error } = await supabase
         .from(tableName)
         .update({ status })
         .eq("id", appId);
@@ -93,8 +93,27 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       }
       
       console.log(`Successfully updated application ${appId} in ${tableName} to ${status}`);
-      // Refresh data after successful update
-      await fetchApplications();
+      
+      // Update local state immediately based on table type
+      if (tableName === 'agro_dealer_applications') {
+        setAgroDealerApps(prev => 
+          prev.map(app => app.id === appId ? {...app, status} : app)
+        );
+      } else if (tableName === 'ssp_training_applications') {
+        setSspTrainingApps(prev => 
+          prev.map(app => app.id === appId ? {...app, status} : app)
+        );
+      } else if (tableName === 'extension_applications') {
+        setExtensionApps(prev => 
+          prev.map(app => app.id === appId ? {...app, status} : app)
+        );
+      }
+      
+      // Update the combined applications list as well
+      setAllApplications(prev => 
+        prev.map(app => app.id === appId ? {...app, status} : app)
+      );
+      
       return true;
     } catch (error) {
       console.error(`Error in updateApplicationStatus:`, error);
@@ -103,24 +122,24 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     }
   };
 
-  // Function to delete application
+  // Function to delete application - improved for reliability
   const deleteApplication = async (appId: string, tableName: ApplicationTableName) => {
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
       
-      // Force a direct DELETE SQL command through RPC for more reliable deletion
-      const { error, count } = await supabase
+      // Use a direct deletion approach with proper error handling
+      const { error } = await supabase
         .from(tableName)
         .delete()
-        .eq("id", appId);
-
+        .match({ id: appId }); // Using match for more explicit equality condition
+      
       if (error) {
         console.error(`Error deleting from ${tableName}:`, error);
         toast.error(`Failed to delete application: ${error.message}`);
         return false;
       }
       
-      // Double-check the deletion was successful
+      // Verify the deletion to ensure it was successful
       const { data: checkData } = await supabase
         .from(tableName)
         .select('id')
@@ -134,7 +153,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       
       console.log(`Successfully deleted application ${appId} from ${tableName}`);
       
-      // Update local state to reflect the deletion
+      // Update local state to reflect the deletion based on table type
       if (tableName === 'agro_dealer_applications') {
         setAgroDealerApps(prev => prev.filter(app => app.id !== appId));
       } else if (tableName === 'ssp_training_applications') {
@@ -146,8 +165,6 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       // Update the combined applications list as well
       setAllApplications(prev => prev.filter(app => app.id !== appId));
       
-      // Refresh all data to ensure everything is in sync
-      await fetchApplications();
       return true;
     } catch (error) {
       console.error(`Error in deleteApplication:`, error);
