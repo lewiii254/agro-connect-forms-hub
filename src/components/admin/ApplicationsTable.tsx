@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { Table, TableHead, TableRow, TableCell, TableHeader, TableBody } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { View } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication, ApplicationTableName } from "@/types/admin";
+import type { AgroDealerApplication, SSPTrainingApplication, ExtensionApplication } from "@/types/admin";
 
 import ApplicationsTableActions from "./ApplicationsTableActions";
-import ApplicationsTableDetailsSheet from "./ApplicationsTableDetailsSheet";
+import ApplicationDetailsModal from "./ApplicationDetailsModal";
 
 type ApplicationType = AgroDealerApplication | SSPTrainingApplication | ExtensionApplication;
 
@@ -30,6 +32,7 @@ export default function ApplicationsTable({
   onDelete
 }: Props) {
   const [selectedApp, setSelectedApp] = useState<ApplicationType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [localApplications, setLocalApplications] = useState<ApplicationType[]>(applications);
 
@@ -43,6 +46,11 @@ export default function ApplicationsTable({
     if ("techniques" in app) return "SSP Training";
     if ("farming_types" in app) return "Extension Services";
     return "Unknown";
+  };
+
+  const handleOpenDetails = (app: ApplicationType) => {
+    setSelectedApp(app);
+    setIsModalOpen(true);
   };
 
   const handleApprove = async (app: ApplicationType) => {
@@ -110,6 +118,12 @@ export default function ApplicationsTable({
           
           // Update local state immediately to reflect deletion
           setLocalApplications(prev => prev.filter(a => a.id !== app.id));
+          
+          // Close modal if the deleted app was being viewed
+          if (selectedApp && selectedApp.id === app.id) {
+            setIsModalOpen(false);
+            setSelectedApp(null);
+          }
         } else {
           toast.error("Failed to delete application");
         }
@@ -133,67 +147,82 @@ export default function ApplicationsTable({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl text-emerald-800">Applications</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-sky-100">
-              <TableRow>
-                <TableHead>Applicant Name</TableHead>
-                <TableHead>Service Requested</TableHead>
-                <TableHead>Date Submitted</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {localApplications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell>{app.full_name}</TableCell>
-                  <TableCell>{getServiceType(app)}</TableCell>
-                  <TableCell>{formatDate(app.created_at).split(",")[0]}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      app.status === "approved"
-                        ? "bg-green-100 text-green-800"
-                        : app.status === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                    }`}>
-                      {app.status
-                        ? app.status.charAt(0).toUpperCase() + app.status.slice(1)
-                        : "Pending"}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <ApplicationsTableDetailsSheet
-                        app={app}
-                        selectedApp={selectedApp}
-                        setSelectedApp={setSelectedApp}
-                        formatDate={formatDate}
-                        onApprove={handleApprove}
-                        onReject={handleReject}
-                        processingId={processingId}
-                      />
-                      <ApplicationsTableActions
-                        app={app}
-                        onApprove={handleApprove}
-                        onReject={handleReject}
-                        onDelete={handleDelete}
-                        processingId={processingId}
-                      />
-                    </div>
-                  </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl text-emerald-800">Applications</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-sky-100">
+                <TableRow>
+                  <TableHead>Applicant Name</TableHead>
+                  <TableHead>Service Requested</TableHead>
+                  <TableHead>Date Submitted</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {localApplications.map((app) => (
+                  <TableRow key={app.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOpenDetails(app)}>
+                    <TableCell>{app.full_name}</TableCell>
+                    <TableCell>{getServiceType(app)}</TableCell>
+                    <TableCell>{formatDate(app.created_at).split(",")[0]}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        app.status === "approved"
+                          ? "bg-green-100 text-green-800"
+                          : app.status === "rejected"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                      }`}>
+                        {app.status
+                          ? app.status.charAt(0).toUpperCase() + app.status.slice(1)
+                          : "Pending"}
+                      </span>
+                    </TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenDetails(app);
+                          }}
+                        >
+                          <View size={16} />
+                          View
+                        </Button>
+                        <ApplicationsTableActions
+                          app={app}
+                          onApprove={handleApprove}
+                          onReject={handleReject}
+                          onDelete={handleDelete}
+                          processingId={processingId}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <ApplicationDetailsModal
+        app={selectedApp}
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        formatDate={formatDate}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        processingId={processingId}
+      />
+    </>
   );
 }
