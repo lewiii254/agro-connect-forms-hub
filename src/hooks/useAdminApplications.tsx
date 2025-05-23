@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
@@ -126,11 +127,13 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
       
-      // Use RPC (stored procedure) approach for more reliable deletion
-      // This executes a direct SQL delete command on the server
-      const { data, error } = await supabase.rpc('delete_application', { 
-        app_id: appId, 
-        table_name: tableName 
+      // Use direct POST request to call the function instead of typed rpc method
+      // This avoids TypeScript errors since the function is new and not in the types
+      const { data, error } = await supabase.functions.invoke('delete-application-wrapper', {
+        body: { 
+          app_id: appId, 
+          table_name: tableName 
+        }
       });
       
       if (error) {
