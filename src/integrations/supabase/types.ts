@@ -251,6 +251,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_application: {
+        Args: { app_id: string; table_name: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _user_id: string

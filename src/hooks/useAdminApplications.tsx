@@ -128,7 +128,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       
       // Use RPC (stored procedure) approach for more reliable deletion
       // This executes a direct SQL delete command on the server
-      const { error } = await supabase.rpc('delete_application', { 
+      const { data, error } = await supabase.rpc('delete_application', { 
         app_id: appId, 
         table_name: tableName 
       });
