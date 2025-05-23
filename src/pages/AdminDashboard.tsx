@@ -1,132 +1,152 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
-import { toast } from "@/components/ui/sonner";
-import DashboardHeader from "@/components/admin/DashboardHeader";
-import StatisticsCard from "@/components/admin/StatisticsCard";
-import ApplicationsTable from "@/components/admin/ApplicationsTable";
-import { RefreshCw, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAdminAuthentication } from "@/hooks/useAdminAuthentication";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAdminApplications } from "@/hooks/useAdminApplications";
-import type { ApplicationTableName } from "@/types/admin";
+import { formatDate } from "@/utils/formatDate";
+import Layout from "@/components/layout/Layout";
+import DashboardHeader from "@/components/admin/DashboardHeader";
+import ApplicationsTable from "@/components/admin/ApplicationsTable";
+import ApplicationsChart from "@/components/admin/ApplicationsChart";
+import ApplicationsStatusChart from "@/components/admin/ApplicationsStatusChart";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  
-  const { isAuthenticated, isCheckingAuth } = useAdminAuthentication(navigate);
+  const { isAuthenticated, isCheckingAuth } = useAuth();
   const { 
-    allApplications, 
-    loading, 
-    fetchApplications, 
+    admins,
+    allApplications,
+    agroDealerApps,
+    sspTrainingApps,
+    extensionApps,
+    loading,
+    fetchApplications,
     fetchAdmins,
     updateApplicationStatus,
     deleteApplication
   } = useAdminApplications(isAuthenticated, isCheckingAuth);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
-  };
-
-  const handleRefresh = () => {
-    fetchApplications();
-    fetchAdmins();
-    toast.success("Data refreshed");
-  };
-
-  const getTableName = (appId: string): ApplicationTableName => {
-    // Find the application in our data and determine its type
-    const app = allApplications.find(app => app.id === appId);
-    if (!app) return "agro_dealer_applications"; // Default fallback
-
-    if ("product_types" in app) return "agro_dealer_applications";
-    if ("techniques" in app) return "ssp_training_applications";
-    if ("farming_types" in app) return "extension_applications";
-    
-    return "agro_dealer_applications"; // Default fallback
-  };
+  useEffect(() => {
+    if (!isCheckingAuth && !isAuthenticated) {
+      navigate("/admin/login");
+    }
+  }, [isAuthenticated, isCheckingAuth, navigate]);
 
   const handleApprove = async (appId: string) => {
-    const tableName = getTableName(appId);
+    const app = allApplications.find(app => app.id === appId);
+    if (!app) {
+      console.error("Application not found");
+      return false;
+    }
+
+    let tableName: string;
+    if ("product_types" in app) {
+      tableName = "agro_dealer_applications";
+    } else if ("techniques" in app) {
+      tableName = "ssp_training_applications";
+    } else if ("farming_types" in app) {
+      tableName = "extension_applications";
+    } else {
+      console.error("Unknown application type");
+      return false;
+    }
+
     return await updateApplicationStatus(appId, tableName, "approved");
   };
 
   const handleReject = async (appId: string) => {
-    const tableName = getTableName(appId);
+    const app = allApplications.find(app => app.id === appId);
+    if (!app) {
+      console.error("Application not found");
+      return false;
+    }
+
+    let tableName: string;
+    if ("product_types" in app) {
+      tableName = "agro_dealer_applications";
+    } else if ("techniques" in app) {
+      tableName = "ssp_training_applications";
+    } else if ("farming_types" in app) {
+      tableName = "extension_applications";
+    } else {
+      console.error("Unknown application type");
+      return false;
+    }
+
     return await updateApplicationStatus(appId, tableName, "rejected");
   };
 
   const handleDelete = async (appId: string) => {
-    const tableName = getTableName(appId);
+    const app = allApplications.find(app => app.id === appId);
+    if (!app) {
+      console.error("Application not found");
+      return false;
+    }
+
+    let tableName: string;
+    if ("product_types" in app) {
+      tableName = "agro_dealer_applications";
+    } else if ("techniques" in app) {
+      tableName = "ssp_training_applications";
+    } else if ("farming_types" in app) {
+      tableName = "extension_applications";
+    } else {
+      console.error("Unknown application type");
+      return false;
+    }
+
     return await deleteApplication(appId, tableName);
   };
 
-  // Show loading until auth check is complete
   if (isCheckingAuth) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <p className="text-lg">Loading admin dashboard...</p>
-        </div>
-      </Layout>
-    );
+    return <div>Loading...</div>;
   }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const agroDealerCount = agroDealerApps.length;
+  const sspTrainingCount = sspTrainingApps.length;
+  const extensionCount = extensionApps.length;
+
+  const pendingApplicationsCount = allApplications.filter(
+    app => !app.status || app.status === 'pending'
+  ).length;
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
-        <DashboardHeader activeTab="applications" />
-        
-        <div className="container mx-auto px-4 pb-8">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-emerald-800">Applications Management</h2>
-              <p className="text-gray-600 mt-1">Review and process user applications</p>
-            </div>
-            <div className="flex space-x-4">
-              <Button variant="outline" className="flex items-center gap-1" onClick={handleRefresh}>
-                <RefreshCw size={18} />
-                Refresh Data
-              </Button>
+      <DashboardHeader activeTab="applications" unreadCount={pendingApplicationsCount} />
+
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-white shadow rounded-md p-4">
+            <h2 className="text-lg font-semibold mb-2 text-emerald-700">Application Types</h2>
+            <div style={{ width: '100%', height: '300px' }}>
+              <ApplicationsChart
+                agroDealerCount={agroDealerCount}
+                sspTrainingCount={sspTrainingCount}
+                extensionCount={extensionCount}
+              />
             </div>
           </div>
-          
-          {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <StatisticsCard 
-              title="Total Applications" 
-              value={allApplications.length} 
-              color="bg-emerald-600"
-              icon={<FileText size={24} />}
-            />
-            <StatisticsCard 
-              title="Pending Review" 
-              value={allApplications.filter(app => !app.status || app.status === 'pending').length} 
-              color="bg-amber-500"
-              icon={<FileText size={24} />}
-            />
-            <StatisticsCard 
-              title="Processed" 
-              value={allApplications.filter(app => app.status === 'approved' || app.status === 'rejected').length} 
-              color="bg-blue-500" 
-              icon={<FileText size={24} />}
-            />
-          </div>
-          
-          {/* Applications Table */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm">
-            <ApplicationsTable 
-              applications={allApplications}
-              formatDate={formatDate}
-              loading={loading}
-              onUpdate={fetchApplications}
-              onApprove={handleApprove}
-              onReject={handleReject}
-              onDelete={handleDelete}
-            />
+
+          <div className="bg-white shadow rounded-md p-4">
+            <h2 className="text-lg font-semibold mb-2 text-emerald-700">Application Status</h2>
+            <div style={{ width: '100%', height: '300px' }}>
+              <ApplicationsStatusChart applications={allApplications} />
+            </div>
           </div>
         </div>
+
+        <ApplicationsTable 
+          applications={allApplications} 
+          formatDate={formatDate}
+          loading={loading}
+          onUpdate={fetchApplications}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onDelete={handleDelete}
+        />
       </div>
     </Layout>
   );

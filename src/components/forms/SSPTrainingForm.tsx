@@ -50,55 +50,80 @@ const SSPTrainingForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const sendAdminNotification = async (applicantName: string, applicationId: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("send-admin-notification", {
+        body: {
+          applicantName,
+          applicationType: "SSP Training",
+          applicationId,
+        },
+      });
+      
+      if (error) {
+        console.error("Failed to send admin notification:", error);
+      } else {
+        console.log("Admin notification sent successfully");
+      }
+    } catch (err) {
+      console.error("Error sending admin notification:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  try {
-    const insertData = {
-      full_name: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
-      location: formData.location,
-      experience: formData.experience,
-      previous_training: formData.previousTraining,
-      techniques: formData.techniques,
-      other_technique: formData.otherTechnique || null,
-      area_size: formData.areaSize || null,
-      people_count: formData.peopleCount || null,
-      preferred_date: formData.preferredDate
-        ? formData.preferredDate.toISOString().split("T")[0]
-        : null,
-      challenges: formData.challenges || null,
-      referral_source: formData.referralSource || null,
-      other_referral_source: formData.otherReferralSource || null,
-    };
+    try {
+      const insertData = {
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        location: formData.location,
+        experience: formData.experience,
+        previous_training: formData.previousTraining,
+        techniques: formData.techniques,
+        other_technique: formData.otherTechnique || null,
+        area_size: formData.areaSize || null,
+        people_count: formData.peopleCount || null,
+        preferred_date: formData.preferredDate
+          ? formData.preferredDate.toISOString().split("T")[0]
+          : null,
+        challenges: formData.challenges || null,
+        referral_source: formData.referralSource || null,
+        other_referral_source: formData.otherReferralSource || null,
+      };
 
-    const { error } = await supabase.from("ssp_training_applications").insert([insertData]);
-    if (error) throw error;
+      const { data, error } = await supabase.from("ssp_training_applications").insert([insertData]).select();
+      if (error) throw error;
 
-    toast.success("Application submitted successfully! We'll contact you soon.");
+      // Send notification to admin users
+      if (data && data[0]) {
+        await sendAdminNotification(formData.fullName, data[0].id);
+      }
 
-    setFormData({
-      fullName: "",
-      email: "",
-      phone: "",
-      location: "",
-      experience: "",
-      previousTraining: false,
-      techniques: [],
-      areaSize: "",
-      peopleCount: "",
-      challenges: "",
-      referralSource: "",
-    });
-  } catch (error: any) {
-    toast.error("There was an error submitting your application. Please try again.");
-    console.error("Form submission error:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      toast.success("Application submitted successfully! We'll contact you soon.");
+
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        location: "",
+        experience: "",
+        previousTraining: false,
+        techniques: [],
+        areaSize: "",
+        peopleCount: "",
+        challenges: "",
+        referralSource: "",
+      });
+    } catch (error: any) {
+      toast.error("There was an error submitting your application. Please try again.");
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,7 +138,7 @@ const SSPTrainingForm = () => {
         id="email" 
         label="Email Address" 
         required 
-        onChange={(value) => updateFormData("email", value)}
+        onChange={(value)  => updateFormData("email", value)}
       />
       
       <PhoneInput 

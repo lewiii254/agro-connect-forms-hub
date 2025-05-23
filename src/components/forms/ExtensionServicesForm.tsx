@@ -50,6 +50,26 @@ const ExtensionServicesForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const sendAdminNotification = async (applicantName: string, applicationId: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("send-admin-notification", {
+        body: {
+          applicantName,
+          applicationType: "Extension Services",
+          applicationId,
+        },
+      });
+      
+      if (error) {
+        console.error("Failed to send admin notification:", error);
+      } else {
+        console.log("Admin notification sent successfully");
+      }
+    } catch (err) {
+      console.error("Error sending admin notification:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsSubmitting(true);
@@ -75,8 +95,13 @@ const ExtensionServicesForm = () => {
       other_referral_source: formData.otherReferralSource || null,
     };
 
-    const { error } = await supabase.from("extension_applications").insert([insertData]);
-    if (error) throw error;
+      const { data, error } = await supabase.from("extension_applications").insert([insertData]).select();
+      if (error) throw error;
+
+      // Send notification to admin users
+      if (data && data[0]) {
+        await sendAdminNotification(formData.fullName, data[0].id);
+      }
 
     toast.success("Application submitted successfully! We'll contact you soon.");
 

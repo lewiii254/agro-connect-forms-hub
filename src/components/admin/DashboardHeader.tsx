@@ -1,12 +1,13 @@
 
 import { Link } from "react-router-dom";
-import { LayoutDashboard, FileText, MessageSquare, BarChart3 } from "lucide-react";
+import { LayoutDashboard, FileText, MessageSquare, BarChart3, Bell } from "lucide-react";
 
 type DashboardHeaderProps = {
   activeTab: "applications" | "messages" | "analytics";
+  unreadCount?: number;
 };
 
-export default function DashboardHeader({ activeTab }: DashboardHeaderProps) {
+export default function DashboardHeader({ activeTab, unreadCount = 0 }: DashboardHeaderProps) {
   return (
     <header className="bg-white border-b">
       <div className="container mx-auto px-4">
@@ -15,6 +16,13 @@ export default function DashboardHeader({ activeTab }: DashboardHeaderProps) {
             <h1 className="text-2xl font-bold text-emerald-800">Admin Dashboard</h1>
             <p className="text-gray-600">Manage applications and platform services</p>
           </div>
+          
+          {unreadCount > 0 && (
+            <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full text-yellow-800 text-sm font-medium">
+              <Bell size={16} className="mr-1" />
+              {unreadCount} new {unreadCount === 1 ? 'application' : 'applications'}
+            </div>
+          )}
         </div>
 
         <div className="flex overflow-x-auto pb-3 -mb-px">
@@ -28,6 +36,11 @@ export default function DashboardHeader({ activeTab }: DashboardHeaderProps) {
           >
             <FileText size={18} className="mr-2" />
             Applications
+            {unreadCount > 0 && (
+              <span className="ml-2 bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+                {unreadCount}
+              </span>
+            )}
           </Link>
           
           <Link
