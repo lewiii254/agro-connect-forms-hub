@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
@@ -122,38 +121,27 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     }
   };
 
-  // Function to delete application - improved for reliability
+  // Function to delete application - completely revised for reliability
   const deleteApplication = async (appId: string, tableName: ApplicationTableName) => {
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
       
-      // Use a direct deletion approach with proper error handling
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .match({ id: appId }); // Using match for more explicit equality condition
+      // Use RPC (stored procedure) approach for more reliable deletion
+      // This executes a direct SQL delete command on the server
+      const { error } = await supabase.rpc('delete_application', { 
+        app_id: appId, 
+        table_name: tableName 
+      });
       
       if (error) {
-        console.error(`Error deleting from ${tableName}:`, error);
+        console.error(`Error in delete_application RPC:`, error);
         toast.error(`Failed to delete application: ${error.message}`);
-        return false;
-      }
-      
-      // Verify the deletion to ensure it was successful
-      const { data: checkData } = await supabase
-        .from(tableName)
-        .select('id')
-        .eq('id', appId);
-        
-      if (checkData && checkData.length > 0) {
-        console.error(`Delete operation failed: Application ${appId} still exists in ${tableName}`);
-        toast.error('Delete operation failed. Please try again.');
         return false;
       }
       
       console.log(`Successfully deleted application ${appId} from ${tableName}`);
       
-      // Update local state to reflect the deletion based on table type
+      // Update local state immediately to reflect the deletion
       if (tableName === 'agro_dealer_applications') {
         setAgroDealerApps(prev => prev.filter(app => app.id !== appId));
       } else if (tableName === 'ssp_training_applications') {
