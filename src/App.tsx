@@ -15,6 +15,7 @@ import SSPTrainingApplicationPage from "./pages/applications/SSPTrainingApplicat
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
+import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import NotFound from "./pages/NotFound";
 import GalleryPage from "./pages/GalleryPage";
 
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/messages" element={<AdminMessagesPage />} />
+            <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
