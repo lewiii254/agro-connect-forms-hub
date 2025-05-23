@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAdminAuthentication } from "@/hooks/useAdminAuthentication";
 import { useAdminApplications } from "@/hooks/useAdminApplications";
 import { formatDate } from "@/utils/formatDate";
 import Layout from "@/components/layout/Layout";
@@ -8,10 +9,11 @@ import DashboardHeader from "@/components/admin/DashboardHeader";
 import ApplicationsTable from "@/components/admin/ApplicationsTable";
 import ApplicationsChart from "@/components/admin/ApplicationsChart";
 import ApplicationsStatusChart from "@/components/admin/ApplicationsStatusChart";
+import type { ApplicationTableName } from "@/types/admin";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isCheckingAuth } = useAuth();
+  const { isAuthenticated, isCheckingAuth } = useAdminAuthentication(navigate);
   const { 
     admins,
     allApplications,
@@ -38,7 +40,7 @@ const AdminDashboard = () => {
       return false;
     }
 
-    let tableName: string;
+    let tableName: ApplicationTableName;
     if ("product_types" in app) {
       tableName = "agro_dealer_applications";
     } else if ("techniques" in app) {
@@ -60,7 +62,7 @@ const AdminDashboard = () => {
       return false;
     }
 
-    let tableName: string;
+    let tableName: ApplicationTableName;
     if ("product_types" in app) {
       tableName = "agro_dealer_applications";
     } else if ("techniques" in app) {
@@ -82,7 +84,7 @@ const AdminDashboard = () => {
       return false;
     }
 
-    let tableName: string;
+    let tableName: ApplicationTableName;
     if ("product_types" in app) {
       tableName = "agro_dealer_applications";
     } else if ("techniques" in app) {
