@@ -2,27 +2,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { corsHeaders } from '../_shared/cors.ts'
 
-// Create a custom fetch function that includes Supabase authorization
-const customFetch = (url: string, options = {}) => {
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') 
-        ? `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}` 
-        : '',
-    },
-  })
-}
-
 // Create a Supabase client configured for the Edge function
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-  { 
-    global: { fetch: customFetch },
-    auth: { persistSession: false }
-  }
+  { auth: { persistSession: false } }
 )
 
 Deno.serve(async (req) => {
@@ -49,14 +33,42 @@ Deno.serve(async (req) => {
 
     console.log(`Attempting to delete application ${app_id} from ${table_name}`)
 
-    // Call the database RPC function
-    const { data, error } = await supabase.rpc('delete_application', {
-      app_id,
-      table_name
-    })
+    // Use the service_role client to directly delete from the appropriate table
+    let error = null;
+    
+    if (table_name === 'agro_dealer_applications') {
+      const { error: deleteError } = await supabase
+        .from('agro_dealer_applications')
+        .delete()
+        .eq('id', app_id);
+      error = deleteError;
+    } 
+    else if (table_name === 'ssp_training_applications') {
+      const { error: deleteError } = await supabase
+        .from('ssp_training_applications')
+        .delete()
+        .eq('id', app_id);
+      error = deleteError;
+    } 
+    else if (table_name === 'extension_applications') {
+      const { error: deleteError } = await supabase
+        .from('extension_applications')
+        .delete()
+        .eq('id', app_id);
+      error = deleteError;
+    } 
+    else {
+      return new Response(
+        JSON.stringify({ error: 'Invalid table name provided' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      )
+    }
 
     if (error) {
-      console.error('Error calling delete_application RPC:', error)
+      console.error(`Error deleting from ${table_name}:`, error)
       return new Response(
         JSON.stringify({ error: error.message }),
         { 
@@ -67,7 +79,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ success: true }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 

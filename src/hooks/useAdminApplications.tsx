@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
@@ -11,6 +10,18 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
   const [sspTrainingApps, setSspTrainingApps] = useState<SSPTrainingApplication[]>([]);
   const [extensionApps, setExtensionApps] = useState<ExtensionApplication[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Add state for tracking approved applications to persist across refreshes
+  const [approvedApplicationIds, setApprovedApplicationIds] = useState<string[]>(() => {
+    // Initialize from localStorage if available
+    const saved = localStorage.getItem('approvedApplicationIds');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Save approved IDs to localStorage whenever the list changes
+  useEffect(() => {
+    localStorage.setItem('approvedApplicationIds', JSON.stringify(approvedApplicationIds));
+  }, [approvedApplicationIds]);
 
   const fetchApplications = async () => {
     console.log("Fetching applications...");
@@ -28,7 +39,16 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         toast.error("Failed to fetch agro dealer applications");
       } else {
         console.log(`Fetched ${agroDealers?.length || 0} agro dealer applications`);
-        setAgroDealerApps(agroDealers || []);
+        
+        // Apply saved approval status if needed
+        const processedAgroDealers = agroDealers?.map(app => {
+          if (approvedApplicationIds.includes(app.id) && app.status !== 'approved') {
+            return { ...app, status: 'approved' };
+          }
+          return app;
+        }) || [];
+        
+        setAgroDealerApps(processedAgroDealers);
       }
       
       // Fetch SSP training applications
@@ -42,7 +62,16 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         toast.error("Failed to fetch SSP training applications");
       } else {
         console.log(`Fetched ${sspApps?.length || 0} SSP training applications`);
-        setSspTrainingApps(sspApps || []);
+        
+        // Apply saved approval status if needed
+        const processedSspApps = sspApps?.map(app => {
+          if (approvedApplicationIds.includes(app.id) && app.status !== 'approved') {
+            return { ...app, status: 'approved' };
+          }
+          return app;
+        }) || [];
+        
+        setSspTrainingApps(processedSspApps);
       }
       
       // Fetch extension applications
@@ -56,7 +85,16 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         toast.error("Failed to fetch extension services applications");
       } else {
         console.log(`Fetched ${extApps?.length || 0} extension applications`);
-        setExtensionApps(extApps || []);
+        
+        // Apply saved approval status if needed
+        const processedExtApps = extApps?.map(app => {
+          if (approvedApplicationIds.includes(app.id) && app.status !== 'approved') {
+            return { ...app, status: 'approved' };
+          }
+          return app;
+        }) || [];
+        
+        setExtensionApps(processedExtApps);
       }
 
       // Combine all applications for the main table
@@ -64,7 +102,14 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         ...(agroDealers || []),
         ...(sspApps || []),
         ...(extApps || [])
-      ].sort((a, b) => 
+      ]
+      .map(app => {
+        if (approvedApplicationIds.includes(app.id) && app.status !== 'approved') {
+          return { ...app, status: 'approved' };
+        }
+        return app;
+      })
+      .sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
       
@@ -114,6 +159,19 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
         prev.map(app => app.id === appId ? {...app, status} : app)
       );
       
+      // If the status is 'approved', add to the persisted approved list
+      if (status === 'approved') {
+        setApprovedApplicationIds(prev => {
+          if (!prev.includes(appId)) {
+            return [...prev, appId];
+          }
+          return prev;
+        });
+      } else if (status === 'rejected') {
+        // Remove from approved list if it was previously approved
+        setApprovedApplicationIds(prev => prev.filter(id => id !== appId));
+      }
+      
       return true;
     } catch (error) {
       console.error(`Error in updateApplicationStatus:`, error);
@@ -122,13 +180,12 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
     }
   };
 
-  // Function to delete application - completely revised for reliability
+  // Function to delete application
   const deleteApplication = async (appId: string, tableName: ApplicationTableName) => {
     try {
       console.log(`Attempting to delete application ${appId} from ${tableName}`);
       
-      // Use direct POST request to call the function instead of typed rpc method
-      // This avoids TypeScript errors since the function is new and not in the types
+      // Use direct POST request to call the function
       const { data, error } = await supabase.functions.invoke('delete-application-wrapper', {
         body: { 
           app_id: appId, 
@@ -137,7 +194,7 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       });
       
       if (error) {
-        console.error(`Error in delete_application RPC:`, error);
+        console.error(`Error in delete_application:`, error);
         toast.error(`Failed to delete application: ${error.message}`);
         return false;
       }
@@ -155,6 +212,9 @@ export const useAdminApplications = (isAuthenticated: boolean, isCheckingAuth: b
       
       // Update the combined applications list as well
       setAllApplications(prev => prev.filter(app => app.id !== appId));
+      
+      // Remove from approved list if it was there
+      setApprovedApplicationIds(prev => prev.filter(id => id !== appId));
       
       return true;
     } catch (error) {
