@@ -215,7 +215,7 @@ const ServicesPage = () => {
                     Contact Us for Farm Tours
                   </Link>
                   <a 
-                    href="https://wa.me/254790767347?text=Hello,%20I%20would%20like%20to%20inquire%20about%20farm%20tours%20and%20visits."
+                    href="https://wa.me/254758568145?text=Hello,%20I%20would%20like%20to%20inquire%20about%20farm%20tours%20and%20visits."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-medium rounded-md hover:bg-opacity-90 transition-colors"
