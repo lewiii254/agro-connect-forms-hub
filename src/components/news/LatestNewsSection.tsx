@@ -3,31 +3,31 @@ import { Newspaper } from "lucide-react";
 import NewsCard from "./NewsCard";
 
 const LatestNewsSection = () => {
-  // Sample news data
+  // Updated news data with agricultural system-relevant content
   const latestNews = [
     {
       id: 1,
       image: "/lovable-uploads/3db45ff9-3d7e-4723-b0d0-116e21bf11fe.png",
       date: "April 19, 2024",
-      title: "Introduces a Field Officer",
-      summary: "Loom a mon-signt ofider introducess",
-      link: "#"
+      title: "New Field Officer Program Launches to Support Smallholder Farmers",
+      summary: "AgroNexus introduces dedicated field officers to provide on-ground support for crop protection and sustainable farming practices.",
+      link: "/news/1"
     },
     {
       id: 2,
       image: "/public/GalleryPic2.png",
       date: "April 2, 2024",
-      title: "New Adi-recoiv Information",
-      summary: "A new officer address announcements ut",
-      link: "#"
+      title: "Advanced Crop Protection Training Program Now Available",
+      summary: "Comprehensive training modules covering integrated pest management, disease prevention, and sustainable farming practices.",
+      link: "/news/2"
     },
     {
       id: 3,
       image: "/public/GalleryPic3.png",
       date: "March 18, 2024",
-      title: "Launch New Training Program",
-      summary: "Laurotrat a new training program",
-      link: "#"
+      title: "New Agro-Dealer Partnership Network Expansion",
+      summary: "AgroNexus expands its network of certified agro-dealers to improve farmer access to quality inputs and expert advice.",
+      link: "/news/3"
     }
   ];
 
