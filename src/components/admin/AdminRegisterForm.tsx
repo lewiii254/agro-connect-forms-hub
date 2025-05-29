@@ -183,11 +183,6 @@ const AdminRegisterForm = ({ isLoading, setIsLoading, onSuccessfulRegister }: Ad
             {isLoading ? 'Registering...' : 'Register'}
           </Button>
         </div>
-        
-        <div className="text-sm text-gray-600 mt-4">
-          <p><strong>Note:</strong> If email confirmation is enabled, you'll need to confirm your email before logging in.</p>
-          <p>For testing purposes, you can disable email confirmation in your Supabase project settings.</p>
-        </div>
       </form>
     </div>
   );
