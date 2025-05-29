@@ -33,14 +33,14 @@ const MagazinesSection = () => {
       image: "/public/GalleryPic4.png",
       title: "AGRI REVIEW",
       date: "April 2024",
-      link: "#"
+      link: "/magazines/1"
     },
     {
       id: 2,
       image: "/public/GalleryPic5.png",
       title: "FARMING INSIGHTS",
       date: "January 2024",
-      link: "#"
+      link: "/magazines/2"
     }
   ];
 
