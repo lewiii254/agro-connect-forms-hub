@@ -1,5 +1,4 @@
 
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -41,7 +40,22 @@ export const useContentManagement = () => {
     }
   };
 
-  const sanitizeContentData = (contentData: CreateContentRequest | UpdateContentRequest) => {
+  const sanitizeCreateData = (contentData: CreateContentRequest) => {
+    return {
+      ...contentData,
+      // Convert empty strings to null for date fields
+      event_date: contentData.event_date === '' ? null : contentData.event_date,
+      // Convert empty strings to null for optional text fields
+      summary: contentData.summary === '' ? null : contentData.summary,
+      content: contentData.content === '' ? null : contentData.content,
+      author: contentData.author === '' ? null : contentData.author,
+      image_url: contentData.image_url === '' ? null : contentData.image_url,
+      download_url: contentData.download_url === '' ? null : contentData.download_url,
+      event_location: contentData.event_location === '' ? null : contentData.event_location,
+    };
+  };
+
+  const sanitizeUpdateData = (contentData: Partial<CreateContentRequest>) => {
     return {
       ...contentData,
       // Convert empty strings to null for date fields
@@ -68,7 +82,7 @@ export const useContentManagement = () => {
         .replace(/-+/g, '-')
         .trim();
 
-      const sanitizedData = sanitizeContentData(contentData);
+      const sanitizedData = sanitizeCreateData(contentData);
       const insertData = {
         ...sanitizedData,
         slug,
@@ -117,7 +131,7 @@ export const useContentManagement = () => {
           .trim();
       }
 
-      const sanitizedData = sanitizeContentData(updateData);
+      const sanitizedData = sanitizeUpdateData(updateData);
 
       const { error } = await supabase
         .from('content')
@@ -178,4 +192,3 @@ export const useContentManagement = () => {
     deleteContent
   };
 };
-
