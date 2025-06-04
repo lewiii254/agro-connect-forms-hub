@@ -117,17 +117,11 @@ export const useContentManagement = () => {
           .trim();
       }
 
-      const sanitizedData = sanitizeContentData({
-        ...updateData,
-        id // Add id back for sanitization function
-      } as UpdateContentRequest);
-
-      // Remove id from sanitized data for the update operation
-      const { id: _, ...updateFields } = sanitizedData;
+      const sanitizedData = sanitizeContentData(updateData);
 
       const { error } = await supabase
         .from('content')
-        .update(updateFields)
+        .update(sanitizedData)
         .eq('id', id);
 
       if (error) {
