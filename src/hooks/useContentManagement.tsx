@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -79,7 +80,7 @@ export const useContentManagement = () => {
 
       const { data, error } = await supabase
         .from('content')
-        .insert([insertData])
+        .insert(insertData)
         .select()
         .single();
 
@@ -116,11 +117,17 @@ export const useContentManagement = () => {
           .trim();
       }
 
-      const sanitizedData = sanitizeContentData(updateData);
+      const sanitizedData = sanitizeContentData({
+        ...updateData,
+        id // Add id back for sanitization function
+      } as UpdateContentRequest);
+
+      // Remove id from sanitized data for the update operation
+      const { id: _, ...updateFields } = sanitizedData;
 
       const { error } = await supabase
         .from('content')
-        .update(sanitizedData)
+        .update(updateFields)
         .eq('id', id);
 
       if (error) {
@@ -177,3 +184,4 @@ export const useContentManagement = () => {
     deleteContent
   };
 };
+
