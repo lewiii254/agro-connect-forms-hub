@@ -37,4 +37,5 @@ export interface CreateContentRequest {
 
 export interface UpdateContentRequest extends Partial<CreateContentRequest> {
   id: string;
+  slug?: string;
 }
