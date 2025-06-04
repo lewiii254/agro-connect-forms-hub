@@ -69,7 +69,6 @@ const LatestNewsSection = () => {
             title={article.title}
             summary={article.summary || ""}
             date={article.created_at}
-            author={article.author || "AgroNexus Team"}
             link={`/news/${article.slug || article.id}`}
           />
         ))}
