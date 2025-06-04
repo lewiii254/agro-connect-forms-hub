@@ -19,6 +19,7 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminContentPage from "./pages/AdminContentPage";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
+import AdminMessagingDashboard from "./pages/AdminMessagingDashboard";
 import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import NotFound from "./pages/NotFound";
 import GalleryPage from "./pages/GalleryPage";
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/content" element={<AdminContentPage />} />
             <Route path="/admin/messages" element={<AdminMessagesPage />} />
+            <Route path="/admin/messaging" element={<AdminMessagingDashboard />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

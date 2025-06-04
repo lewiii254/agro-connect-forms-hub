@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
-import { LogOut, Users, BarChart3, MessageSquare, FileText } from "lucide-react";
+import { LogOut, Users, BarChart3, MessageSquare, FileText, MessageCircle } from "lucide-react";
 
 interface DashboardHeaderProps {
   activeTab?: string;
@@ -46,6 +46,12 @@ const DashboardHeader = ({ activeTab = "applications", unreadCount = 0 }: Dashbo
       path: "/admin/messages",
       icon: MessageSquare,
       badge: unreadCount > 0 ? unreadCount : undefined
+    },
+    {
+      id: "messaging",
+      label: "Admin Chat",
+      path: "/admin/messaging",
+      icon: MessageCircle
     },
     {
       id: "analytics",
