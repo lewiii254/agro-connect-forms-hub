@@ -105,6 +105,63 @@ export type Database = {
         }
         Relationships: []
       }
+      content: {
+        Row: {
+          author: string | null
+          content: string | null
+          content_type: Database["public"]["Enums"]["content_type"]
+          created_at: string
+          created_by: string | null
+          download_url: string | null
+          event_date: string | null
+          event_location: string | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          content?: string | null
+          content_type: Database["public"]["Enums"]["content_type"]
+          created_at?: string
+          created_by?: string | null
+          download_url?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          content?: string | null
+          content_type?: Database["public"]["Enums"]["content_type"]
+          created_at?: string
+          created_by?: string | null
+          download_url?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       extension_applications: {
         Row: {
           challenges: string | null
@@ -255,6 +312,10 @@ export type Database = {
         Args: { app_id: string; table_name: string }
         Returns: boolean
       }
+      generate_slug: {
+        Args: { title: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -265,6 +326,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      content_status: "draft" | "published" | "archived"
+      content_type:
+        | "news"
+        | "blog"
+        | "update"
+        | "magazine"
+        | "resource"
+        | "event"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -381,6 +450,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      content_status: ["draft", "published", "archived"],
+      content_type: ["news", "blog", "update", "magazine", "resource", "event"],
     },
   },
 } as const

@@ -1,73 +1,101 @@
 
-import { Link } from "react-router-dom";
-import { LayoutDashboard, FileText, MessageSquare, BarChart3, Bell } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/sonner";
+import { LogOut, Users, BarChart3, MessageSquare, FileText } from "lucide-react";
 
-type DashboardHeaderProps = {
-  activeTab: "applications" | "messages" | "analytics";
+interface DashboardHeaderProps {
+  activeTab?: string;
   unreadCount?: number;
+}
+
+const DashboardHeader = ({ activeTab = "applications", unreadCount = 0 }: DashboardHeaderProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      navigate("/admin/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Failed to log out");
+    }
+  };
+
+  const tabs = [
+    {
+      id: "applications",
+      label: "Applications",
+      path: "/admin/dashboard",
+      icon: Users
+    },
+    {
+      id: "content",
+      label: "Content",
+      path: "/admin/content",
+      icon: FileText
+    },
+    {
+      id: "messages",
+      label: "Messages",
+      path: "/admin/messages",
+      icon: MessageSquare,
+      badge: unreadCount > 0 ? unreadCount : undefined
+    },
+    {
+      id: "analytics",
+      label: "Analytics",
+      path: "/admin/analytics",
+      icon: BarChart3
+    }
+  ];
+
+  return (
+    <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-8">
+          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          
+          <nav className="flex space-x-4">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id || location.pathname === tab.path;
+              
+              return (
+                <Link key={tab.id} to={tab.path}>
+                  <Button 
+                    variant={isActive ? "default" : "ghost"}
+                    className="relative"
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {tab.label}
+                    {tab.badge && (
+                      <Badge 
+                        variant="destructive" 
+                        className="ml-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                      >
+                        {tab.badge}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <Button variant="outline" onClick={handleLogout}>
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
+      </div>
+    </div>
+  );
 };
 
-export default function DashboardHeader({ activeTab, unreadCount = 0 }: DashboardHeaderProps) {
-  return (
-    <header className="bg-white border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-4">
-          <div className="mb-4 sm:mb-0">
-            <h1 className="text-2xl font-bold text-emerald-800">Admin Dashboard</h1>
-            <p className="text-gray-600">Manage applications and platform services</p>
-          </div>
-          
-          {unreadCount > 0 && (
-            <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full text-yellow-800 text-sm font-medium">
-              <Bell size={16} className="mr-1" />
-              {unreadCount} new {unreadCount === 1 ? 'application' : 'applications'}
-            </div>
-          )}
-        </div>
-
-        <div className="flex overflow-x-auto pb-3 -mb-px">
-          <Link
-            to="/admin/dashboard"
-            className={`whitespace-nowrap px-5 py-3 border-b-2 text-sm font-medium flex items-center ${
-              activeTab === "applications"
-                ? "border-emerald-500 text-emerald-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            <FileText size={18} className="mr-2" />
-            Applications
-            {unreadCount > 0 && (
-              <span className="ml-2 bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                {unreadCount}
-              </span>
-            )}
-          </Link>
-          
-          <Link
-            to="/admin/analytics"
-            className={`whitespace-nowrap px-5 py-3 border-b-2 text-sm font-medium flex items-center ${
-              activeTab === "analytics"
-                ? "border-emerald-500 text-emerald-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            <BarChart3 size={18} className="mr-2" />
-            Analytics
-          </Link>
-
-          <Link
-            to="/admin/messages"
-            className={`whitespace-nowrap px-5 py-3 border-b-2 text-sm font-medium flex items-center ${
-              activeTab === "messages"
-                ? "border-emerald-500 text-emerald-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            <MessageSquare size={18} className="mr-2" />
-            Messages
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+export default DashboardHeader;

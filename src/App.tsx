@@ -17,6 +17,7 @@ import ExtensionServicesApplicationPage from "./pages/applications/ExtensionServ
 import SSPTrainingApplicationPage from "./pages/applications/SSPTrainingApplicationPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminContentPage from "./pages/AdminContentPage";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
 import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import NotFound from "./pages/NotFound";
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/applications/ssp-training" element={<SSPTrainingApplicationPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/content" element={<AdminContentPage />} />
             <Route path="/admin/messages" element={<AdminMessagesPage />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="*" element={<NotFound />} />
