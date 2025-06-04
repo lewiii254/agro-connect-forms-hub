@@ -11,6 +11,8 @@ export const usePublishedContent = (contentType?: ContentType, featured?: boolea
     const fetchContent = async () => {
       try {
         setLoading(true);
+        console.log('Fetching published content, type:', contentType, 'featured:', featured);
+        
         let query = supabase
           .from('content')
           .select('*')
@@ -28,13 +30,16 @@ export const usePublishedContent = (contentType?: ContentType, featured?: boolea
         const { data, error } = await query;
 
         if (error) {
-          console.error('Error fetching content:', error);
+          console.error('Error fetching published content:', error);
+          setContent([]);
           return;
         }
 
+        console.log('Fetched published content:', data);
         setContent(data || []);
       } catch (error) {
-        console.error('Error fetching content:', error);
+        console.error('Error fetching published content:', error);
+        setContent([]);
       } finally {
         setLoading(false);
       }

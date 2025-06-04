@@ -34,14 +34,26 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    console.log('Form submitted with data:', formData);
     
-    const success = await onSubmit(formData);
-    if (success) {
-      onCancel();
+    if (!formData.title.trim()) {
+      alert('Title is required');
+      return;
     }
     
-    setLoading(false);
+    setLoading(true);
+    
+    try {
+      const success = await onSubmit(formData);
+      if (success) {
+        console.log('Content submitted successfully');
+        onCancel();
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contentTypeOptions: { value: ContentType; label: string }[] = [
@@ -73,6 +85,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="Enter title"
                 required
               />
             </div>
@@ -121,6 +134,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                 id="author"
                 value={formData.author}
                 onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                placeholder="Author name"
               />
             </div>
           </div>
@@ -131,6 +145,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
               id="summary"
               value={formData.summary}
               onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+              placeholder="Brief summary of the content"
               rows={3}
             />
           </div>
@@ -141,6 +156,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
               id="content"
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              placeholder="Full content text"
               rows={10}
             />
           </div>
@@ -153,6 +169,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                 type="url"
                 value={formData.image_url}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                placeholder="https://example.com/image.jpg"
               />
             </div>
 
@@ -163,6 +180,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                 type="url"
                 value={formData.download_url}
                 onChange={(e) => setFormData({ ...formData, download_url: e.target.value })}
+                placeholder="https://example.com/file.pdf"
               />
             </div>
           </div>
@@ -185,6 +203,7 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                   id="event_location"
                   value={formData.event_location}
                   onChange={(e) => setFormData({ ...formData, event_location: e.target.value })}
+                  placeholder="Event location"
                 />
               </div>
             </div>

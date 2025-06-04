@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import type { Content, CreateContentRequest, UpdateContentRequest, ContentType } from "@/types/content";
 
 export const useContentManagement = () => {
@@ -11,6 +11,8 @@ export const useContentManagement = () => {
   const fetchContent = async (contentType?: ContentType) => {
     try {
       setLoading(true);
+      console.log('Fetching content with type:', contentType);
+      
       let query = supabase
         .from('content')
         .select('*')
@@ -24,10 +26,11 @@ export const useContentManagement = () => {
 
       if (error) {
         console.error('Error fetching content:', error);
-        toast.error('Failed to fetch content');
+        toast.error('Failed to fetch content: ' + error.message);
         return;
       }
 
+      console.log('Fetched content:', data);
       setContent(data || []);
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -39,28 +42,40 @@ export const useContentManagement = () => {
 
   const createContent = async (contentData: CreateContentRequest): Promise<boolean> => {
     try {
+      console.log('Creating content with data:', contentData);
+      
       // Generate slug from title
-      const { data: slugData } = await supabase.rpc('generate_slug', { title: contentData.title });
-      const slug = slugData || contentData.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const slug = contentData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+
+      const insertData = {
+        ...contentData,
+        slug,
+        status: contentData.status || 'draft',
+        featured: contentData.featured || false
+      };
+
+      console.log('Insert data:', insertData);
 
       const { data, error } = await supabase
         .from('content')
-        .insert([{
-          ...contentData,
-          slug,
-          status: contentData.status || 'draft'
-        }])
+        .insert([insertData])
         .select()
         .single();
 
       if (error) {
         console.error('Error creating content:', error);
-        toast.error('Failed to create content');
+        toast.error('Failed to create content: ' + error.message);
         return false;
       }
 
+      console.log('Created content:', data);
       toast.success('Content created successfully');
-      fetchContent();
+      await fetchContent();
       return true;
     } catch (error) {
       console.error('Error creating content:', error);
@@ -71,31 +86,33 @@ export const useContentManagement = () => {
 
   const updateContent = async (contentData: UpdateContentRequest): Promise<boolean> => {
     try {
+      console.log('Updating content with data:', contentData);
+      
       const { id, ...updateData } = contentData;
       
       // Generate new slug if title changed
-      let slug = undefined;
       if (updateData.title) {
-        const { data: slugData } = await supabase.rpc('generate_slug', { title: updateData.title });
-        slug = slugData || updateData.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        updateData.slug = updateData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
       }
 
       const { error } = await supabase
         .from('content')
-        .update({
-          ...updateData,
-          ...(slug && { slug })
-        })
+        .update(updateData)
         .eq('id', id);
 
       if (error) {
         console.error('Error updating content:', error);
-        toast.error('Failed to update content');
+        toast.error('Failed to update content: ' + error.message);
         return false;
       }
 
       toast.success('Content updated successfully');
-      fetchContent();
+      await fetchContent();
       return true;
     } catch (error) {
       console.error('Error updating content:', error);
@@ -106,6 +123,8 @@ export const useContentManagement = () => {
 
   const deleteContent = async (id: string): Promise<boolean> => {
     try {
+      console.log('Deleting content with id:', id);
+      
       const { error } = await supabase
         .from('content')
         .delete()
@@ -113,12 +132,12 @@ export const useContentManagement = () => {
 
       if (error) {
         console.error('Error deleting content:', error);
-        toast.error('Failed to delete content');
+        toast.error('Failed to delete content: ' + error.message);
         return false;
       }
 
       toast.success('Content deleted successfully');
-      fetchContent();
+      await fetchContent();
       return true;
     } catch (error) {
       console.error('Error deleting content:', error);

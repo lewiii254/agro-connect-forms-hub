@@ -26,12 +26,23 @@ const AdminContentPage = () => {
     }
   }, [isAuthenticated, isCheckingAuth, navigate]);
 
+  useEffect(() => {
+    console.log('AdminContentPage mounted, content:', content);
+  }, [content]);
+
   const handleFilterChange = (contentType?: ContentType) => {
+    console.log('Filter changed to:', contentType);
     fetchContent(contentType);
   };
 
   if (isCheckingAuth) {
-    return <div>Loading...</div>;
+    return (
+      <Layout>
+        <div className="flex justify-center items-center min-h-screen">
+          <div>Loading...</div>
+        </div>
+      </Layout>
+    );
   }
 
   if (!isAuthenticated) {
