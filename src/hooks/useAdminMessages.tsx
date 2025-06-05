@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,6 +16,13 @@ export interface AdminMessage {
   read_at: string | null;
   sender_email?: string;
   recipient_email?: string;
+}
+
+// Type definition for Supabase admin user
+interface SupabaseAdminUser {
+  id: string;
+  email?: string;
+  [key: string]: any;
 }
 
 export const useAdminMessages = () => {
@@ -46,7 +52,7 @@ export const useAdminMessages = () => {
       if (rolesError) throw rolesError;
 
       // Get admin users with their emails using admin API
-      const { data: adminUsers, error: usersError } = await supabase.auth.admin.listUsers();
+      const { data: adminUsersResponse, error: usersError } = await supabase.auth.admin.listUsers();
       
       if (usersError) {
         console.error('Error fetching users:', usersError);
@@ -63,13 +69,15 @@ export const useAdminMessages = () => {
 
       // Filter to only include admin users and exclude current user
       const adminUserIds = adminRoles.map(role => role.user_id);
-      const filteredAdmins: AdminUser[] = adminUsers.users
-        .filter(user => 
+      const adminUsers = adminUsersResponse?.users as SupabaseAdminUser[] || [];
+      
+      const filteredAdmins: AdminUser[] = adminUsers
+        .filter((user: SupabaseAdminUser) => 
           adminUserIds.includes(user.id) && 
           user.id !== currentUserId &&
           user.email
         )
-        .map(user => ({
+        .map((user: SupabaseAdminUser) => ({
           id: user.id,
           email: user.email!
         }));
