@@ -1,13 +1,6 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Label } from "@/components/ui/label";
-
-// Dynamic import to avoid SSR issues
-let ReactQuill: any = null;
-if (typeof window !== 'undefined') {
-  ReactQuill = require('react-quill').default;
-  require('react-quill/dist/quill.snow.css');
-}
 
 interface RichTextEditorProps {
   value: string;
@@ -17,7 +10,25 @@ interface RichTextEditorProps {
 }
 
 const RichTextEditor = ({ value, onChange, label, placeholder }: RichTextEditorProps) => {
+  const [ReactQuill, setReactQuill] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const quillRef = useRef<any>(null);
+
+  useEffect(() => {
+    const loadQuill = async () => {
+      try {
+        const { default: QuillComponent } = await import('react-quill');
+        await import('react-quill/dist/quill.snow.css');
+        setReactQuill(() => QuillComponent);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load React Quill:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadQuill();
+  }, []);
 
   const modules = {
     toolbar: [
@@ -36,7 +47,7 @@ const RichTextEditor = ({ value, onChange, label, placeholder }: RichTextEditorP
     'link', 'image'
   ];
 
-  if (!ReactQuill) {
+  if (isLoading || !ReactQuill) {
     return (
       <div className="space-y-2">
         {label && <Label>{label}</Label>}

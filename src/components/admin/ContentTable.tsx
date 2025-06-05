@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -32,6 +31,11 @@ const ContentTable = ({
   const [selectedContent, setSelectedContent] = useState<Content | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [filteredContent, setFilteredContent] = useState<Content[]>(content);
+
+  // Update filtered content when main content changes
+  useEffect(() => {
+    setFilteredContent(content);
+  }, [content]);
 
   const getStatusBadge = (status: string) => {
     const variants = {
