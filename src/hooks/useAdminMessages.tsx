@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -34,7 +33,7 @@ export const useAdminMessages = () => {
     getCurrentUser();
   }, []);
 
-  // Fetch all admin users with their real email addresses
+  // Fetch all admin users and assign sequential numbers
   const fetchAdmins = async () => {
     try {
       // First get admin user IDs
@@ -50,52 +49,19 @@ export const useAdminMessages = () => {
         return;
       }
 
-      // Get current user's email to exclude them and get other admin emails
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      
-      // Try to get admin users with their emails using the admin API
-      try {
-        const { data: adminUsersResponse, error: usersError } = await supabase.auth.admin.listUsers();
-        
-        if (!usersError && adminUsersResponse?.users) {
-          // Filter to only include admin users and exclude current user
-          const adminUserIds = adminRoles.map(role => role.user_id);
-          const adminUsers = adminUsersResponse.users;
-          
-          const filteredAdmins: AdminUser[] = adminUsers
-            .filter((user: any) => 
-              adminUserIds.includes(user.id) && 
-              user.id !== currentUserId &&
-              user.email
-            )
-            .map((user: any) => ({
-              id: user.id,
-              email: user.email
-            }));
-
-          setAdmins(filteredAdmins);
-          return;
-        }
-      } catch (adminError) {
-        console.log('Admin API not available, trying alternative approach');
-      }
-
-      // Fallback: Try to get user profiles or use a different approach
-      // Since we can't access auth.users directly, we'll need to store emails in a profiles table
-      // For now, show the user IDs with a note that we need proper setup
-      const adminUsersList: AdminUser[] = adminRoles
+      // Filter out current user and sort for consistent numbering
+      const otherAdminIds = adminRoles
         .filter(role => role.user_id !== currentUserId)
-        .map(role => ({
-          id: role.user_id,
-          email: `User ${role.user_id.slice(0, 8)}` // Temporary fallback
-        }));
+        .map(role => role.user_id)
+        .sort(); // Sort to ensure consistent ordering
+
+      // Assign sequential numbers starting from 1
+      const adminUsersList: AdminUser[] = otherAdminIds.map((userId, index) => ({
+        id: userId,
+        email: `Admin ${index + 1}`
+      }));
       
       setAdmins(adminUsersList);
-      
-      // Let user know they need proper setup
-      if (adminUsersList.length > 0) {
-        toast.error('Cannot fetch admin emails. Contact system administrator to set up proper permissions.');
-      }
       
     } catch (error) {
       console.error('Error fetching admins:', error);
