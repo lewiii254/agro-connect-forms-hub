@@ -3,10 +3,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import RichTextEditor from "./RichTextEditor";
+import ImageUpload from "./ImageUpload";
+import ContentPreview from "./ContentPreview";
 import type { Content, CreateContentRequest, ContentType, ContentStatus } from "@/types/content";
 
 interface ContentFormProps {
@@ -72,106 +75,130 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
   ];
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>{content ? 'Edit Content' : 'Create New Content'}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="w-full max-w-6xl mx-auto space-y-6">
+      {/* Header with Preview */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">
+          {content ? 'Edit Content' : 'Create New Content'}
+        </h2>
+        <ContentPreview content={formData} />
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Enter title"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content_type">Content Type *</Label>
+                <Select 
+                  value={formData.content_type} 
+                  onValueChange={(value: ContentType) => setFormData({ ...formData, content_type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {contentTypeOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={formData.status} 
+                  onValueChange={(value: ContentStatus) => setFormData({ ...formData, status: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="author">Author</Label>
+                <Input
+                  id="author"
+                  value={formData.author}
+                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                  placeholder="Author name"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter title"
-                required
+              <Label htmlFor="summary">Summary</Label>
+              <Textarea
+                id="summary"
+                value={formData.summary}
+                onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                placeholder="Brief summary of the content"
+                rows={3}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="content_type">Content Type *</Label>
-              <Select 
-                value={formData.content_type} 
-                onValueChange={(value: ContentType) => setFormData({ ...formData, content_type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {contentTypeOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value: ContentStatus) => setFormData({ ...formData, status: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="author">Author</Label>
-              <Input
-                id="author"
-                value={formData.author}
-                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                placeholder="Author name"
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="featured"
+                checked={formData.featured}
+                onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
               />
+              <Label htmlFor="featured">Featured Content</Label>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="summary">Summary</Label>
-            <Textarea
-              id="summary"
-              value={formData.summary}
-              onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-              placeholder="Brief summary of the content"
-              rows={3}
+        {/* Content */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Content</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RichTextEditor
+              value={formData.content || ''}
+              onChange={(value) => setFormData({ ...formData, content: value })}
+              placeholder="Write your content here..."
             />
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              placeholder="Full content text"
-              rows={10}
+        {/* Media */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Media & Files</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ImageUpload
+              value={formData.image_url || ''}
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              label="Featured Image"
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="image_url">Image URL</Label>
-              <Input
-                id="image_url"
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="download_url">Download URL</Label>
@@ -183,52 +210,52 @@ const ContentForm = ({ content, onSubmit, onCancel }: ContentFormProps) => {
                 placeholder="https://example.com/file.pdf"
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          {formData.content_type === 'event' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="event_date">Event Date</Label>
-                <Input
-                  id="event_date"
-                  type="date"
-                  value={formData.event_date}
-                  onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                />
+        {/* Event Details (conditional) */}
+        {formData.content_type === 'event' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Event Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="event_date">Event Date</Label>
+                  <Input
+                    id="event_date"
+                    type="date"
+                    value={formData.event_date}
+                    onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="event_location">Event Location</Label>
+                  <Input
+                    id="event_location"
+                    value={formData.event_location}
+                    onChange={(e) => setFormData({ ...formData, event_location: e.target.value })}
+                    placeholder="Event location"
+                  />
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
 
-              <div className="space-y-2">
-                <Label htmlFor="event_location">Event Location</Label>
-                <Input
-                  id="event_location"
-                  value={formData.event_location}
-                  onChange={(e) => setFormData({ ...formData, event_location: e.target.value })}
-                  placeholder="Event location"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="featured"
-              checked={formData.featured}
-              onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
-            />
-            <Label htmlFor="featured">Featured Content</Label>
-          </div>
-
-          <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : (content ? 'Update' : 'Create')}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        {/* Form Actions */}
+        <div className="flex justify-end space-x-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Saving...' : (content ? 'Update' : 'Create')}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
 
