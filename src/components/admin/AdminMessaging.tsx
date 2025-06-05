@@ -138,7 +138,7 @@ const AdminMessaging = () => {
                               {getInitials(admin.email)}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <div className="font-medium text-sm truncate">
                               {admin.email}
                             </div>
@@ -172,8 +172,8 @@ const AdminMessaging = () => {
                         {getInitials(selectedAdmin.email)}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <div className="font-medium">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium truncate">
                         {selectedAdmin.email}
                       </div>
                       <div className="text-sm text-gray-500">
