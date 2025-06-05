@@ -21,9 +21,9 @@ interface ContentFiltersProps {
 const ContentFilters = ({ onFilterChange }: ContentFiltersProps) => {
   const [filters, setFilters] = useState({
     search: '',
-    contentType: '' as ContentType | '',
-    status: '' as ContentStatus | '',
-    featured: '' as 'true' | 'false' | '',
+    contentType: 'all' as ContentType | 'all',
+    status: 'all' as ContentStatus | 'all',
+    featured: 'all' as 'true' | 'false' | 'all',
     author: ''
   });
 
@@ -35,31 +35,35 @@ const ContentFilters = ({ onFilterChange }: ContentFiltersProps) => {
 
     // Update active filters list
     const active = Object.entries(newFilters)
-      .filter(([_, val]) => val !== '')
+      .filter(([_, val]) => val !== '' && val !== 'all')
       .map(([key, _]) => key);
     setActiveFilters(active);
 
     // Convert and send to parent
     const processedFilters: any = {};
     if (newFilters.search) processedFilters.search = newFilters.search;
-    if (newFilters.contentType) processedFilters.contentType = newFilters.contentType as ContentType;
-    if (newFilters.status) processedFilters.status = newFilters.status as ContentStatus;
-    if (newFilters.featured) processedFilters.featured = newFilters.featured === 'true';
+    if (newFilters.contentType && newFilters.contentType !== 'all') processedFilters.contentType = newFilters.contentType as ContentType;
+    if (newFilters.status && newFilters.status !== 'all') processedFilters.status = newFilters.status as ContentStatus;
+    if (newFilters.featured && newFilters.featured !== 'all') processedFilters.featured = newFilters.featured === 'true';
     if (newFilters.author) processedFilters.author = newFilters.author;
 
     onFilterChange(processedFilters);
   };
 
   const clearFilter = (key: string) => {
-    handleFilterChange(key, '');
+    if (key === 'search' || key === 'author') {
+      handleFilterChange(key, '');
+    } else {
+      handleFilterChange(key, 'all');
+    }
   };
 
   const clearAllFilters = () => {
     const clearedFilters = {
       search: '',
-      contentType: '' as ContentType | '',
-      status: '' as ContentStatus | '',
-      featured: '' as 'true' | 'false' | '',
+      contentType: 'all' as ContentType | 'all',
+      status: 'all' as ContentStatus | 'all',
+      featured: 'all' as 'true' | 'false' | 'all',
       author: ''
     };
     setFilters(clearedFilters);
@@ -103,7 +107,7 @@ const ContentFilters = ({ onFilterChange }: ContentFiltersProps) => {
               <SelectValue placeholder="Content Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="news">News</SelectItem>
               <SelectItem value="blog">Blog</SelectItem>
               <SelectItem value="update">Update</SelectItem>
@@ -119,7 +123,7 @@ const ContentFilters = ({ onFilterChange }: ContentFiltersProps) => {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="published">Published</SelectItem>
               <SelectItem value="archived">Archived</SelectItem>
@@ -132,7 +136,7 @@ const ContentFilters = ({ onFilterChange }: ContentFiltersProps) => {
               <SelectValue placeholder="Featured" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="true">Featured</SelectItem>
               <SelectItem value="false">Not Featured</SelectItem>
             </SelectContent>
