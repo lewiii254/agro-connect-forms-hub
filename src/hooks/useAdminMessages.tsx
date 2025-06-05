@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -16,13 +17,6 @@ export interface AdminMessage {
   read_at: string | null;
   sender_email?: string;
   recipient_email?: string;
-}
-
-// Type definition for Supabase admin user
-interface SupabaseAdminUser {
-  id: string;
-  email?: string;
-  [key: string]: any;
 }
 
 export const useAdminMessages = () => {
@@ -51,38 +45,58 @@ export const useAdminMessages = () => {
 
       if (rolesError) throw rolesError;
 
-      // Get admin users with their emails using admin API
-      const { data: adminUsersResponse, error: usersError } = await supabase.auth.admin.listUsers();
-      
-      if (usersError) {
-        console.error('Error fetching users:', usersError);
-        // Fallback: use a simpler approach if admin API fails
-        const adminUsersList: AdminUser[] = adminRoles
-          .filter(role => role.user_id !== currentUserId)
-          .map(role => ({
-            id: role.user_id,
-            email: `admin-${role.user_id.slice(0, 8)}@example.com`
-          }));
-        setAdmins(adminUsersList);
+      if (!adminRoles || adminRoles.length === 0) {
+        setAdmins([]);
         return;
       }
 
-      // Filter to only include admin users and exclude current user
-      const adminUserIds = adminRoles.map(role => role.user_id);
-      const adminUsers = adminUsersResponse?.users as SupabaseAdminUser[] || [];
+      // Get current user's email to exclude them and get other admin emails
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       
-      const filteredAdmins: AdminUser[] = adminUsers
-        .filter((user: SupabaseAdminUser) => 
-          adminUserIds.includes(user.id) && 
-          user.id !== currentUserId &&
-          user.email
-        )
-        .map((user: SupabaseAdminUser) => ({
-          id: user.id,
-          email: user.email!
-        }));
+      // Try to get admin users with their emails using the admin API
+      try {
+        const { data: adminUsersResponse, error: usersError } = await supabase.auth.admin.listUsers();
+        
+        if (!usersError && adminUsersResponse?.users) {
+          // Filter to only include admin users and exclude current user
+          const adminUserIds = adminRoles.map(role => role.user_id);
+          const adminUsers = adminUsersResponse.users;
+          
+          const filteredAdmins: AdminUser[] = adminUsers
+            .filter((user: any) => 
+              adminUserIds.includes(user.id) && 
+              user.id !== currentUserId &&
+              user.email
+            )
+            .map((user: any) => ({
+              id: user.id,
+              email: user.email
+            }));
 
-      setAdmins(filteredAdmins);
+          setAdmins(filteredAdmins);
+          return;
+        }
+      } catch (adminError) {
+        console.log('Admin API not available, trying alternative approach');
+      }
+
+      // Fallback: Try to get user profiles or use a different approach
+      // Since we can't access auth.users directly, we'll need to store emails in a profiles table
+      // For now, show the user IDs with a note that we need proper setup
+      const adminUsersList: AdminUser[] = adminRoles
+        .filter(role => role.user_id !== currentUserId)
+        .map(role => ({
+          id: role.user_id,
+          email: `User ${role.user_id.slice(0, 8)}` // Temporary fallback
+        }));
+      
+      setAdmins(adminUsersList);
+      
+      // Let user know they need proper setup
+      if (adminUsersList.length > 0) {
+        toast.error('Cannot fetch admin emails. Contact system administrator to set up proper permissions.');
+      }
+      
     } catch (error) {
       console.error('Error fetching admins:', error);
       toast.error('Failed to fetch admin users');
