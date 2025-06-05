@@ -129,7 +129,7 @@ const ContentTable = ({
   };
 
   // Update filtered content when main content changes
-  useState(() => {
+  useEffect(() => {
     setFilteredContent(content);
   }, [content]);
 
