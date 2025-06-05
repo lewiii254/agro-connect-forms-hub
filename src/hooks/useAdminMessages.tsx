@@ -34,27 +34,47 @@ export const useAdminMessages = () => {
     getCurrentUser();
   }, []);
 
-  // Fetch all admin users
+  // Fetch all admin users with their real email addresses
   const fetchAdmins = async () => {
     try {
-      const { data, error } = await supabase
+      // First get admin user IDs
+      const { data: adminRoles, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id')
         .eq('role', 'admin');
 
-      if (error) throw error;
+      if (rolesError) throw rolesError;
 
-      // Get user emails from auth.users through a function or direct query
-      const userIds = data.map(row => row.user_id);
+      // Get admin users with their emails using admin API
+      const { data: adminUsers, error: usersError } = await supabase.auth.admin.listUsers();
       
-      // For now, we'll create a simple list with user IDs
-      // In a production app, you'd want to store email/name in a profiles table
-      const adminUsers: AdminUser[] = userIds.map(id => ({
-        id,
-        email: `admin-${id.slice(0, 8)}@example.com` // Placeholder email
-      }));
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+        // Fallback: use a simpler approach if admin API fails
+        const adminUsersList: AdminUser[] = adminRoles
+          .filter(role => role.user_id !== currentUserId)
+          .map(role => ({
+            id: role.user_id,
+            email: `admin-${role.user_id.slice(0, 8)}@example.com`
+          }));
+        setAdmins(adminUsersList);
+        return;
+      }
 
-      setAdmins(adminUsers.filter(admin => admin.id !== currentUserId));
+      // Filter to only include admin users and exclude current user
+      const adminUserIds = adminRoles.map(role => role.user_id);
+      const filteredAdmins: AdminUser[] = adminUsers.users
+        .filter(user => 
+          adminUserIds.includes(user.id) && 
+          user.id !== currentUserId &&
+          user.email
+        )
+        .map(user => ({
+          id: user.id,
+          email: user.email!
+        }));
+
+      setAdmins(filteredAdmins);
     } catch (error) {
       console.error('Error fetching admins:', error);
       toast.error('Failed to fetch admin users');

@@ -80,6 +80,10 @@ const AdminMessaging = () => {
     ).length;
   };
 
+  const getInitials = (email: string) => {
+    return email.slice(0, 2).toUpperCase();
+  };
+
   if (loading) {
     return (
       <Card>
@@ -131,15 +135,15 @@ const AdminMessaging = () => {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback className="text-xs">
-                              {admin.email.slice(0, 2).toUpperCase()}
+                              {getInitials(admin.email)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <div className="font-medium text-sm">
-                              Admin {admin.id.slice(0, 8)}
+                            <div className="font-medium text-sm truncate">
+                              {admin.email}
                             </div>
                             <div className="text-xs text-gray-500">
-                              {admin.email}
+                              Admin
                             </div>
                           </div>
                           {unreadCount > 0 && (
@@ -165,15 +169,15 @@ const AdminMessaging = () => {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="text-xs">
-                        {selectedAdmin.email.slice(0, 2).toUpperCase()}
+                        {getInitials(selectedAdmin.email)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">
-                        Admin {selectedAdmin.id.slice(0, 8)}
+                        {selectedAdmin.email}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {selectedAdmin.email}
+                        Admin
                       </div>
                     </div>
                   </div>
