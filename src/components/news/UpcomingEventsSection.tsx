@@ -1,5 +1,7 @@
 
 import { CalendarDays } from "lucide-react";
+import { usePublishedContent } from "@/hooks/usePublishedContent";
+import { formatDate } from "@/utils/formatDate";
 
 interface EventCardProps {
   date: string;
@@ -28,29 +30,51 @@ const EventCard = ({ date, title, location, description }: EventCardProps) => {
 };
 
 const UpcomingEventsSection = () => {
-  const events = [
+  const { content: eventContent, loading } = usePublishedContent('event');
+
+  // Fallback events when no database content
+  const fallbackEvents = [
     {
       id: 1,
-      date: "May 15, 2024",
+      event_date: "2024-05-15",
       title: "Pesticide Safety Training Workshop",
-      location: "Meru County Agricultural Hall",
-      description: "Join us for a comprehensive training session on safe pesticide application techniques and certification."
+      event_location: "Meru County Agricultural Hall",
+      summary: "Join us for a comprehensive training session on safe pesticide application techniques and certification."
     },
     {
       id: 2,
-      date: "June 3, 2024",
+      event_date: "2024-06-03",
       title: "Agricultural Innovation Expo",
-      location: "Nchiiru Community Center",
-      description: "Discover the latest innovations in agricultural technology, fertilizers, and sustainable farming practices."
+      event_location: "Nchiiru Community Center",
+      summary: "Discover the latest innovations in agricultural technology, fertilizers, and sustainable farming practices."
     },
     {
       id: 3,
-      date: "July 12, 2024",
+      event_date: "2024-07-12",
       title: "Agro-Dealer Certification Program",
-      location: "Virtual Event",
-      description: "Get certified as an agro-dealer through our comprehensive online training program. Registration required."
+      event_location: "Virtual Event",
+      summary: "Get certified as an agro-dealer through our comprehensive online training program. Registration required."
     }
   ];
+
+  if (loading) {
+    return (
+      <section className="mt-16 mb-8">
+        <div className="flex items-center mb-6">
+          <CalendarDays className="text-agro-green mr-2" size={24} />
+          <h2 className="text-2xl font-bold text-gray-800">Upcoming Events</h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse bg-gray-200 h-32 rounded-lg"></div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // Use database content if available, otherwise fallback
+  const displayEvents = eventContent.length > 0 ? eventContent : fallbackEvents;
 
   return (
     <section className="mt-16 mb-8">
@@ -59,13 +83,13 @@ const UpcomingEventsSection = () => {
         <h2 className="text-2xl font-bold text-gray-800">Upcoming Events</h2>
       </div>
       <div className="grid grid-cols-1 gap-4">
-        {events.map(event => (
+        {displayEvents.slice(0, 3).map(event => (
           <EventCard
             key={event.id}
-            date={event.date}
+            date={event.event_date ? formatDate(event.event_date) : "TBD"}
             title={event.title}
-            location={event.location}
-            description={event.description}
+            location={event.event_location || "Location TBD"}
+            description={event.summary || "Event details coming soon."}
           />
         ))}
       </div>

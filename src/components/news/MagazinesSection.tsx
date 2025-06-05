@@ -1,67 +1,98 @@
 
-import { Book } from "lucide-react";
-import { Link } from "react-router-dom";
+import { BookOpen } from "lucide-react";
+import { usePublishedContent } from "@/hooks/usePublishedContent";
 
 interface MagazineCardProps {
-  image: string;
   title: string;
-  date: string;
-  link: string;
+  image: string;
+  description: string;
+  downloadUrl?: string;
 }
 
-const MagazineCard = ({ image, title, date, link }: MagazineCardProps) => {
+const MagazineCard = ({ title, image, description, downloadUrl }: MagazineCardProps) => {
   return (
-    <div className="flex mb-4">
-      <div className="w-24 h-32 flex-shrink-0 mr-4 overflow-hidden">
-        <img src={image} alt={title} className="w-full h-full object-cover" />
-      </div>
-      <div className="flex flex-col justify-center">
-        <h3 className="font-bold text-agro-blue">{title}</h3>
-        <p className="text-gray-600 text-sm mb-2">{date}</p>
-        <Link to={link} className="text-agro-orange hover:underline text-sm font-medium">
-          View Issue
-        </Link>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+      <img src={image} alt={title} className="w-full h-48 object-cover" />
+      <div className="p-4">
+        <h3 className="font-bold text-lg text-agro-blue mb-2">{title}</h3>
+        <p className="text-gray-700 text-sm mb-4">{description}</p>
+        {downloadUrl ? (
+          <a
+            href={downloadUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-agro-green text-white px-4 py-2 rounded hover:bg-agro-blue transition-colors text-sm"
+          >
+            Download PDF
+          </a>
+        ) : (
+          <button className="inline-block bg-gray-400 text-white px-4 py-2 rounded text-sm cursor-not-allowed">
+            Coming Soon
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
 const MagazinesSection = () => {
-  const magazines = [
+  const { content: magazineContent, loading } = usePublishedContent('magazine');
+
+  // Fallback magazines when no database content
+  const fallbackMagazines = [
     {
       id: 1,
-      image: "/public/GalleryPic4.png",
-      title: "AGRI REVIEW",
-      date: "April 2024",
-      link: "/magazines/1"
+      title: "AgroNexus Quarterly - Q1 2024",
+      image_url: "/public/GalleryPic4.png",
+      summary: "Latest trends in sustainable agriculture and crop protection innovations.",
+      download_url: undefined
     },
     {
       id: 2,
-      image: "/public/GalleryPic5.png",
-      title: "FARMING INSIGHTS",
-      date: "January 2024",
-      link: "/magazines/2"
+      title: "Farmer's Guide to Pest Management",
+      image_url: "/public/GalleryPic5.png", 
+      summary: "Comprehensive guide to integrated pest management strategies for smallholder farmers.",
+      download_url: undefined
     }
   ];
 
-  return (
-    <section className="bg-gray-50 p-6 rounded-lg">
-      <div className="flex items-center mb-6">
-        <Book className="text-agro-green mr-2" size={24} />
-        <h2 className="text-2xl font-bold text-gray-800">Magazines</h2>
-      </div>
+  if (loading) {
+    return (
       <div>
-        {magazines.map(magazine => (
+        <div className="flex items-center mb-4">
+          <BookOpen className="text-agro-green mr-2" size={20} />
+          <h3 className="text-xl font-bold text-gray-800">Agricultural Magazines</h3>
+        </div>
+        <div className="space-y-4">
+          {[1, 2].map((i) => (
+            <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Use database content if available, otherwise fallback
+  const displayMagazines = magazineContent.length > 0 ? magazineContent : fallbackMagazines;
+
+  return (
+    <div>
+      <div className="flex items-center mb-4">
+        <BookOpen className="text-agro-green mr-2" size={20} />
+        <h3 className="text-xl font-bold text-gray-800">Agricultural Magazines</h3>
+      </div>
+      <div className="space-y-4">
+        {displayMagazines.slice(0, 2).map(magazine => (
           <MagazineCard
             key={magazine.id}
-            image={magazine.image}
             title={magazine.title}
-            date={magazine.date}
-            link={magazine.link}
+            image={magazine.image_url || "/public/GalleryPic4.png"}
+            description={magazine.summary || "Magazine content description."}
+            downloadUrl={magazine.download_url}
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 };
 

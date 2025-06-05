@@ -1,70 +1,104 @@
 
-import { FileText, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { FileText } from "lucide-react";
+import { usePublishedContent } from "@/hooks/usePublishedContent";
 
-interface JournalItemProps {
+interface JournalCardProps {
   title: string;
-  authors: string;
-  link: string;
+  description: string;
+  downloadUrl?: string;
 }
 
-const JournalItem = ({ title, authors, link }: JournalItemProps) => {
-  const handleDownload = () => {
-    // Simulate download functionality
-    toast.success(`Downloading: ${title}`);
-    console.log(`Downloading journal: ${title} from ${link}`);
-  };
-
+const JournalCard = ({ title, description, downloadUrl }: JournalCardProps) => {
   return (
-    <div className="mb-6 border-b pb-4 last:border-0">
-      <h3 className="text-lg font-bold text-gray-800 mb-1">{title}</h3>
-      <p className="text-gray-600 text-sm mb-2">Authors: {authors}</p>
-      <Button
-        variant="outline"
-        className="bg-agro-orange hover:bg-agro-orange/90 text-white border-0"
-        size="sm"
-        onClick={handleDownload}
-      >
-        <Download className="mr-1 h-4 w-4" /> Download PDF
-      </Button>
+    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+      <div className="flex items-start space-x-3">
+        <div className="bg-agro-lightgreen p-2 rounded">
+          <FileText className="text-agro-green" size={20} />
+        </div>
+        <div className="flex-1">
+          <h4 className="font-bold text-md text-agro-blue mb-1">{title}</h4>
+          <p className="text-gray-700 text-sm mb-3">{description}</p>
+          {downloadUrl ? (
+            <a
+              href={downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-agro-green text-white px-3 py-1 rounded hover:bg-agro-blue transition-colors text-sm"
+            >
+              Read More
+            </a>
+          ) : (
+            <button className="inline-block bg-gray-400 text-white px-3 py-1 rounded text-sm cursor-not-allowed">
+              Coming Soon
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
 const JournalsSection = () => {
-  const journals = [
+  const { content: blogContent, loading } = usePublishedContent('blog');
+
+  // Fallback journals when no database content
+  const fallbackJournals = [
     {
       id: 1,
-      title: "Integrated Pest Management in Tropical Agriculture",
-      authors: "Dr. Andrew Kamau, Prof. Sarah Muthoni",
-      link: "/downloads/ipm-tropical-agriculture.pdf"
+      title: "Research on Climate-Smart Agriculture",
+      summary: "Latest findings on drought-resistant crop varieties and water-efficient farming techniques.",
+      download_url: undefined
     },
     {
       id: 2,
-      title: "Sustainable Crop Protection Strategies for Smallholder Farms",
-      authors: "Dr. Grace Wanjiku, Dr. Peter Ochieng",
-      link: "/downloads/sustainable-crop-protection.pdf"
+      title: "Market Analysis: Fertilizer Trends 2024",
+      summary: "Comprehensive analysis of fertilizer market dynamics and pricing trends affecting farmers.",
+      download_url: undefined
+    },
+    {
+      id: 3,
+      title: "Innovation in Biological Pest Control",
+      summary: "Exploring natural and biological alternatives to chemical pesticides for sustainable farming.",
+      download_url: undefined
     }
   ];
 
-  return (
-    <section className="bg-gray-50 p-6 rounded-lg">
-      <div className="flex items-center mb-6">
-        <FileText className="text-agro-green mr-2" size={24} />
-        <h2 className="text-2xl font-bold text-gray-800">Research Journals</h2>
-      </div>
+  if (loading) {
+    return (
       <div>
-        {journals.map(journal => (
-          <JournalItem
+        <div className="flex items-center mb-4">
+          <FileText className="text-agro-green mr-2" size={20} />
+          <h3 className="text-xl font-bold text-gray-800">Research Journals</h3>
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse bg-gray-200 h-24 rounded-lg"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Use database content if available, otherwise fallback
+  const displayJournals = blogContent.length > 0 ? blogContent : fallbackJournals;
+
+  return (
+    <div>
+      <div className="flex items-center mb-4">
+        <FileText className="text-agro-green mr-2" size={20} />
+        <h3 className="text-xl font-bold text-gray-800">Research Journals</h3>
+      </div>
+      <div className="space-y-4">
+        {displayJournals.slice(0, 3).map(journal => (
+          <JournalCard
             key={journal.id}
             title={journal.title}
-            authors={journal.authors}
-            link={journal.link}
+            description={journal.summary || "Journal content description."}
+            downloadUrl={journal.download_url}
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 };
 
