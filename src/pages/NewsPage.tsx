@@ -1,11 +1,12 @@
 
 import Layout from "@/components/layout/Layout";
 import NewsHero from "@/components/news/NewsHero";
-import LatestNewsSection from "@/components/news/LatestNewsSection";
+import FeaturedNewsSection from "@/components/news/FeaturedNewsSection";
+import EventsSection from "@/components/news/EventsSection";
 import MagazinesSection from "@/components/news/MagazinesSection";
-import JournalsSection from "@/components/news/JournalsSection";
-import BooksSection from "@/components/news/BooksSection";
-import UpcomingEventsSection from "@/components/news/UpcomingEventsSection";
+import BlogSection from "@/components/news/BlogSection";
+import ResourcesSection from "@/components/news/ResourcesSection";
+import LatestNewsSection from "@/components/news/LatestNewsSection";
 
 const NewsPage = () => {
   return (
@@ -13,22 +14,28 @@ const NewsPage = () => {
       <NewsHero />
       
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-16">
-        <LatestNewsSection />
-        
-        {/* Two Column Layout for Side Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main Content Column */}
-          <div className="lg:col-span-2 space-y-16">
-            <BooksSection />
+      <div className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto px-4 py-12">
+          {/* Featured News */}
+          <FeaturedNewsSection />
+          
+          {/* Content Sections Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Left Column */}
+            <div className="space-y-8">
+              <EventsSection />
+              <BlogSection />
+            </div>
+            
+            {/* Right Column */}
+            <div className="space-y-8">
+              <MagazinesSection />
+              <ResourcesSection />
+            </div>
           </div>
           
-          {/* Sidebar */}
-          <div className="space-y-12">
-            <MagazinesSection />
-            <JournalsSection />
-            <UpcomingEventsSection />
-          </div>
+          {/* Latest News */}
+          <LatestNewsSection />
         </div>
       </div>
     </Layout>
