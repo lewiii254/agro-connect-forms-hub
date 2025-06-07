@@ -10,7 +10,7 @@ const NewsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date_desc");
   const [contentType, setContentType] = useState("all");
-  const [itemsToShow, setItemsToShow] = useState(12);
+  const [itemsToShow, setItemsToShow] = useState(9);
 
   // Fetch all content types
   const { content: allContent, loading } = usePublishedContent();
@@ -57,57 +57,76 @@ const NewsPage = () => {
   const hasMoreContent = filteredAndSortedContent.length > itemsToShow;
 
   const handleLoadMore = () => {
-    setItemsToShow(prev => prev + 12);
+    setItemsToShow(prev => prev + 9);
   };
 
   return (
     <Layout>
       <NewsHero />
-      <div className="container mx-auto px-4 py-8">
-        {/* Filters */}
-        <NewsFilters
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          contentType={contentType}
-          onContentTypeChange={setContentType}
-        />
-
-        {/* Results Summary */}
-        {!loading && (
-          <div className="mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <p className="text-gray-600">
-                {searchTerm ? (
-                  <>
-                    Showing {displayedContent.length} of {filteredAndSortedContent.length} results for "{searchTerm}"
-                  </>
-                ) : (
-                  <>
-                    Showing {displayedContent.length} of {filteredAndSortedContent.length} items
-                  </>
-                )}
-              </p>
-              {searchTerm && filteredAndSortedContent.length === 0 && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="text-agro-green hover:text-agro-blue text-sm underline"
-                >
-                  Clear search
-                </button>
-              )}
-            </div>
+      
+      {/* Main Content Container */}
+      <div className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto px-4 py-12">
+          {/* Page Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-agro-blue mb-4">
+              Latest News & Publications
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Discover the latest insights, research, and updates from the agricultural world
+            </p>
           </div>
-        )}
 
-        {/* Content Grid */}
-        <ContentGrid
-          items={displayedContent}
-          loading={loading}
-          showLoadMore={hasMoreContent}
-          onLoadMore={handleLoadMore}
-        />
+          {/* Filters Section */}
+          <div className="mb-8">
+            <NewsFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              contentType={contentType}
+              onContentTypeChange={setContentType}
+            />
+          </div>
+
+          {/* Results Summary */}
+          {!loading && (
+            <div className="mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-agro-green rounded-full"></div>
+                  <p className="text-gray-700 font-medium">
+                    {searchTerm ? (
+                      <>
+                        Found {filteredAndSortedContent.length} results for "{searchTerm}"
+                      </>
+                    ) : (
+                      <>
+                        Showing {displayedContent.length} of {filteredAndSortedContent.length} publications
+                      </>
+                    )}
+                  </p>
+                </div>
+                {searchTerm && filteredAndSortedContent.length === 0 && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="text-agro-orange hover:text-agro-blue text-sm font-medium px-4 py-2 rounded-lg border border-agro-orange hover:border-agro-blue transition-colors"
+                  >
+                    Clear search
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Content Grid */}
+          <ContentGrid
+            items={displayedContent}
+            loading={loading}
+            showLoadMore={hasMoreContent}
+            onLoadMore={handleLoadMore}
+          />
+        </div>
       </div>
     </Layout>
   );
