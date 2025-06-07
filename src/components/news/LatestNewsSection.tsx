@@ -1,12 +1,13 @@
-
 import { usePublishedContent } from "@/hooks/usePublishedContent";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowRight } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const LatestNewsSection = () => {
   const { content: newsContent, loading } = usePublishedContent('news');
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   const fallbackNews = [
     {
@@ -38,16 +39,22 @@ const LatestNewsSection = () => {
     }
   ];
 
+  const handleImageLoad = (id: string) => {
+    setLoadedImages(prev => ({ ...prev, [id]: true }));
+  };
+
   if (loading) {
     return (
-      <section className="bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center mb-2 text-gray-900">Latest News</h2>
-        <p className="text-gray-600 text-center mb-8">Stay informed with our recent updates</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
+      <section className="bg-white rounded-2xl shadow-xl p-10">
+        <div className="text-center mb-10">
+          <div className="h-8 bg-gray-300 rounded w-48 mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-300 rounded w-64 mx-auto"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="bg-gray-300 h-48 rounded-t-xl"></div>
-              <div className="p-6 space-y-3">
+              <div className="bg-gray-300 h-56 rounded-xl mb-4"></div>
+              <div className="space-y-3">
                 <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                 <div className="h-3 bg-gray-300 rounded w-1/2"></div>
                 <div className="h-3 bg-gray-300 rounded w-full"></div>
@@ -62,38 +69,48 @@ const LatestNewsSection = () => {
   const displayContent = newsContent.length > 0 ? newsContent : fallbackNews;
 
   return (
-    <section className="bg-white rounded-xl shadow-lg p-8">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Latest News</h2>
-        <p className="text-gray-600">Stay informed with our recent updates and announcements</p>
+    <section className="bg-white rounded-2xl shadow-xl p-10">
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6">
+          📰 Latest News
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">Recent Updates</h2>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">Stay informed with our latest news, announcements, and industry insights</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayContent.slice(0, 6).map((article) => (
-          <article key={article.id} className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-300">
+          <article key={article.id} className="group bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:transform hover:scale-105">
             <div className="aspect-video relative overflow-hidden">
-              <img 
-                src={article.image_url || "/public/GalleryPic1.png"} 
-                alt={article.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+              <div className={`w-full h-full ${!loadedImages[article.id] ? 'bg-gray-200 animate-pulse' : ''}`}>
+                <img 
+                  src={article.image_url || "/public/GalleryPic1.png"} 
+                  alt={article.title}
+                  className={`w-full h-full object-cover transition-all duration-700 ${
+                    loadedImages[article.id] ? 'opacity-100 group-hover:scale-110' : 'opacity-0'
+                  }`}
+                  loading="lazy"
+                  onLoad={() => handleImageLoad(article.id)}
+                />
+              </div>
               <div className="absolute top-3 left-3">
-                <Badge className="bg-blue-500 text-white font-semibold">
+                <Badge className="bg-blue-600 text-white font-semibold shadow-md">
                   News
                 </Badge>
               </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
             </div>
             
             <div className="p-6">
-              <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                <div className="flex items-center gap-1">
+              <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md">
                   <Calendar size={14} className="text-blue-500" />
-                  <span>{formatDate(article.created_at)}</span>
+                  <span className="font-medium">{formatDate(article.created_at)}</span>
                 </div>
                 {article.author && (
-                  <div className="flex items-center gap-1">
-                    <User size={14} className="text-blue-500" />
-                    <span className="truncate">{article.author}</span>
+                  <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-md">
+                    <User size={14} className="text-green-500" />
+                    <span className="truncate font-medium">{article.author}</span>
                   </div>
                 )}
               </div>
@@ -103,14 +120,14 @@ const LatestNewsSection = () => {
               </h3>
               
               {article.summary && (
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
                   {article.summary}
                 </p>
               )}
               
               <Link 
                 to={`/news/${article.slug || article.id}`}
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm group/link"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-all group/link"
               >
                 Read More 
                 <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
@@ -121,8 +138,8 @@ const LatestNewsSection = () => {
       </div>
       
       {displayContent.length > 6 && (
-        <div className="mt-8 text-center">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+        <div className="mt-12 text-center">
+          <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg hover:transform hover:scale-105">
             View All News Articles
           </button>
         </div>

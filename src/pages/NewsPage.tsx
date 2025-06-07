@@ -14,28 +14,42 @@ const NewsPage = () => {
       <NewsHero />
       
       {/* Main Content */}
-      <div className="bg-gray-50 min-h-screen">
-        <div className="container mx-auto px-4 py-12">
-          {/* Featured News */}
-          <FeaturedNewsSection />
+      <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <div className="container mx-auto px-4 py-16 space-y-16">
+          {/* Featured News - Full Width */}
+          <section className="animate-fade-in">
+            <FeaturedNewsSection />
+          </section>
           
-          {/* Content Sections Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Left Column */}
-            <div className="space-y-8">
+          {/* Primary Content Grid */}
+          <section className="grid grid-cols-1 xl:grid-cols-3 gap-8 animate-fade-in">
+            {/* Left Column - Events (Featured) */}
+            <div className="xl:col-span-1">
               <EventsSection />
-              <BlogSection />
             </div>
             
-            {/* Right Column */}
-            <div className="space-y-8">
+            {/* Center Column - Magazines (Highlighted) */}
+            <div className="xl:col-span-1">
               <MagazinesSection />
+            </div>
+            
+            {/* Right Column - Resources */}
+            <div className="xl:col-span-1">
               <ResourcesSection />
             </div>
-          </div>
+          </section>
           
-          {/* Latest News */}
-          <LatestNewsSection />
+          {/* Secondary Content - Blog Research */}
+          <section className="animate-fade-in">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <BlogSection />
+            </div>
+          </section>
+          
+          {/* Latest News - Full Width Grid */}
+          <section className="animate-fade-in">
+            <LatestNewsSection />
+          </section>
         </div>
       </div>
     </Layout>
