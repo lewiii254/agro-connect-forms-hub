@@ -1,3 +1,4 @@
+
 import { BookOpen, Download, Eye } from "lucide-react";
 import { usePublishedContent } from "@/hooks/usePublishedContent";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,7 @@ const MagazinesSection = () => {
 
   const fallbackMagazines = [
     {
-      id: 1,
+      id: "1",
       title: "AgroNexus Quarterly - Q1 2024",
       image_url: "/public/GalleryPic4.png",
       summary: "Latest trends in sustainable agriculture and crop protection innovations.",
@@ -18,7 +19,7 @@ const MagazinesSection = () => {
       slug: "agronexus-quarterly-q1-2024"
     },
     {
-      id: 2,
+      id: "2",
       title: "Farmer's Success Stories",
       image_url: "/public/GalleryPic5.png", 
       summary: "Inspiring stories from farmers who transformed their yields using modern techniques.",

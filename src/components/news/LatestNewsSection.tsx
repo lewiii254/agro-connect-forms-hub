@@ -14,7 +14,8 @@ const LatestNewsSection = () => {
       created_at: "2024-04-19",
       author: "AgroNexus Communications",
       image_url: "/lovable-uploads/3db45ff9-3d7e-4723-b0d0-116e21bf11fe.png",
-      content_type: "news"
+      content_type: "news",
+      slug: "field-officer-program"
     },
     {
       id: "2", 
@@ -23,7 +24,8 @@ const LatestNewsSection = () => {
       created_at: "2024-04-02",
       author: "Dr. Sarah Kimani, Training Director",
       image_url: "/public/GalleryPic2.png",
-      content_type: "news"
+      content_type: "news",
+      slug: "crop-protection-training"
     },
     {
       id: "3",
@@ -32,7 +34,8 @@ const LatestNewsSection = () => {
       created_at: "2024-03-18",
       author: "James Mwangi, Partnership Manager",
       image_url: "/public/GalleryPic3.png",
-      content_type: "news"
+      content_type: "news",
+      slug: "agro-dealer-network"
     }
   ];
 
@@ -82,6 +85,7 @@ const LatestNewsSection = () => {
             summary={article.summary || ""}
             contentType={article.content_type}
             author={article.author}
+            slug={article.slug}
           />
         ))}
       </div>

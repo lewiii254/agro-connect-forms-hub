@@ -15,7 +15,8 @@ const FeaturedNewsSection = () => {
       author: "AgroNexus Communications",
       image_url: "/lovable-uploads/3db45ff9-3d7e-4723-b0d0-116e21bf11fe.png",
       content_type: "news",
-      featured: true
+      featured: true,
+      slug: "field-officer-program"
     }
   ];
 
@@ -69,6 +70,7 @@ const FeaturedNewsSection = () => {
             summary={article.summary || ""}
             contentType={article.content_type}
             author={article.author}
+            slug={article.slug}
           />
         ))}
       </div>
