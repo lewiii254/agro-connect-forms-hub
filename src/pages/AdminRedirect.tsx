@@ -9,7 +9,14 @@ const AdminRedirect = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Failed to retrieve session:", sessionError);
+          setIsAuthenticated(false);
+          setIsCheckingAuth(false);
+          return;
+        }
         
         if (!session) {
           setIsAuthenticated(false);
@@ -24,13 +31,17 @@ const AdminRedirect = () => {
           .eq('user_id', session.user.id)
           .single();
           
-        if (roleError || !roleData || roleData.role !== 'admin') {
+        if (roleError) {
+          console.error("Failed to check user role:", roleError);
+          setIsAuthenticated(false);
+        } else if (!roleData || roleData.role !== 'admin') {
+          console.log("User does not have admin privileges");
           setIsAuthenticated(false);
         } else {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        console.error("Unexpected error during auth check:", error);
         setIsAuthenticated(false);
       } finally {
         setIsCheckingAuth(false);
