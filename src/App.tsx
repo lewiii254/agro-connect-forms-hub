@@ -16,6 +16,7 @@ import AgroDealerApplicationPage from "./pages/applications/AgroDealerApplicatio
 import ExtensionServicesApplicationPage from "./pages/applications/ExtensionServicesApplicationPage";
 import SSPTrainingApplicationPage from "./pages/applications/SSPTrainingApplicationPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminRedirect from "./pages/AdminRedirect";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminContentPage from "./pages/AdminContentPage";
 import AdminMessagesPage from "./pages/AdminMessagesPage";
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/applications/agro-dealers" element={<AgroDealerApplicationPage />} />
             <Route path="/applications/extension-services" element={<ExtensionServicesApplicationPage />} />
             <Route path="/applications/ssp-training" element={<SSPTrainingApplicationPage />} />
+            <Route path="/admin" element={<AdminRedirect />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/content" element={<AdminContentPage />} />
