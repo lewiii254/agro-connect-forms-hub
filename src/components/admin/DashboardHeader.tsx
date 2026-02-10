@@ -143,7 +143,7 @@ const DashboardHeader = ({ activeTab = "applications", unreadCount = 0 }: Dashbo
                     {tab.badge && (
                       <Badge 
                         variant="destructive" 
-                        className="ml-auto h-5 w-5 flex items-center justify-center p-0 text-xs"
+                        className="ml-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
                       >
                         {tab.badge}
                       </Badge>

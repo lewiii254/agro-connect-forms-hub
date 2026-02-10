@@ -161,7 +161,7 @@ export default function ApplicationsTable({
                   <TableHead className="min-w-[180px]">Service Requested</TableHead>
                   <TableHead className="min-w-[120px] hidden sm:table-cell">Date Submitted</TableHead>
                   <TableHead className="min-w-[100px]">Status</TableHead>
-                  <TableHead className="min-w-[200px]">Actions</TableHead>
+                  <TableHead className="min-w-[150px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

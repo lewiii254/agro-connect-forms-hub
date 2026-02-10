@@ -120,7 +120,7 @@ const AdminDashboard = () => {
       <DashboardHeader activeTab="applications" unreadCount={pendingApplicationsCount} />
 
       <div className="container mx-auto p-4 md:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="bg-white shadow rounded-md p-4">
             <h2 className="text-lg font-semibold mb-2 text-emerald-700">Application Types</h2>
             <div className="w-full h-64 md:h-80">

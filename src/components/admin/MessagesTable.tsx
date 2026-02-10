@@ -109,7 +109,7 @@ export default function MessagesTable({ messages = [], onUpdate, loading = false
                 <TableHead className="min-w-[180px]">Subject</TableHead>
                 <TableHead className="min-w-[100px] hidden sm:table-cell">Date</TableHead>
                 <TableHead className="min-w-[80px]">Status</TableHead>
-                <TableHead className="min-w-[250px]">Actions</TableHead>
+                <TableHead className="min-w-[180px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

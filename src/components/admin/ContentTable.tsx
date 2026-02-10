@@ -183,7 +183,7 @@ const ContentTable = ({
       <ContentFilters onFilterChange={handleFilterChange} />
 
       {/* Content Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <Card>
           <CardContent className="p-3 md:p-4">
             <div className="text-xl md:text-2xl font-bold text-blue-600">{content.length}</div>
