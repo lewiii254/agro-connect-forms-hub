@@ -32,11 +32,11 @@ export default function ApplicationsTableActions({
   processingId,
 }: ActionsProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row gap-2">
       <Button
         variant="default"
         size="sm"
-        className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+        className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1 justify-center w-full sm:w-auto"
         onClick={(e) => {
           e.stopPropagation();
           onApprove(app);
@@ -44,12 +44,12 @@ export default function ApplicationsTableActions({
         disabled={processingId === app.id || app.status === "approved"}
       >
         <Check size={16} />
-        Approve
+        <span className="hidden sm:inline">Approve</span>
       </Button>
       <Button
         variant="default"
         size="sm"
-        className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1"
+        className="bg-orange-500 hover:bg-orange-600 flex items-center gap-1 justify-center w-full sm:w-auto"
         onClick={(e) => {
           e.stopPropagation();
           onReject(app);
@@ -57,22 +57,22 @@ export default function ApplicationsTableActions({
         disabled={processingId === app.id || app.status === "rejected"}
       >
         <X size={16} />
-        Reject
+        <span className="hidden sm:inline">Reject</span>
       </Button>
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
             variant="destructive"
             size="sm"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 justify-center w-full sm:w-auto"
             disabled={processingId === app.id}
             onClick={(e) => e.stopPropagation()}
           >
             <Trash2 size={16} />
-            Delete
+            <span className="hidden sm:inline">Delete</span>
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()} className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -80,14 +80,14 @@ export default function ApplicationsTableActions({
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(app);
               }}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-red-500 hover:bg-red-600 w-full sm:w-auto"
             >
               Delete
             </AlertDialogAction>

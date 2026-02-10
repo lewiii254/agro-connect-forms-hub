@@ -150,28 +150,28 @@ export default function ApplicationsTable({
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl text-emerald-800">Applications</CardTitle>
+          <CardTitle className="text-xl md:text-2xl text-emerald-800">Applications</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 md:p-6">
           <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader className="bg-sky-100">
                 <TableRow>
-                  <TableHead>Applicant Name</TableHead>
-                  <TableHead>Service Requested</TableHead>
-                  <TableHead>Date Submitted</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="min-w-[150px]">Applicant Name</TableHead>
+                  <TableHead className="min-w-[180px]">Service Requested</TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">Date Submitted</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[150px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {localApplications.map((app) => (
                   <TableRow key={app.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOpenDetails(app)}>
-                    <TableCell>{app.full_name}</TableCell>
+                    <TableCell className="font-medium">{app.full_name}</TableCell>
                     <TableCell>{getServiceType(app)}</TableCell>
-                    <TableCell>{formatDate(app.created_at).split(",")[0]}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{formatDate(app.created_at).split(",")[0]}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
+                      <span className={`px-2 py-1 rounded-full text-xs whitespace-nowrap ${
                         app.status === "approved"
                           ? "bg-green-100 text-green-800"
                           : app.status === "rejected"
@@ -184,18 +184,18 @@ export default function ApplicationsTable({
                       </span>
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Button
                           variant="default"
                           size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1"
+                          className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1 w-full sm:w-auto"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleOpenDetails(app);
                           }}
                         >
                           <View size={16} />
-                          View
+                          <span className="hidden sm:inline">View</span>
                         </Button>
                         <ApplicationsTableActions
                           app={app}

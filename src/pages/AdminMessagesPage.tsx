@@ -70,20 +70,20 @@ const AdminMessagesPage = () => {
       <div className="min-h-screen bg-gray-50">
         <DashboardHeader activeTab="messages" />
         
-        <div className="container mx-auto px-4 pb-8">
-          <div className="flex justify-between items-center mb-6">
+        <div className="container mx-auto px-4 md:px-6 pb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-emerald-800">Message Management</h2>
-              <p className="text-gray-600 mt-1">View and respond to user inquiries</p>
+              <h2 className="text-xl md:text-2xl font-bold text-emerald-800">Message Management</h2>
+              <p className="text-sm md:text-base text-gray-600 mt-1">View and respond to user inquiries</p>
             </div>
-            <Button variant="outline" className="flex items-center gap-1" onClick={handleRefresh}>
+            <Button variant="outline" className="flex items-center gap-1 w-full sm:w-auto" onClick={handleRefresh}>
               <RefreshCw size={18} />
               Refresh Messages
             </Button>
           </div>
           
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
             <StatisticsCard 
               title="Total Messages" 
               value={messages.length} 

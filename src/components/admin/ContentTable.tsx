@@ -149,17 +149,17 @@ const ContentTable = ({
       {/* Header */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle className="text-2xl">Content Management</CardTitle>
-              <p className="text-gray-600 mt-1">
+              <CardTitle className="text-xl md:text-2xl">Content Management</CardTitle>
+              <p className="text-sm md:text-base text-gray-600 mt-1">
                 Manage your website content, articles, and resources
               </p>
             </div>
             
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
               <DialogTrigger asChild>
-                <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90">
+                <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Content
                 </Button>
@@ -183,35 +183,35 @@ const ContentTable = ({
       <ContentFilters onFilterChange={handleFilterChange} />
 
       {/* Content Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-600">{content.length}</div>
-            <p className="text-sm text-gray-600">Total Content</p>
+          <CardContent className="p-3 md:p-4">
+            <div className="text-xl md:text-2xl font-bold text-blue-600">{content.length}</div>
+            <p className="text-xs md:text-sm text-gray-600">Total Content</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-green-600">
+          <CardContent className="p-3 md:p-4">
+            <div className="text-xl md:text-2xl font-bold text-green-600">
               {content.filter(c => c.status === 'published').length}
             </div>
-            <p className="text-sm text-gray-600">Published</p>
+            <p className="text-xs md:text-sm text-gray-600">Published</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-yellow-600">
+          <CardContent className="p-3 md:p-4">
+            <div className="text-xl md:text-2xl font-bold text-yellow-600">
               {content.filter(c => c.status === 'draft').length}
             </div>
-            <p className="text-sm text-gray-600">Drafts</p>
+            <p className="text-xs md:text-sm text-gray-600">Drafts</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-purple-600">
+          <CardContent className="p-3 md:p-4">
+            <div className="text-xl md:text-2xl font-bold text-purple-600">
               {content.filter(c => c.featured).length}
             </div>
-            <p className="text-sm text-gray-600">Featured</p>
+            <p className="text-xs md:text-sm text-gray-600">Featured</p>
           </CardContent>
         </Card>
       </div>
@@ -219,104 +219,106 @@ const ContentTable = ({
       {/* Content Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">Title</TableHead>
-                <TableHead className="font-semibold">Type</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Author</TableHead>
-                <TableHead className="font-semibold">Featured</TableHead>
-                <TableHead className="font-semibold">Created</TableHead>
-                <TableHead className="text-right font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredContent.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12">
-                    <div className="text-gray-500 space-y-2">
-                      <p className="text-lg font-medium">No content found</p>
-                      <p className="text-sm">Create your first piece of content to get started.</p>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-semibold min-w-[200px]">Title</TableHead>
+                  <TableHead className="font-semibold min-w-[100px]">Type</TableHead>
+                  <TableHead className="font-semibold min-w-[80px]">Status</TableHead>
+                  <TableHead className="font-semibold min-w-[120px] hidden md:table-cell">Author</TableHead>
+                  <TableHead className="font-semibold min-w-[80px] hidden lg:table-cell">Featured</TableHead>
+                  <TableHead className="font-semibold min-w-[100px] hidden lg:table-cell">Created</TableHead>
+                  <TableHead className="text-right font-semibold min-w-[120px]">Actions</TableHead>
                 </TableRow>
-              ) : (
-                filteredContent.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-gray-50">
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium text-gray-900">{item.title}</div>
-                        {item.summary && (
-                          <div className="text-sm text-gray-500 line-clamp-1">
-                            {item.summary}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{getContentTypeBadge(item.content_type)}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                    <TableCell>
-                      <span className="text-gray-700">{item.author || 'N/A'}</span>
-                    </TableCell>
-                    <TableCell>
-                      {item.featured ? (
-                        <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                          Featured
-                        </Badge>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-gray-600">{formatDate(item.created_at)}</span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(item)}
-                          className="hover:bg-blue-50 hover:border-blue-300"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="hover:bg-red-50 hover:border-red-300 text-red-600"
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Content</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{item.title}"? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => onDeleteContent(item.id)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+              </TableHeader>
+              <TableBody>
+                {filteredContent.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12">
+                      <div className="text-gray-500 space-y-2">
+                        <p className="text-base md:text-lg font-medium">No content found</p>
+                        <p className="text-xs md:text-sm">Create your first piece of content to get started.</p>
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredContent.map((item) => (
+                    <TableRow key={item.id} className="hover:bg-gray-50">
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium text-gray-900 text-sm md:text-base">{item.title}</div>
+                          {item.summary && (
+                            <div className="text-xs md:text-sm text-gray-500 line-clamp-1">
+                              {item.summary}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getContentTypeBadge(item.content_type)}</TableCell>
+                      <TableCell>{getStatusBadge(item.status)}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <span className="text-gray-700">{item.author || 'N/A'}</span>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {item.featured ? (
+                          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                            Featured
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <span className="text-gray-600">{formatDate(item.created_at)}</span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(item)}
+                            className="hover:bg-blue-50 hover:border-blue-300"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="hover:bg-red-50 hover:border-red-300 text-red-600"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="max-w-md">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Content</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "{item.title}"? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => onDeleteContent(item.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

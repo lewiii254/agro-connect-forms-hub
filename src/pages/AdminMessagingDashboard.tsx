@@ -25,10 +25,10 @@ const AdminMessagingDashboard = () => {
       <div className="min-h-screen bg-gray-50">
         <DashboardHeader activeTab="messaging" />
         
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 md:px-6 py-6 md:py-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-emerald-800">Admin Messaging</h2>
-            <p className="text-gray-600 mt-1">Communicate with other administrators</p>
+            <h2 className="text-xl md:text-2xl font-bold text-emerald-800">Admin Messaging</h2>
+            <p className="text-sm md:text-base text-gray-600 mt-1">Communicate with other administrators</p>
           </div>
           
           <AdminMessaging />
